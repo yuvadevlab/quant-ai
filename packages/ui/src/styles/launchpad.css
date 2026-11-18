@@ -18,7 +18,7 @@
   .launchpad-title {
     font-size: 18px;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--foreground);
   }
 
   .launchpad-grid {
@@ -55,29 +55,29 @@
   }
 
   .box-predictions {
-    background-color: rgba(16, 185, 129, 0.12);
+    background-color: color-mix(in srgb, var(--success) 12%, transparent);
     color: var(--color-gain);
   }
 
   .box-screener {
-    background-color: rgba(6, 182, 212, 0.12);
+    background-color: color-mix(in srgb, var(--primary) 12%, transparent);
     color: var(--brand-cyan);
   }
 
   .box-portfolio {
-    background-color: rgba(59, 130, 246, 0.12);
-    color: #3b82f6;
+    background-color: color-mix(in srgb, var(--chart-actual) 12%, transparent);
+    color: var(--chart-actual);
   }
 
   .box-copilot {
-    background-color: rgba(168, 85, 247, 0.12);
-    color: #c084fc;
+    background-color: color-mix(in srgb, var(--chart-5) 12%, transparent);
+    color: var(--chart-5);
   }
 
   .launchpad-info h3 {
     font-size: 15px;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--foreground);
   }
 
   .launchpad-info p {

@@ -4,3 +4,6 @@ packages:
 allowBuilds:
   "@scarf/scarf": true
   esbuild: true
+minimumReleaseAgeExclude:
+  - "@yuva-devlab/tokens@2.2.0"
+  - "@yuva-devlab/ui@4.0.0"

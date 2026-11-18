@@ -45,12 +45,12 @@
   }
 
   .tag-moderate {
-    background-color: rgba(6, 182, 212, 0.12);
+    background-color: color-mix(in srgb, var(--primary) 12%, transparent);
     color: var(--brand-cyan);
   }
 
   .tag-neutral {
-    background-color: rgba(255, 255, 255, 0.06);
+    background-color: color-mix(in srgb, var(--foreground) 6%, transparent);
     color: var(--text-muted);
   }
 

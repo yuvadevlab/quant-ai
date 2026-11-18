@@ -42,7 +42,7 @@
   .not-found-title {
     font-size: 22px;
     font-weight: 800;
-    color: #ffffff;
+    color: var(--foreground);
   }
 
   .not-found-description {

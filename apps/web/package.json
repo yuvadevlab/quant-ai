@@ -23,8 +23,6 @@
     "@tanstack/react-router": "1.170.41",
     "@tanstack/react-start": "1.168.60",
     "@tanstack/router-plugin": "1.168.42",
-    "@yuva-devlab/tokens": "link:../../../devlab-shared/packages/tokens",
-    "@yuva-devlab/ui": "link:../../../devlab-shared/packages/ui",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.575.0",

@@ -6,7 +6,8 @@
 
 @layer dl-reset {
   /* ==========================================================================
-   QuantAI — Intelligent Market Analytics & Predictive Workstation   Standard: Pure Platform CSS, W3C Cascade Layers, High Contrast & Accessibility
+   QuantAI — Intelligent Market Analytics & Predictive Workstation
+   Standard: Pure Platform CSS, W3C Cascade Layers, High Contrast & Accessibility
    ========================================================================== */
 
   :root {
@@ -15,31 +16,31 @@
     --font-mono: var(--theme-font-mono, "JetBrains Mono", ui-monospace, monospace);
 
     /* Color Palette mapped directly to @yuva-devlab/tokens */
-    --bg-app: var(--background, #080c14);
-    --bg-sidebar: var(--sidebar, #0c121e);
-    --bg-card: var(--card, #111827);
+    --bg-app: var(--background);
+    --bg-sidebar: var(--sidebar);
+    --bg-card: var(--card);
     --bg-card-hover: oklch(from var(--card) calc(l + 0.04) c h);
     --bg-card-subtle: oklch(from var(--card) calc(l - 0.02) c h);
-    --bg-input: var(--input, #0a0f1a);
+    --bg-input: var(--input);
 
-    --border-subtle: var(--border, rgba(255, 255, 255, 0.08));
-    --border-active: var(--ring, rgba(6, 182, 212, 0.4));
-    --border-focus: var(--primary, #06b6d4);
+    --border-subtle: var(--border);
+    --border-active: var(--ring);
+    --border-focus: var(--primary);
 
-    --text-primary: var(--foreground, #f9fafb);
+    --text-primary: var(--foreground);
     --text-secondary: oklch(from var(--foreground) calc(l - 0.15) c h);
-    --text-muted: var(--muted-foreground, #9ca3af);
+    --text-muted: var(--muted-foreground);
     --text-dim: oklch(from var(--muted-foreground) calc(l - 0.15) c h);
 
-    --brand-cyan: var(--primary, #06b6d4);
+    --brand-cyan: var(--primary);
     --brand-cyan-glow: oklch(from var(--primary) l c h / 20%);
-    --brand-blue: var(--chart-actual, #3b82f6);
+    --brand-blue: var(--chart-actual);
 
-    --color-gain: var(--success, #10b981);
+    --color-gain: var(--success);
     --color-gain-bg: oklch(from var(--success) l c h / 12%);
-    --color-loss: var(--destructive, #ef4444);
+    --color-loss: var(--destructive);
     --color-loss-bg: oklch(from var(--destructive) l c h / 12%);
-    --color-amber: var(--warning, #f59e0b);
+    --color-amber: var(--warning);
     --color-amber-bg: oklch(from var(--warning) l c h / 12%);
 
     --radius-sm: calc(var(--radius, 0.75rem) * 0.5);
@@ -48,7 +49,7 @@
     --radius-xl: calc(var(--radius, 0.75rem) * 1.25);
     --radius-full: 9999px;
 
-    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+    --shadow-card: 0 4px 20px color-mix(in srgb, var(--background) 80%, black);
     --shadow-glow: 0 0 24px oklch(from var(--primary) l c h / 15%);
   }
 
@@ -93,6 +94,6 @@
   }
 
   .highlight {
-    color: #38bdf8;
+    color: var(--primary);
   }
 }

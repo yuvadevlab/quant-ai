@@ -53,11 +53,11 @@
     width: 36px;
     height: 36px;
     border-radius: var(--radius-md);
-    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    background: linear-gradient(135deg, var(--primary), var(--chart-actual));
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #ffffff;
+    color: var(--primary-foreground);
     box-shadow: 0 0 16px var(--brand-cyan-glow);
     flex-shrink: 0;
   }
@@ -71,7 +71,7 @@
     font-size: 17px;
     font-weight: 800;
     letter-spacing: 0.5px;
-    color: #ffffff;
+    color: var(--foreground);
     line-height: 1.1;
   }
 
@@ -134,12 +134,12 @@
 
   .nav-item:hover {
     background-color: var(--bg-card-hover);
-    color: #ffffff;
+    color: var(--foreground);
   }
 
   .nav-item.active {
-    background-color: rgba(6, 182, 212, 0.12);
-    color: #ffffff;
+    background-color: color-mix(in srgb, var(--primary) 12%, transparent);
+    color: var(--foreground);
     border-left: 3px solid var(--brand-cyan);
   }
 
@@ -153,7 +153,7 @@
   }
 
   .copilot-icon {
-    color: #a855f7 !important;
+    color: var(--chart-5) !important;
   }
 
   .nav-label {
@@ -166,14 +166,14 @@
     font-weight: 600;
     padding: 2px 7px;
     border-radius: var(--radius-full);
-    background-color: rgba(16, 185, 129, 0.15);
+    background-color: color-mix(in srgb, var(--success) 15%, transparent);
     color: var(--color-gain);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    border: 1px solid color-mix(in srgb, var(--success) 30%, transparent);
   }
 
   .copilot-badge {
-    background-color: rgba(168, 85, 247, 0.15);
-    color: #c084fc;
-    border-color: rgba(168, 85, 247, 0.3);
+    background-color: color-mix(in srgb, var(--chart-5) 15%, transparent);
+    color: var(--chart-5);
+    border-color: color-mix(in srgb, var(--chart-5) 30%, transparent);
   }
 }

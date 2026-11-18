@@ -1,17 +1,12 @@
-import { Link } from "@tanstack/react-router";
 import {
   ArrowDownRight,
   ArrowUpRight,
   Briefcase,
   ChevronRight,
-  DollarSign,
-  Lock,
   PieChart,
-  ShieldAlert,
   ShieldCheck,
   TrendingUp,
   Wallet,
-  Zap,
 } from "lucide-react";
 import { QuantLayout } from "./layout";
 import { paperPortfolio } from "./data";

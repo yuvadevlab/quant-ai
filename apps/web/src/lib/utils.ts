@@ -1,6 +1,6 @@
 /**
  * @file src/lib/utils.ts
- * @description Universal class names utility re-exported from @yuva-devlab/ui.
+ * @description Universal class names utility re-exported from @quant-ai/ui.
  */
 
-export { cn } from "@yuva-devlab/ui";
+export { cn } from "@quant-ai/ui";

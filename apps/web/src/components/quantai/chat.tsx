@@ -4,15 +4,10 @@ import {
   ArrowUpRight,
   Bot,
   ChevronRight,
-  CircleHelp,
-  CornerDownLeft,
-  MoreHorizontal,
-  Plus,
   Send,
   ShieldCheck,
   Sparkles,
   Target,
-  WandSparkles,
   Zap,
 } from "lucide-react";
 import { useState, type FormEvent } from "react";

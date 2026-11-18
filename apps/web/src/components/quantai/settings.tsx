@@ -1,24 +1,57 @@
-import {
-  Bell,
-  Check,
-  ChevronRight,
-  CircleHelp,
-  Cpu,
-  Monitor,
-  Radio,
-  ShieldCheck,
-  SlidersHorizontal,
-  Sparkles,
-  User,
-  Volume2,
-} from "lucide-react";
+/**
+ * @file apps/web/src/components/quantai/settings.tsx
+ * @description Platform Configuration & Risk Governance workstation desk.
+ */
+
+import { Check, ChevronRight, Cpu, ShieldCheck, User } from "lucide-react";
 import { useState } from "react";
 import { QuantLayout } from "./layout";
 
+type ModelProviderKey = "gemini" | "ollama" | "anthropic" | "openai";
+
+interface ProviderOption {
+  readonly id: ModelProviderKey;
+  readonly name: string;
+  readonly tag: string;
+  readonly tagClass?: string;
+  readonly desc: string;
+}
+
+const PROVIDERS: readonly ProviderOption[] = [
+  {
+    id: "gemini",
+    name: "Google Gemini 2.0 Flash",
+    tag: "DEFAULT / FREE TIER",
+    tagClass: "tag-active",
+    desc: "High throughput, sub-500ms latency, optimal for rapid market regime detection.",
+  },
+  {
+    id: "ollama",
+    name: "Local Ollama (Llama-3-70B-Instruct)",
+    tag: "SELF-HOSTED / ZERO COST",
+    desc: "Private quantitative deliberation engine running on local inference hardware.",
+  },
+  {
+    id: "anthropic",
+    name: "Anthropic Claude 3.5 Sonnet",
+    tag: "REASONING PRO",
+    desc: "Deep multi-step quantitative reasoning and complex derivatives flow synthesis.",
+  },
+  {
+    id: "openai",
+    name: "OpenAI GPT-4o",
+    tag: "CLOUD PRO",
+    desc: "Institutional agent capabilities and structured JSON financial tool calling.",
+  },
+];
+
+/**
+ * Settings and platform configuration workstation desk.
+ *
+ * @returns Rendered JSX SettingsWorkspace element.
+ */
 export function SettingsWorkspace() {
-  const [selectedProvider, setSelectedProvider] = useState<
-    "gemini" | "ollama" | "anthropic" | "openai"
-  >("gemini");
+  const [selectedProvider, setSelectedProvider] = useState<ModelProviderKey>("gemini");
   const [maxRisk, setMaxRisk] = useState("1.0%");
   const [dailyMaxDrawdown, setDailyMaxDrawdown] = useState("3.0%");
   const [autoTrailingSL, setAutoTrailingSL] = useState(true);
@@ -77,89 +110,29 @@ export function SettingsWorkspace() {
             </div>
 
             <div className="settings-options-list">
-              <label
-                className={`provider-radio-card ${selectedProvider === "gemini" ? "selected" : ""}`}
-              >
-                <input
-                  type="radio"
-                  name="modelProvider"
-                  value="gemini"
-                  checked={selectedProvider === "gemini"}
-                  onChange={() => setSelectedProvider("gemini")}
-                />
-                <div className="provider-info">
-                  <div className="provider-name-row">
-                    <strong>Google Gemini 2.0 Flash</strong>
-                    <span className="provider-tag tag-active">DEFAULT / FREE TIER</span>
+              {PROVIDERS.map((provider) => (
+                <label
+                  key={provider.id}
+                  className={`provider-radio-card ${selectedProvider === provider.id ? "selected" : ""}`}
+                >
+                  <input
+                    type="radio"
+                    name="modelProvider"
+                    value={provider.id}
+                    checked={selectedProvider === provider.id}
+                    onChange={() => setSelectedProvider(provider.id)}
+                  />
+                  <div className="provider-info">
+                    <div className="provider-name-row">
+                      <strong>{provider.name}</strong>
+                      <span className={`provider-tag ${provider.tagClass ?? ""}`}>
+                        {provider.tag}
+                      </span>
+                    </div>
+                    <p className="provider-desc">{provider.desc}</p>
                   </div>
-                  <p className="provider-desc">
-                    High throughput, sub-500ms latency, optimal for rapid market regime detection.
-                  </p>
-                </div>
-              </label>
-
-              <label
-                className={`provider-radio-card ${selectedProvider === "ollama" ? "selected" : ""}`}
-              >
-                <input
-                  type="radio"
-                  name="modelProvider"
-                  value="ollama"
-                  checked={selectedProvider === "ollama"}
-                  onChange={() => setSelectedProvider("ollama")}
-                />
-                <div className="provider-info">
-                  <div className="provider-name-row">
-                    <strong>Local Ollama (Llama-3-70B-Instruct)</strong>
-                    <span className="provider-tag">SELF-HOSTED / ZERO COST</span>
-                  </div>
-                  <p className="provider-desc">
-                    Private quantitative deliberation engine running on local inference hardware.
-                  </p>
-                </div>
-              </label>
-
-              <label
-                className={`provider-radio-card ${selectedProvider === "anthropic" ? "selected" : ""}`}
-              >
-                <input
-                  type="radio"
-                  name="modelProvider"
-                  value="anthropic"
-                  checked={selectedProvider === "anthropic"}
-                  onChange={() => setSelectedProvider("anthropic")}
-                />
-                <div className="provider-info">
-                  <div className="provider-name-row">
-                    <strong>Anthropic Claude 3.5 Sonnet</strong>
-                    <span className="provider-tag">REASONING PRO</span>
-                  </div>
-                  <p className="provider-desc">
-                    Deep multi-step quantitative reasoning and complex derivatives flow synthesis.
-                  </p>
-                </div>
-              </label>
-
-              <label
-                className={`provider-radio-card ${selectedProvider === "openai" ? "selected" : ""}`}
-              >
-                <input
-                  type="radio"
-                  name="modelProvider"
-                  value="openai"
-                  checked={selectedProvider === "openai"}
-                  onChange={() => setSelectedProvider("openai")}
-                />
-                <div className="provider-info">
-                  <div className="provider-name-row">
-                    <strong>OpenAI GPT-4o</strong>
-                    <span className="provider-tag">CLOUD PRO</span>
-                  </div>
-                  <p className="provider-desc">
-                    Institutional agent capabilities and structured JSON financial tool calling.
-                  </p>
-                </div>
-              </label>
+                </label>
+              ))}
             </div>
           </div>
 

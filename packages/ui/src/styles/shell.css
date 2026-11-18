@@ -34,7 +34,7 @@
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.5px;
-    background-color: rgba(16, 185, 129, 0.15);
+    background-color: color-mix(in srgb, var(--success) 15%, transparent);
     color: var(--color-gain);
     padding: 2px 7px;
     border-radius: var(--radius-sm);
@@ -91,8 +91,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background-color: rgba(6, 182, 212, 0.08);
-    border: 1px solid rgba(6, 182, 212, 0.2);
+    background-color: color-mix(in srgb, var(--primary) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
     padding: 6px 12px;
     border-radius: var(--radius-md);
     font-size: 12px;
@@ -123,13 +123,13 @@
     width: 26px;
     height: 26px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    background: linear-gradient(135deg, var(--chart-actual), var(--accent-foreground));
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     font-size: 12px;
-    color: #ffffff;
+    color: var(--primary-foreground);
   }
 
   .profile-name {

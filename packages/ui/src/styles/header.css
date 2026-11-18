@@ -6,37 +6,40 @@
 
 @layer dl-components {
   /* ==========================================================================
-   Page Desks & Layout Structure
+   Page Headers & Desks
    ========================================================================== */
 
-  .quant-content-body {
-    flex: 1;
-    padding: 32px 36px;
-    max-width: 1540px;
-    width: 100%;
+  .desk-container {
+    max-width: var(--page-max-width);
     margin: 0 auto;
+    padding: var(--page-padding-y) var(--page-padding-x);
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
   }
 
-  .overview-container,
-  .desk-container {
+  .overview-container {
+    max-width: var(--page-max-width);
+    margin: 0 auto;
+    padding: var(--page-padding-y) var(--page-padding-x);
     display: flex;
     flex-direction: column;
     gap: 32px;
   }
 
-  /* Page Header & Breadcrumbs */
   .desk-header {
     display: flex;
-    align-items: flex-start;
     justify-content: space-between;
+    align-items: flex-start;
     gap: 24px;
+    flex-wrap: wrap;
   }
 
   .desk-breadcrumb {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 700;
     letter-spacing: 0.8px;
     color: var(--text-dim);
@@ -44,7 +47,7 @@
   }
 
   .breadcrumb-back-link {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 4px;
     color: var(--brand-cyan);
@@ -62,7 +65,7 @@
   .desk-title {
     font-size: 26px;
     font-weight: 800;
-    color: #ffffff;
+    color: var(--foreground);
     letter-spacing: -0.4px;
     line-height: 1.2;
   }
@@ -98,9 +101,9 @@
   .overview-hero {
     background: linear-gradient(
       135deg,
-      rgba(6, 182, 212, 0.08) 0%,
-      rgba(59, 130, 246, 0.04) 50%,
-      rgba(17, 24, 39, 0.6) 100%
+      color-mix(in srgb, var(--primary) 8%, transparent) 0%,
+      color-mix(in srgb, var(--chart-actual) 4%, transparent) 50%,
+      color-mix(in srgb, var(--card) 60%, transparent) 100%
     );
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
@@ -120,7 +123,7 @@
     font-weight: 800;
     letter-spacing: 1px;
     color: var(--brand-cyan);
-    background-color: rgba(6, 182, 212, 0.12);
+    background-color: color-mix(in srgb, var(--primary) 12%, transparent);
     padding: 4px 10px;
     border-radius: var(--radius-full);
     margin-bottom: 12px;
@@ -134,7 +137,7 @@
     font-size: 30px;
     font-weight: 800;
     letter-spacing: -0.5px;
-    color: #ffffff;
+    color: var(--foreground);
   }
 
   .hero-subtitle {
@@ -157,8 +160,8 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: linear-gradient(135deg, #06b6d4, #3b82f6);
-    color: #ffffff;
+    background: linear-gradient(135deg, var(--primary), var(--chart-actual));
+    color: var(--primary-foreground);
     font-weight: 600;
     font-size: 14px;
     padding: 12px 22px;
@@ -171,7 +174,7 @@
 
   .btn-hero-copilot:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(6, 182, 212, 0.35);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--primary) 35%, transparent);
   }
 
   .btn-hero-predictions {
@@ -179,7 +182,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: color-mix(in srgb, var(--foreground) 5%, transparent);
     border: 1px solid var(--border-subtle);
     color: var(--text-primary);
     font-weight: 500;
@@ -190,6 +193,6 @@
   }
 
   .btn-hero-predictions:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: color-mix(in srgb, var(--foreground) 10%, transparent);
   }
 }

@@ -1,20 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import {
-  ArrowDownRight,
-  ArrowUpRight,
-  ChevronRight,
-  Filter,
-  Flame,
-  Layers,
-  ScanLine,
-  Search,
-  Sparkles,
-  TrendingUp,
-  Zap,
-} from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, ChevronRight, Search, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { QuantLayout } from "./layout";
-import { screenerItems, type ScreenerItem } from "./data";
+import { screenerItems } from "./data";
 
 export function ScreenerDesk() {
   const [activeTab, setActiveTab] = useState<"all" | "breakouts" | "options" | "momentum">("all");
