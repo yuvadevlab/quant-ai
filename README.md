@@ -13,6 +13,19 @@
 
 ---
 
+## 📚 Documentation & Multi-Agent Guides
+
+- 📖 **[Master Documentation Index](./docs/INDEX.md)** — Complete 14-chapter architecture, domain knowledge, and API reference.
+- 🤖 **[AGENTS.md](./AGENTS.md)** — Master engineering standards and invariants for all AI coding agents.
+- ♊ **[GEMINI.md](./GEMINI.md)** — Google Antigravity & Gemini CLI specific instruction adapter.
+- 🟣 **[CLAUDE.md](./CLAUDE.md)** — Claude Code specific instruction adapter.
+- 🐙 **[Copilot Instructions](.github/copilot-instructions.md)** — GitHub Copilot & VS Code agent mode configuration.
+- 📋 **[CONTRIBUTING.md](./CONTRIBUTING.md)** — Branching models, commit conventions, and PR checklist.
+- 🛡️ **[SECURITY.md](./SECURITY.md)** — Capital safety, air-gapped broker policy, and data integrity.
+- 🚀 **[IMPLEMENTATION.md](./IMPLEMENTATION.md)** — Phased roadmap, deliverables, and acceptance criteria.
+
+---
+
 ## 🏛️ System Architecture
 
 ```mermaid
