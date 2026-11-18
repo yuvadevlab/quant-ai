@@ -46,25 +46,41 @@
 
 ---
 
-## 2. Directory Architecture & Layer Boundaries
+## 2. Monorepo Architecture & Layer Boundaries
 
 ```
-src/
-├── features/          # Vertical domain slices (overview, predictions, monitor, screener, portfolio, copilot)
-│   ├── <domain>/components/ # Visual presentation blocks (< 150 lines each)
-│   └── <domain>/api/        # Colocated React Query hooks & streaming adapters
+quant-ai/
+├── pnpm-workspace.yaml            # Targets apps/* and packages/*
+├── docker-compose.yml             # Local dev orchestrator (workstation:3005, quant-engine:8000)
 │
-├── components/        # Workstation layout & shared primitives
-│   ├── layout/        # QuantShell, QuantSidebar, QuantTopbar, MarketTickerStrip, ComplianceFooter
-│   └── ui/            # MetricCard, Sparkline, StatusBadge, ConfidenceMeter
+├── apps/
+│   └── workstation/               # @quant-ai/workstation (TanStack Start / React 19 UI & SSR)
+│       ├── src/
+│       │   ├── components/layout/ # QuantShell, QuantSidebar, QuantTopbar, MarketTickerStrip
+│       │   ├── components/ui/     # MetricCard, Sparkline, StatusBadge
+│       │   ├── components/quantai/# Overview, Predictions, Monitor, Screener, Copilot
+│       │   ├── services/          # Market feed & client signal streaming adapters
+│       │   ├── lib/ui-copy/       # Centralized UI Copy Catalogs (Zero hardcoded strings)
+│       │   ├── constants/         # AppRoute, QueryParamKey
+│       │   └── routes/            # Thin TanStack Router endpoints
+│       └── vite.config.ts
 │
-├── services/          # Decoupled mock & live WebSocket market data adapters
-├── lib/
-│   ├── ui-copy/       # Centralized UI Copy (Zero Hardcoded Strings)
-│   └── utils.ts       # Platform CSS class name helpers (clsx)
+├── packages/
+│   └── contracts/                 # @quant-ai/contracts (Shared domain types, enums & pure math)
+│       └── src/
+│           ├── enums.ts           # SignalStatus, SignalDirection, SignalRegime, MarketIndex
+│           ├── signals.ts         # Signal interfaces & Zod validation schemas
+│           └── math.ts            # Deterministic MFE/MAE & Brier score formulas
 │
-├── constants/         # Domain Enums (MarketIndex, SignalStatus) and AppRoute
-└── routes/            # Thin TanStack Router endpoints (< 35 lines each)
+├── services/
+│   └── quant-engine/              # Python FastAPI & NumPy Vectorized Compute Service
+│       ├── pyproject.toml         # Python 3.12 + FastAPI + NumPy + SciPy (managed by uv)
+│       ├── Dockerfile             # Scale-to-zero container for Cloud Run
+│       └── src/
+│           ├── main.py            # FastAPI REST entrypoint
+│           └── monte_carlo.py     # Vectorized Geometric Brownian Motion simulation
+│
+└── docs/                          # Master 14-chapter architecture index & ADRs
 ```
 
 ---

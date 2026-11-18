@@ -43,19 +43,34 @@ flowchart TD
 
 ---
 
-## 2. Directory Boundaries
+## 2. Monorepo Directory Boundaries
 
 ```
-src/
-├── components/layout/   # QuantShell, QuantSidebar, QuantTopbar, MarketTickerStrip, ComplianceFooter
-├── components/ui/       # MetricCard, Sparkline, StatusBadge, ConfidenceMeter
-├── components/quantai/  # Domain views: Overview, Predictions, Monitor, Screener, Copilot, Portfolio
-├── services/            # Decoupled mock & live WebSocket market data adapters
-├── lib/
-│   ├── ui-copy/         # Centralized UI Copy Catalogs (Zero hardcoded strings)
-│   └── utils.ts         # Platform CSS class name helpers (clsx)
-├── constants/           # Enums (MarketIndex, SignalStatus, AppRoute, QueryParamKey)
-└── routes/              # Thin TanStack Router endpoints
+quant-ai/
+├── pnpm-workspace.yaml            # Targets apps/* and packages/*
+├── docker-compose.yml             # Local dev orchestrator (workstation:3005, quant-engine:8000)
+│
+├── apps/
+│   └── workstation/               # @quant-ai/workstation (TanStack Start / React 19 UI & SSR)
+│       ├── src/components/layout/ # QuantShell, QuantSidebar, QuantTopbar, MarketTickerStrip
+│       ├── src/components/ui/     # MetricCard, Sparkline, StatusBadge
+│       ├── src/components/quantai/# Domain views: Overview, Predictions, Monitor, Screener, Copilot
+│       ├── src/services/          # Market feed & client signal streaming adapters
+│       ├── src/lib/ui-copy/       # Centralized UI Copy Catalogs (Zero hardcoded strings)
+│       └── src/routes/            # Thin TanStack Router endpoints
+│
+├── packages/
+│   └── contracts/                 # @quant-ai/contracts (Shared domain types, enums & pure math)
+│       ├── src/enums.ts           # SignalStatus, SignalDirection, SignalRegime, MarketIndex
+│       ├── src/signals.ts         # Signal interfaces & Zod validation schemas
+│       └── src/math.ts            # Deterministic MFE/MAE & Brier score formulas
+│
+└── services/
+    └── quant-engine/              # Python FastAPI & NumPy Vectorized Compute Service
+        ├── pyproject.toml         # Python 3.12 + FastAPI + NumPy + SciPy (managed by uv)
+        ├── Dockerfile             # Scale-to-zero container for Cloud Run
+        ├── src/main.py            # FastAPI REST entrypoint
+        └── src/monte_carlo.py     # Vectorized Geometric Brownian Motion simulation
 ```
 
 ---

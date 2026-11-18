@@ -1,0 +1,134 @@
+/**
+ * @file src/styles/layout-tokens.css
+ * @description Master structural dimension tokens for shells, sidebars, headers, and grids.
+ * Mobile-first responsive fluid metrics governed under @layer dl-tokens. */
+
+@layer dl-tokens {
+  :root,
+  [data-brand="quantai"],
+  [data-theme="quantai"],
+  [data-theme="quantai-dark"] {
+    /* ── Typography & Font Stacks ────────────────────────────────────────── */
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+    --theme-font-sans: var(--font-sans);
+    --theme-font-mono: var(--font-mono);
+
+    /* ── Viewport Safe Area Insets ────────────────────────────────────────── */
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-left: env(safe-area-inset-left, 0px);
+    --safe-area-right: env(safe-area-inset-right, 0px);
+
+    /* ── Header / Topbar Dimensions (Mobile First: 56px default) ──────────── */
+    --topbar-height: 3.5rem; /* 56px on mobile */
+    --topbar-padding-x: clamp(0.75rem, 2.5vw, 1.25rem);
+    --sidebar-header-height: 3.5rem;
+
+    /* ── Sidebar Dimensions ───────────────────────────────────────────────── */
+    --sidebar-width: 16rem; /* 256px */
+    --sidebar-width-collapsed: 4.5rem; /* 72px */
+    --sidebar-padding-x: 0.75rem;
+    --sidebar-padding-y: 1rem;
+
+    /* ── Page Layout & Viewport Containers ───────────────────────────────── */
+    --page-max-width: 96rem;
+    --page-padding-x: clamp(0.75rem, 2.5vw, 1.5rem);
+    --page-padding-y: clamp(0.875rem, 2.5vw, 1.5rem);
+    --section-gap: clamp(1rem, 2.5vw, 1.5rem);
+
+    /* ── Card & Surface Metrics ──────────────────────────────────────────── */
+    --card-padding: clamp(0.875rem, 2vw, 1.25rem);
+    --card-padding-sm: clamp(0.75rem, 1.5vw, 0.875rem);
+    --card-padding-lg: clamp(1rem, 2.5vw, 1.5rem);
+    --card-gap: clamp(0.75rem, 2vw, 1rem);
+    --card-radius: 0.75rem;
+
+    /* ── Interactive Controls & Touch Friendly Minimums ──────────────────── */
+    --control-height-xs: 1.75rem;
+    --control-height-sm: 2rem;
+    --control-height-md: 2.25rem;
+    --control-height-lg: 2.5rem;
+    --control-height-xl: 3rem;
+    --touch-target-min: 2.75rem; /* 44px touch target WCAG 2.5.5 */
+
+    /* ── Data Tables & Ledgers ───────────────────────────────────────────── */
+    --table-header-height: 2.5rem;
+    --table-row-height: 3.25rem;
+    --table-cell-padding-x: clamp(0.625rem, 1.5vw, 1rem);
+    --table-cell-padding-y: clamp(0.5rem, 1.2vw, 0.75rem);
+    --table-toolbar-height: 3.5rem;
+
+    /* ── Viewport Offsets & Overlays ─────────────────────────────────────── */
+    --viewport-gutter: var(--page-padding-x);
+    --viewport-popover-max-width: calc(100vw - (var(--viewport-gutter) * 2));
+    --viewport-drawer-gutter: 3rem;
+    --viewport-drawer-max-width: calc(100vw - var(--viewport-drawer-gutter));
+
+    /* ── Quantitative Intelligence Workspace Viewport Offsets ────────────── */
+    --quant-workspace-offset-desktop: 10rem;
+    --quant-workspace-offset-mobile: 12rem;
+    --quant-workspace-height: calc(100dvh - var(--quant-workspace-offset-desktop));
+    --quant-chat-min-height: calc(100dvh - var(--quant-workspace-offset-mobile));
+
+    /* ── Semantic Layer Z-Index Stack ────────────────────────────────────── */
+    --z-base: 0;
+    --z-card: 1;
+    --z-sticky-table: 10;
+    --z-topbar: 20;
+    --z-sidebar: 30;
+    --z-dropdown: 40;
+    --z-drawer: 50;
+    --z-modal: 60;
+    --z-popover: 70;
+    --z-toast: 80;
+    --z-skip-link: 9999;
+  }
+
+  /* ── Responsive Viewport Scaling: Tablet (768px+) ──────────────────────── */
+  @media (min-width: 768px) {
+    :root,
+    [data-brand="quantai"],
+    [data-theme="quantai-dark"] {
+      --topbar-height: 4rem; /* 64px desktop */
+      --sidebar-header-height: 4rem;
+      --topbar-padding-x: 1.5rem;
+      --page-padding-x: 1.5rem;
+      --page-padding-y: 1.5rem;
+    }
+  }
+
+  /* ── Responsive Viewport Scaling: Desktop (1024px+) ─────────────────────── */
+  @media (min-width: 1024px) {
+    :root,
+    [data-brand="quantai"],
+    [data-theme="quantai-dark"] {
+      --topbar-padding-x: 2rem;
+      --page-padding-x: 2rem;
+      --page-padding-y: 2rem;
+    }
+  }
+
+  /* ── Responsive Viewport Scaling: Ultrawide (1536px+) ──────────────────── */
+  @media (min-width: 1536px) {
+    :root,
+    [data-brand="quantai"],
+    [data-theme="quantai-dark"] {
+      --page-max-width: 120rem;
+      --page-padding-x: 2.5rem;
+      --page-padding-y: 2.5rem;
+    }
+  }
+
+  /* ── Native Density Switching ─────────────────────────────────────────── */
+  body.density-compact {
+    --page-padding-y: 0.75rem;
+    --card-padding: 0.75rem;
+    --card-gap: 0.5rem;
+    --section-gap: 0.75rem;
+    --control-height-md: 2rem;
+    --table-header-height: 2rem;
+    --table-row-height: 2.5rem;
+    --table-cell-padding-y: 0.375rem;
+  }
+}
