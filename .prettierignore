@@ -1,0 +1,7 @@
+node_modules
+dist
+.output
+.vinxi
+routeTree.gen.ts
+coverage
+pnpm-lock.yaml

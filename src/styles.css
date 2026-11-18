@@ -1,0 +1,12 @@
+/*
+ * QuantAI Platform Stylesheet
+ * Standardized pure platform CSS and theme layers.
+ * Attribution: yuva.devlab@gmail.com
+ */
+
+@import "@yuva-devlab/tokens/root.css";
+@import "@yuva-devlab/tokens/typography.css";
+@import "@yuva-devlab/tokens/themes/quantai.css";
+@import "@yuva-devlab/tokens/utilities.css";
+@import "./styles/layout-tokens.css";
+@import "./quantai-theme.css";
