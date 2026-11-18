@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MonitorWorkspace } from "@/components/quantai/monitor";
+import { MonitorPage, getMonitorData } from "@/features/monitor";
 
 export const Route = createFileRoute("/predictions/$id")({
   head: ({ params }) => ({
@@ -19,10 +19,12 @@ export const Route = createFileRoute("/predictions/$id")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: PredictionMonitorPage,
+  loader: async ({ params }) => await getMonitorData(params.id),
+  component: function PredictionMonitorPage() {
+    const data = Route.useLoaderData();
+    if (!data) {
+      return null;
+    }
+    return <MonitorPage initialData={data} />;
+  },
 });
-
-function PredictionMonitorPage() {
-  const { id } = Route.useParams();
-  return <MonitorWorkspace signalId={id} />;
-}

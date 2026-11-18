@@ -5,6 +5,8 @@
 export const COMMON_COPY = {
   APP: {
     NAME: "QuantAI",
+    PREFIX: "Quant",
+    SUFFIX: "AI",
     BADGE: "V2 PRO",
     TITLE: "AI Quantitative Market Intelligence & Strategy Workstation",
     TAGLINE: "Algorithmic Precision for Indian Financial Markets",

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { OverviewDesk } from "@/components/quantai/overview";
+import { OverviewPage, getOverviewData } from "@/features/overview";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -20,9 +20,9 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: HomePage,
+  loader: async () => await getOverviewData(),
+  component: function HomePage() {
+    const data = Route.useLoaderData();
+    return <OverviewPage initialData={data} />;
+  },
 });
-
-function HomePage() {
-  return <OverviewDesk />;
-}

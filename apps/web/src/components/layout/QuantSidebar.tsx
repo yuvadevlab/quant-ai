@@ -48,8 +48,8 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
           {!isCollapsed && (
             <div className="brand-text-block">
               <div className="brand-title">
-                {COMMON_COPY.APP.NAME}
-                <span className="brand-highlight">AI</span>
+                {COMMON_COPY.APP.PREFIX}
+                <span className="brand-highlight">{COMMON_COPY.APP.SUFFIX}</span>
               </div>
               <div className="brand-subtitle">{COMMON_COPY.APP.MARKET_BADGE}</div>
             </div>

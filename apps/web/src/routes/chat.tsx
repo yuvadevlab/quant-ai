@@ -1,19 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ChatWorkspace } from "@/components/quantai/chat";
+import { ChatPage, getChatData } from "@/features/chat";
 
 export const Route = createFileRoute("/chat")({
   head: () => ({
     meta: [
-      { title: "AI Copilot — QuantAI Financial Intelligence" },
+      { title: "AI Financial Copilot — QuantAI" },
       {
         name: "description",
-        content: "Dedicated AI Financial Copilot and market intelligence assistant.",
+        content:
+          "Conversational quantitative assistant for Indian market analysis, options open-interest, and setup evaluation.",
       },
+      { property: "og:title", content: "AI Financial Copilot — QuantAI" },
+      { property: "og:type", content: "website" },
     ],
   }),
-  component: ChatPage,
+  loader: async () => await getChatData(),
+  component: function ChatRoute() {
+    const data = Route.useLoaderData();
+    return <ChatPage initialData={data} />;
+  },
 });
-
-function ChatPage() {
-  return <ChatWorkspace />;
-}

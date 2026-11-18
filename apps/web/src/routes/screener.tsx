@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ScreenerDesk } from "@/components/quantai/screener";
+import { ScreenerPage, getScreenerData } from "@/features/screener";
 
 export const Route = createFileRoute("/screener")({
   head: () => ({
@@ -14,9 +14,9 @@ export const Route = createFileRoute("/screener")({
       { property: "og:type", content: "website" },
     ],
   }),
-  component: ScreenerPage,
+  loader: async () => await getScreenerData(),
+  component: function ScreenerRoute() {
+    const data = Route.useLoaderData();
+    return <ScreenerPage initialData={data} />;
+  },
 });
-
-function ScreenerPage() {
-  return <ScreenerDesk />;
-}

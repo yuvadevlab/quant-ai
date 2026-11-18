@@ -1,27 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SettingsWorkspace } from "@/components/quantai/settings";
+import { SettingsPage, getSettingsData } from "@/features/settings";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — QuantAI" },
+      { title: "Platform Configuration & Risk Governance — QuantAI" },
       {
         name: "description",
         content:
-          "Review the illustrative display and notification preferences in the QuantAI workspace.",
+          "Configure AI model providers, risk limits, DevLab Portal SSO, and quantitative parameters.",
       },
-      { property: "og:title", content: "Settings — QuantAI" },
-      {
-        property: "og:description",
-        content: "Workspace display and notification preferences for the QuantAI demo.",
-      },
+      { property: "og:title", content: "Platform Configuration — QuantAI" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: SettingsPage,
+  loader: async () => await getSettingsData(),
+  component: function SettingsRoute() {
+    const data = Route.useLoaderData();
+    return <SettingsPage initialData={data} />;
+  },
 });
-
-function SettingsPage() {
-  return <SettingsWorkspace />;
-}

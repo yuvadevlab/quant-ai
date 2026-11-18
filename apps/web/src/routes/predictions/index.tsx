@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PredictionsWorkspace } from "@/components/quantai/predictions";
+import { PredictionsPage, getPredictionsData } from "@/features/predictions";
 
 export const Route = createFileRoute("/predictions/")({
   head: () => ({
@@ -15,9 +15,9 @@ export const Route = createFileRoute("/predictions/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: PredictionsPage,
+  loader: async () => await getPredictionsData(),
+  component: function PredictionsRoute() {
+    const data = Route.useLoaderData();
+    return <PredictionsPage initialData={data} />;
+  },
 });
-
-function PredictionsPage() {
-  return <PredictionsWorkspace />;
-}
