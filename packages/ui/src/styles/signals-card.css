@@ -1,0 +1,128 @@
+/**
+ * @file packages/ui/src/styles/signals-card.css
+ * @description Modular stylesheet for signals-card.
+ * Architecture: W3C Cascade Layer @layer dl-components
+ */
+
+@layer dl-components {
+  .badge-neutral {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
+  }
+
+  .horizon-badge {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 2px 7px;
+    border-radius: var(--radius-sm);
+  }
+
+  .price-matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    background-color: var(--bg-card-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 12px;
+  }
+
+  .matrix-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .cell-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: var(--text-dim);
+  }
+
+  .cell-val {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .catalysts-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .catalyst-pill {
+    font-size: 11px;
+    font-weight: 500;
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-subtle);
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+  }
+
+  .card-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .confidence-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .conf-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: var(--text-dim);
+  }
+
+  .conf-bar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .conf-bar-fill {
+    width: 60px;
+    height: 5px;
+    background: linear-gradient(90deg, #3b82f6, #10b981);
+    border-radius: var(--radius-full);
+  }
+
+  .conf-val {
+    font-size: 12px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    color: var(--color-gain);
+  }
+
+  .btn-inspect-trajectory {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand-cyan);
+    background-color: rgba(6, 182, 212, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    transition:
+      background-color 0.15s,
+      border-color 0.15s;
+  }
+
+  .btn-inspect-trajectory:hover {
+    background-color: rgba(6, 182, 212, 0.18);
+    border-color: var(--brand-cyan);
+  }
+}

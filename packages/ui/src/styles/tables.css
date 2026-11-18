@@ -1,0 +1,143 @@
+/**
+ * @file packages/ui/src/styles/tables.css
+ * @description Modular stylesheet for tables.
+ * Architecture: W3C Cascade Layer @layer dl-components
+ */
+
+@layer dl-components {
+  /* ==========================================================================
+   Quant Tables (Screener, Predictions, Portfolio)
+   ========================================================================== */
+
+  .desk-table-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .quant-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 13px;
+  }
+
+  .quant-table thead {
+    background-color: var(--bg-card-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .quant-table th {
+    padding: 14px 18px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .quant-table tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background-color 0.15s;
+  }
+
+  .quant-table tbody tr:hover {
+    background-color: var(--bg-card-hover);
+  }
+
+  .quant-table td {
+    padding: 16px 18px;
+    vertical-align: middle;
+    color: var(--text-secondary);
+  }
+
+  .symbol-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .symbol-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .company-sub,
+  .time-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .sector-badge {
+    font-size: 11.5px;
+    color: var(--text-muted);
+  }
+
+  .price-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .price-mono {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .change-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+  }
+
+  .pill-gain {
+    background-color: var(--color-gain-bg);
+    color: var(--color-gain);
+  }
+
+  .pill-loss {
+    background-color: var(--color-loss-bg);
+    color: var(--color-loss);
+  }
+
+  .pattern-tag {
+    font-size: 12px;
+    color: var(--text-primary);
+  }
+
+  .rsi-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 70px;
+  }
+
+  .rsi-val {
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+  }
+
+  .rsi-high {
+    color: var(--color-loss);
+  }
+  .rsi-low {
+    color: var(--brand-cyan);
+  }
+  .rsi-mid {
+    color: var(--color-gain);
+  }
+}

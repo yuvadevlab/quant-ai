@@ -105,6 +105,9 @@ importers:
       '@quant-ai/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@quant-ai/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@tanstack/react-query':
         specifier: ^5.101.1
         version: 5.107.2(@types/react@19.3.0)(react@19.3.1)
@@ -200,6 +203,49 @@ importers:
       vitest:
         specifier: ^4.1.10
         version: 4.1.12(@types/node@22.20.5)(jsdom@20.0.3(supports-color@7.2.0))(vite@8.1.5(@types/node@22.20.5)(esbuild@0.27.7)(jiti@2.7.0)(terser@5.51.2))
+
+  packages/ui:
+    dependencies:
+      '@quant-ai/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      '@yuva-devlab/tokens':
+        specifier: link:../../../devlab-shared/packages/tokens
+        version: link:../../../devlab-shared/packages/tokens
+      '@yuva-devlab/ui':
+        specifier: link:../../../devlab-shared/packages/ui
+        version: link:../../../devlab-shared/packages/ui
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      lucide-react:
+        specifier: ^0.575.0
+        version: 0.575.0(react@19.3.1)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.16.5
+        version: 22.20.5
+      '@types/react':
+        specifier: ^19.2.0
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.2.0
+        version: 19.3.0(@types/react@19.3.0)
+      react:
+        specifier: ^19.2.0
+        version: 19.3.1
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.3.1(react@19.3.1)
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.33)(supports-color@7.2.0)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vitest:
+        specifier: ^4.1.10
+        version: 4.1.12(@types/node@22.20.5)(jsdom@20.0.3(supports-color@7.2.0))(vite@8.1.5(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2))
 
 packages:
 

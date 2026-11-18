@@ -1,0 +1,98 @@
+/**
+ * @file packages/ui/src/styles/reset.css
+ * @description Modular stylesheet for reset.
+ * Architecture: W3C Cascade Layer @layer dl-reset
+ */
+
+@layer dl-reset {
+  /* ==========================================================================
+   QuantAI — Intelligent Market Analytics & Predictive Workstation   Standard: Pure Platform CSS, W3C Cascade Layers, High Contrast & Accessibility
+   ========================================================================== */
+
+  :root {
+    /* Inherit Typography from @yuva-devlab/tokens */
+    --font-sans: var(--theme-font-sans, "Inter", -apple-system, BlinkMacSystemFont, sans-serif);
+    --font-mono: var(--theme-font-mono, "JetBrains Mono", ui-monospace, monospace);
+
+    /* Color Palette mapped directly to @yuva-devlab/tokens */
+    --bg-app: var(--background, #080c14);
+    --bg-sidebar: var(--sidebar, #0c121e);
+    --bg-card: var(--card, #111827);
+    --bg-card-hover: oklch(from var(--card) calc(l + 0.04) c h);
+    --bg-card-subtle: oklch(from var(--card) calc(l - 0.02) c h);
+    --bg-input: var(--input, #0a0f1a);
+
+    --border-subtle: var(--border, rgba(255, 255, 255, 0.08));
+    --border-active: var(--ring, rgba(6, 182, 212, 0.4));
+    --border-focus: var(--primary, #06b6d4);
+
+    --text-primary: var(--foreground, #f9fafb);
+    --text-secondary: oklch(from var(--foreground) calc(l - 0.15) c h);
+    --text-muted: var(--muted-foreground, #9ca3af);
+    --text-dim: oklch(from var(--muted-foreground) calc(l - 0.15) c h);
+
+    --brand-cyan: var(--primary, #06b6d4);
+    --brand-cyan-glow: oklch(from var(--primary) l c h / 20%);
+    --brand-blue: var(--chart-actual, #3b82f6);
+
+    --color-gain: var(--success, #10b981);
+    --color-gain-bg: oklch(from var(--success) l c h / 12%);
+    --color-loss: var(--destructive, #ef4444);
+    --color-loss-bg: oklch(from var(--destructive) l c h / 12%);
+    --color-amber: var(--warning, #f59e0b);
+    --color-amber-bg: oklch(from var(--warning) l c h / 12%);
+
+    --radius-sm: calc(var(--radius, 0.75rem) * 0.5);
+    --radius-md: calc(var(--radius, 0.75rem) * 0.75);
+    --radius-lg: var(--radius, 0.75rem);
+    --radius-xl: calc(var(--radius, 0.75rem) * 1.25);
+    --radius-full: 9999px;
+
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+    --shadow-glow: 0 0 24px oklch(from var(--primary) l c h / 15%);
+  }
+
+  /* Base Styles */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html,
+  body {
+    height: 100%;
+    background-color: var(--bg-app);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+  }
+
+  .mono {
+    font-family: var(--font-mono);
+  }
+
+  .highlight {
+    color: #38bdf8;
+  }
+}

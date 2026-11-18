@@ -1,0 +1,121 @@
+/**
+ * @file packages/ui/src/styles/indices.css
+ * @description Modular stylesheet for indices.
+ * Architecture: W3C Cascade Layer @layer dl-components
+ */
+
+@layer dl-components {
+  /* ==========================================================================
+   Indices Grid & Cards
+   ========================================================================== */
+
+  .indices-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .index-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition:
+      transform 0.15s,
+      border-color 0.15s;
+  }
+
+  .index-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .index-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .index-exchange {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+  }
+
+  .index-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-top: 2px;
+  }
+
+  .index-change-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+  }
+
+  .index-change-badge.is-gain {
+    background-color: var(--color-gain-bg);
+    color: var(--color-gain);
+  }
+
+  .index-change-badge.is-loss {
+    background-color: var(--color-loss-bg);
+    color: var(--color-loss);
+  }
+
+  .index-price-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .index-current-price {
+    font-size: 22px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    color: #ffffff;
+  }
+
+  .index-sparkline {
+    width: 70px;
+    height: 20px;
+  }
+
+  .index-range-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+  }
+
+  .range-track {
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+
+  .range-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #10b981);
+    border-radius: var(--radius-full);
+  }
+}

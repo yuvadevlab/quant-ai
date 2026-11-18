@@ -13,11 +13,12 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest"
   },
   "dependencies": {
     "@quant-ai/contracts": "workspace:*",
+    "@quant-ai/ui": "workspace:*",
     "@tanstack/react-query": "^5.101.1",
     "@tanstack/react-router": "1.170.41",
     "@tanstack/react-start": "1.168.60",

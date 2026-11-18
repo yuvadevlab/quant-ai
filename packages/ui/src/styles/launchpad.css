@@ -1,0 +1,99 @@
+/**
+ * @file packages/ui/src/styles/launchpad.css
+ * @description Modular stylesheet for launchpad.
+ * Architecture: W3C Cascade Layer @layer dl-components
+ */
+
+@layer dl-components {
+  /* ==========================================================================
+   Launchpad Section
+   ========================================================================== */
+
+  .launchpad-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .launchpad-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .launchpad-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .launchpad-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition:
+      transform 0.15s,
+      border-color 0.15s;
+  }
+
+  .launchpad-card:hover {
+    border-color: var(--border-active);
+    transform: translateY(-2px);
+  }
+
+  .launchpad-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .box-predictions {
+    background-color: rgba(16, 185, 129, 0.12);
+    color: var(--color-gain);
+  }
+
+  .box-screener {
+    background-color: rgba(6, 182, 212, 0.12);
+    color: var(--brand-cyan);
+  }
+
+  .box-portfolio {
+    background-color: rgba(59, 130, 246, 0.12);
+    color: #3b82f6;
+  }
+
+  .box-copilot {
+    background-color: rgba(168, 85, 247, 0.12);
+    color: #c084fc;
+  }
+
+  .launchpad-info h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .launchpad-info p {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  .launchpad-link-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand-cyan);
+    margin-top: auto;
+  }
+}

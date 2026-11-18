@@ -1,0 +1,140 @@
+/**
+ * @file packages/ui/src/styles/shell.css
+ * @description Modular stylesheet for shell.
+ * Architecture: W3C Cascade Layer @layer dl-components
+ */
+
+@layer dl-components {
+  /* Top App Bar */
+  .quant-topbar {
+    height: 60px;
+    background-color: var(--bg-sidebar);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  .market-regime-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    background-color: var(--bg-card-subtle);
+    border: 1px solid var(--border-subtle);
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+  }
+
+  .regime-tag {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    background-color: rgba(16, 185, 129, 0.15);
+    color: var(--color-gain);
+    padding: 2px 7px;
+    border-radius: var(--radius-sm);
+  }
+
+  .regime-text {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .regime-sep {
+    color: var(--text-dim);
+  }
+
+  .regime-vix {
+    color: var(--text-muted);
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .quick-kpi-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--bg-card-subtle);
+    border: 1px solid var(--border-subtle);
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    font-size: 12px;
+  }
+
+  .kpi-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-dim);
+  }
+
+  .kpi-value {
+    font-weight: 700;
+    color: var(--color-gain);
+  }
+
+  .kpi-sub {
+    color: var(--text-dim);
+    font-size: 11px;
+  }
+
+  .model-status-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: rgba(6, 182, 212, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand-cyan);
+  }
+
+  .model-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--brand-cyan);
+    box-shadow: 0 0 6px var(--brand-cyan);
+  }
+
+  .user-profile-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--bg-card-subtle);
+    border: 1px solid var(--border-subtle);
+    padding: 4px 10px 4px 6px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+  }
+
+  .profile-initial {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+    color: #ffffff;
+  }
+
+  .profile-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+}

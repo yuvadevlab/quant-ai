@@ -1,0 +1,55 @@
+{
+  "name": "@quant-ai/ui",
+  "version": "1.0.0",
+  "description": "Institutional quantitative UI primitives, desk components, and platform CSS for QuantAI",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./src/styles.css"
+  },
+  "files": [
+    "dist",
+    "src/styles.css",
+    "src/styles"
+  ],
+  "sideEffects": [
+    "*.css",
+    "**/*.css"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --external react,react-dom,@yuva-devlab/ui,@yuva-devlab/tokens,lucide-react && cp src/styles.css dist/ui.css && cp -r src/styles dist/",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "test": "vitest run --passWithNoTests"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@quant-ai/contracts": "workspace:*",
+    "@yuva-devlab/tokens": "link:../../../devlab-shared/packages/tokens",
+    "@yuva-devlab/ui": "link:../../../devlab-shared/packages/ui",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.575.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.16.5",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.10"
+  }
+}

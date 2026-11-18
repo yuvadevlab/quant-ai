@@ -1,15 +1,6 @@
 /**
  * @file src/lib/utils.ts
- * @description Universal class names and layout utility helpers. */
-
-import { clsx, type ClassValue } from "clsx";
-
-/**
- * Combines conditional class names into a single clean string.
- *
- * @param inputs - List of class values, objects, or arrays
- * @returns Combined class string
+ * @description Universal class names utility re-exported from @yuva-devlab/ui.
  */
-export function cn(...inputs: ClassValue[]): string {
-  return clsx(inputs);
-}
+
+export { cn } from "@yuva-devlab/ui";

@@ -1,0 +1,143 @@
+/**
+ * @file packages/ui/src/styles/panels.css
+ * @description Modular stylesheet for panels.
+ * Architecture: W3C Cascade Layer @layer dl-components
+ */
+
+@layer dl-components {
+  /* ==========================================================================
+   Market Breadth & Sector Matrix Panels
+   ========================================================================== */
+
+  .breadth-sector-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .desk-panel {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panel-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .panel-icon {
+    color: var(--brand-cyan);
+  }
+
+  .panel-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .panel-subtext {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .panel-status-pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: var(--radius-full);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+  }
+
+  .panel-link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand-cyan);
+  }
+
+  .panel-link:hover {
+    text-decoration: underline;
+  }
+
+  /* Breadth Stats */
+  .breadth-metric-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .breadth-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background-color: var(--bg-card-subtle);
+    border: 1px solid var(--border-subtle);
+    padding: 14px;
+    border-radius: var(--radius-md);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: var(--text-dim);
+  }
+
+  .stat-val {
+    font-size: 18px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+  }
+
+  .stat-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .breadth-progress-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .breadth-bar-container {
+    height: 10px;
+    border-radius: var(--radius-full);
+    display: flex;
+    overflow: hidden;
+    gap: 2px;
+  }
+
+  .breadth-bar-advance {
+    background-color: var(--color-gain);
+    height: 100%;
+  }
+
+  .breadth-bar-decline {
+    background-color: var(--color-loss);
+    height: 100%;
+  }
+
+  .breadth-bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+  }
+}

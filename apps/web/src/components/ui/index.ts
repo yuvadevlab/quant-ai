@@ -1,7 +1,6 @@
 /**
  * @file src/components/ui/index.ts
- * @description Master export barrel for QuantAI local domain UI primitives. */
+ * @description Master export barrel for QuantAI UI primitives, delegating to @quant-ai/ui.
+ */
 
-export { Sparkline, type SparklineProps } from "./Sparkline";
-export { MetricCard, type MetricCardProps } from "./MetricCard";
-export { StatusBadge, type StatusBadgeProps } from "./StatusBadge";
+export * from "@quant-ai/ui";

@@ -1,8 +1,10 @@
 /**
- * @file src/components/ui/MetricCard.tsx
- * @description Standardized institutional quantitative KPI card container. */
+ * @file packages/ui/src/components/MetricCard.tsx
+ * @description Standardized institutional quantitative KPI card container.
+ */
 
 import type { ReactNode } from "react";
+import { cn } from "@yuva-devlab/ui";
 
 /**
  * Props for the MetricCard component.
@@ -26,6 +28,9 @@ export interface MetricCardProps {
 
 /**
  * Institutional metric container providing clean financial KPI presentation.
+ *
+ * @param props - Component properties for the metric display.
+ * @returns Rendered JSX MetricCard element.
  */
 export function MetricCard({
   label,
@@ -37,7 +42,7 @@ export function MetricCard({
   className = "",
 }: MetricCardProps) {
   return (
-    <div className={`metric-card ${className}`}>
+    <div className={cn("metric-card", className)}>
       <div className="metric-top">
         <div className="metric-top-left">
           {icon && (
@@ -47,7 +52,7 @@ export function MetricCard({
           )}
           <span className="metric-label">{label}</span>
         </div>
-        {badge && <span className={`metric-badge ${badgeClass}`}>{badge}</span>}
+        {badge && <span className={cn("metric-badge", badgeClass)}>{badge}</span>}
       </div>
 
       <div className="metric-value mono">{value}</div>

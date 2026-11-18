@@ -1,6 +1,9 @@
 /**
- * @file src/components/ui/Sparkline.tsx
- * @description Lightweight, high-contrast SVG sparkline component for price trajectory trends. */
+ * @file packages/ui/src/components/Sparkline.tsx
+ * @description Lightweight, high-contrast SVG sparkline component for price trajectory trends.
+ */
+
+import { cn } from "@yuva-devlab/ui";
 
 /**
  * Props for the Sparkline component.
@@ -20,6 +23,9 @@ export interface SparklineProps {
 
 /**
  * High-performance SVG sparkline for displaying micro-trends in indices, tickers, and signals.
+ *
+ * @param props - Polyline points, directional bias, and SVG viewport configuration.
+ * @returns Rendered JSX SVG Sparkline element.
  */
 export function Sparkline({
   points,
@@ -31,7 +37,7 @@ export function Sparkline({
   const colorClass = isNeutral ? "spark-amber" : isPositive ? "spark-green" : "spark-red";
 
   return (
-    <svg className={`index-sparkline ${className}`} viewBox={viewBox} aria-hidden="true">
+    <svg className={cn("index-sparkline", className)} viewBox={viewBox} aria-hidden="true">
       <polyline points={points} className={colorClass} />
     </svg>
   );

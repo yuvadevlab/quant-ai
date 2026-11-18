@@ -1,0 +1,195 @@
+/**
+ * @file packages/ui/src/styles/header.css
+ * @description Modular stylesheet for header.
+ * Architecture: W3C Cascade Layer @layer dl-components
+ */
+
+@layer dl-components {
+  /* ==========================================================================
+   Page Desks & Layout Structure
+   ========================================================================== */
+
+  .quant-content-body {
+    flex: 1;
+    padding: 32px 36px;
+    max-width: 1540px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .overview-container,
+  .desk-container {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* Page Header & Breadcrumbs */
+  .desk-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .desk-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .breadcrumb-back-link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--brand-cyan);
+    transition: opacity 0.15s;
+  }
+
+  .breadcrumb-back-link:hover {
+    text-decoration: underline;
+  }
+
+  .desk-breadcrumb .current {
+    color: var(--brand-cyan);
+  }
+
+  .desk-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.4px;
+    line-height: 1.2;
+  }
+
+  .title-with-badge {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .title-instrument {
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .desk-subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    max-width: 720px;
+    line-height: 1.5;
+  }
+
+  .desk-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  /* Overview Hero Banner */
+  .overview-hero {
+    background: linear-gradient(
+      135deg,
+      rgba(6, 182, 212, 0.08) 0%,
+      rgba(59, 130, 246, 0.04) 50%,
+      rgba(17, 24, 39, 0.6) 100%
+    );
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 32px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    box-shadow: var(--shadow-card);
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--brand-cyan);
+    background-color: rgba(6, 182, 212, 0.12);
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    margin-bottom: 12px;
+  }
+
+  .hero-zap {
+    color: var(--brand-cyan);
+  }
+
+  .hero-title {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+  }
+
+  .hero-subtitle {
+    font-size: 14.5px;
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin-top: 8px;
+    line-height: 1.6;
+  }
+
+  .hero-actions-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .btn-hero-copilot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 12px 22px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 16px var(--brand-cyan-glow);
+    transition:
+      transform 0.15s,
+      box-shadow 0.15s;
+  }
+
+  .btn-hero-copilot:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(6, 182, 212, 0.35);
+  }
+
+  .btn-hero-predictions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 13.5px;
+    padding: 10px 20px;
+    border-radius: var(--radius-md);
+    transition: background-color 0.15s;
+  }
+
+  .btn-hero-predictions:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}

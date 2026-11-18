@@ -1,8 +1,10 @@
 /**
- * @file src/components/ui/StatusBadge.tsx
- * @description Standardized financial signal direction and lifecycle status badge. */
+ * @file packages/ui/src/components/StatusBadge.tsx
+ * @description Standardized financial signal direction and lifecycle status badge.
+ */
 
-import { SignalDirection, SignalStatus } from "../../constants";
+import { SignalDirection, SignalStatus } from "@quant-ai/contracts";
+import { cn } from "@yuva-devlab/ui";
 
 /**
  * Props for the StatusBadge component.
@@ -10,7 +12,7 @@ import { SignalDirection, SignalStatus } from "../../constants";
 export interface StatusBadgeProps {
   /** Signal execution state or direction */
   readonly status?: SignalStatus;
-  /** Direction bias (LONG/BUY, SHORT/SELL) */
+  /** Direction bias (LONG/BUY, SHORT/SELL, NEUTRAL) */
   readonly direction?: SignalDirection;
   /** Optional custom display text override */
   readonly label?: string;
@@ -20,6 +22,9 @@ export interface StatusBadgeProps {
 
 /**
  * Renders high-contrast semantic badges for trading positions and algorithmic statuses.
+ *
+ * @param props - Status or direction configuration.
+ * @returns Rendered JSX badge element or null.
  */
 export function StatusBadge({ status, direction, label, className = "" }: StatusBadgeProps) {
   if (direction) {
@@ -27,7 +32,7 @@ export function StatusBadge({ status, direction, label, className = "" }: Status
     const dirClass = isLong ? "badge-buy" : "badge-sell";
     const dirText = label ?? (isLong ? "BUY" : "SELL");
 
-    return <span className={`direction-badge ${dirClass} ${className}`}>{dirText}</span>;
+    return <span className={cn("direction-badge", dirClass, className)}>{dirText}</span>;
   }
 
   if (status) {
@@ -54,7 +59,7 @@ export function StatusBadge({ status, direction, label, className = "" }: Status
         break;
     }
 
-    return <span className={`status-tag ${statusClass} ${className}`}>{label ?? statusText}</span>;
+    return <span className={cn("status-tag", statusClass, className)}>{label ?? statusText}</span>;
   }
 
   return null;
