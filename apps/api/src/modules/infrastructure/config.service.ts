@@ -3,13 +3,15 @@
  * @author yuva.devlab@gmail.com
  */
 
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
+import { Logger } from "@yuva-devlab/logger";
 import {
   parseApiEnv,
   type ApiEnvironment,
   NodeEnvironment,
   EventBrokerType,
   DatabaseDriver,
+  AiProviderType,
 } from "@quant-ai/shared-types";
 
 /**
@@ -22,8 +24,8 @@ export class ConfigService {
 
   public constructor() {
     this.envConfig = parseApiEnv(process.env);
-    this.logger.log(
-      `Config loaded [ENV: ${this.envConfig.NODE_ENV}] [PORT: ${this.envConfig.PORT}] [BROKER: ${this.envConfig.EVENT_BROKER}]`,
+    this.logger.info(
+      `Config loaded [ENV: ${this.envConfig.NODE_ENV}] [PORT: ${this.envConfig.PORT}] [BROKER: ${this.envConfig.EVENT_BROKER}] [AI: ${this.envConfig.AI_PROVIDER}]`,
     );
   }
 
@@ -85,5 +87,30 @@ export class ConfigService {
   /** JWT Secret key */
   public get jwtSecret(): string {
     return this.envConfig.JWT_SECRET;
+  }
+
+  /** Configured primary AI model provider */
+  public get aiProvider(): AiProviderType {
+    return this.envConfig.AI_PROVIDER;
+  }
+
+  /** Google Gemini API Key */
+  public get geminiApiKey(): string {
+    return this.envConfig.GEMINI_API_KEY ?? "";
+  }
+
+  /** Anthropic Claude API Key */
+  public get anthropicApiKey(): string {
+    return this.envConfig.ANTHROPIC_API_KEY ?? "";
+  }
+
+  /** Groq API Key */
+  public get groqApiKey(): string {
+    return this.envConfig.GROQ_API_KEY ?? "";
+  }
+
+  /** Local Ollama endpoint base URL */
+  public get ollamaBaseUrl(): string {
+    return this.envConfig.OLLAMA_BASE_URL ?? "http://localhost:11434";
   }
 }

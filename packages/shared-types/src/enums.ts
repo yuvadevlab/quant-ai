@@ -2,6 +2,17 @@
  * @fileoverview Canonical financial market and prediction state enums. */
 
 /**
+ * Supported AI model provider backends for quantitative deliberation and research.
+ */
+export enum ModelProvider {
+  GEMINI = "gemini",
+  ANTHROPIC = "anthropic",
+  GROQ = "groq",
+  OLLAMA = "ollama",
+  SIMULATED = "simulated",
+}
+
+/**
  * Standard life cycle status for quantitative predictions.
  */
 export enum SignalStatus {
