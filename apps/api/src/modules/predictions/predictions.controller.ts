@@ -1,15 +1,26 @@
+/**
+ * @fileoverview Controller exposing Prediction Lab query endpoints.
+ * @author yuva.devlab@gmail.com
+ */
+
 import { Controller, Get, Param } from "@nestjs/common";
 import { ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
-import { Signal, TrajectoryPoint } from "@quant-ai/contracts";
+import {
+  ApiSegment,
+  Signal,
+  SwaggerSummary,
+  SwaggerTag,
+  TrajectoryPoint,
+} from "@quant-ai/contracts";
 import { PredictionsService } from "./predictions.service";
 
 /**
  * Controller exposing Prediction Lab query endpoints.
  */
-@ApiTags("Predictions")
-@Controller("predictions")
+@ApiTags(SwaggerTag.PREDICTIONS)
+@Controller(ApiSegment.PREDICTIONS)
 export class PredictionsController {
-  constructor(private readonly predictionsService: PredictionsService) {}
+  public constructor(private readonly predictionsService: PredictionsService) {}
 
   /**
    * Retrieves all predictions from the ledger.
@@ -17,8 +28,8 @@ export class PredictionsController {
    * @returns Array of Signal records.
    */
   @Get()
-  @ApiOperation({ summary: "Get all market predictions" })
-  findAll(): readonly Signal[] {
+  @ApiOperation({ summary: SwaggerSummary.ACTIVE_PREDICTIONS })
+  public findAll(): readonly Signal[] {
     return this.predictionsService.findAll();
   }
 
@@ -29,9 +40,9 @@ export class PredictionsController {
    * @returns Signal record with trajectory and agent deliberation details.
    */
   @Get(":id")
-  @ApiOperation({ summary: "Get detailed prediction by ID" })
+  @ApiOperation({ summary: SwaggerSummary.PREDICTION_BY_ID })
   @ApiParam({ name: "id", example: "PRED-8942" })
-  findById(@Param("id") id: string): Signal {
+  public findById(@Param("id") id: string): Signal {
     return this.predictionsService.findById(id);
   }
 
@@ -41,10 +52,10 @@ export class PredictionsController {
    * @param id The prediction identifier.
    * @returns Array of trajectory points.
    */
-  @Get(":id/trajectory")
-  @ApiOperation({ summary: "Get prediction trajectory quantile confidence cone" })
+  @Get(`:id/${ApiSegment.TRAJECTORY}`)
+  @ApiOperation({ summary: SwaggerSummary.PREDICTION_TRAJECTORY })
   @ApiParam({ name: "id", example: "PRED-8942" })
-  getTrajectory(@Param("id") id: string): readonly TrajectoryPoint[] {
+  public getTrajectory(@Param("id") id: string): readonly TrajectoryPoint[] {
     return this.predictionsService.getTrajectory(id);
   }
 }

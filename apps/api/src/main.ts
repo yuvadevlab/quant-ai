@@ -1,40 +1,65 @@
+/**
+ * @fileoverview Application bootstrap entry point for QuantAI API Gateway.
+ * @author yuva.devlab@gmail.com
+ */
+
 import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import {
+  ApiSegment,
+  DefaultConnectionUrl,
+  ServiceIdentity,
+  SwaggerTag,
+  WsNamespace,
+} from "@quant-ai/contracts";
 import { AppModule } from "./app.module";
+import { ConfigService } from "./modules/infrastructure/config.service";
 
 /**
  * Bootstraps the NestJS API application server.
  */
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
   // Enable CORS for client workstation
   app.enableCors({
-    origin: ["http://localhost:3005", "http://127.0.0.1:3005"],
+    origin: [
+      configService.corsOrigin,
+      DefaultConnectionUrl.CORS_DEV_WEB,
+      DefaultConnectionUrl.CORS_DEV_WEB_IP,
+    ],
     credentials: true,
   });
 
   // Global API routing prefix
-  app.setGlobalPrefix("api");
+  app.setGlobalPrefix(ApiSegment.API);
 
   // OpenAPI Swagger Documentation
-  const config = new DocumentBuilder()
-    .setTitle("QuantAI API")
-    .setDescription("Enterprise Quantitative Market Intelligence Gateway")
-    .setVersion("1.0.0")
-    .addTag("Market")
-    .addTag("Predictions")
-    .addTag("Health")
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle(ServiceIdentity.TITLE)
+    .setDescription(ServiceIdentity.DESCRIPTION)
+    .setVersion(ServiceIdentity.VERSION)
+    .addTag(SwaggerTag.MARKET)
+    .addTag(SwaggerTag.PREDICTIONS)
+    .addTag(SwaggerTag.SCREENER)
+    .addTag(SwaggerTag.HEALTH)
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("docs", app, document);
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup(ApiSegment.DOCS, app, document);
 
-  const port = process.env.PORT || 4005;
-  await app.listen(port);
-  console.log(`[QuantAI API] Running on http://localhost:${port}/api`);
-  console.log(`[QuantAI API] Swagger Docs on http://localhost:${port}/docs`);
+  await app.listen(configService.port);
+  console.log(
+    `[${ServiceIdentity.TITLE}] REST Gateway: http://localhost:${configService.port}/${ApiSegment.API}`,
+  );
+  console.log(
+    `[${ServiceIdentity.TITLE}] Realtime WebSocket: ws://localhost:${configService.port}${WsNamespace.REALTIME}`,
+  );
+  console.log(
+    `[${ServiceIdentity.TITLE}] Swagger API Docs: http://localhost:${configService.port}/${ApiSegment.DOCS}`,
+  );
 }
 
-bootstrap();
+void bootstrap();

@@ -16,7 +16,9 @@ from src.constants import (
     DEFAULT_VOLATILITY,
     SimulationModel,
 )
+from src.config import settings
 from src.monte_carlo import TrajectoryBound, simulate_trajectories
+
 
 app = FastAPI(
     title="QuantAI Quantitative Engine",
@@ -67,6 +69,7 @@ class HealthResponse(BaseModel):
     status: str
     service: str
     version: str
+    environment: str
 
 
 @app.get("/health", response_model=HealthResponse)
@@ -76,7 +79,9 @@ async def health_check() -> HealthResponse:
         status="healthy",
         service="quant-engine",
         version="0.2.0",
+        environment=settings.environment,
     )
+
 
 
 @app.post("/api/v1/monte-carlo", response_model=list[TrajectoryBound])
