@@ -5,7 +5,7 @@
 
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "./config.service";
-import { EventBrokerType } from "@quant-ai/contracts";
+import { EventBrokerType } from "@quant-ai/shared-types";
 
 type EventHandler<T> = (event: T) => void | Promise<void>;
 

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Strongly-typed configuration service validated against @quant-ai/contracts.
+ * @fileoverview Strongly-typed configuration service validated against @quant-ai/shared-types.
  * @author yuva.devlab@gmail.com
  */
 
@@ -10,7 +10,7 @@ import {
   NodeEnvironment,
   EventBrokerType,
   DatabaseDriver,
-} from "@quant-ai/contracts";
+} from "@quant-ai/shared-types";
 
 /**
  * Validated configuration provider for the NestJS API gateway.

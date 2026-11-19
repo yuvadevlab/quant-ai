@@ -4,7 +4,7 @@
  */
 
 import type { RealtimeRoom } from "./realtime.enums";
-import type { MarketIndex, SignalRegime } from "@quant-ai/contracts";
+import type { MarketIndex, SignalRegime } from "@quant-ai/shared-types";
 
 /**
  * Client channel subscription payload.

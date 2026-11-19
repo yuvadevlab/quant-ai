@@ -2,7 +2,7 @@
  * @file src/constants/routes.constants.ts
  * @description Centralized application route paths and query parameter keys. */
 
-export { ApiRoute, ApiSegment } from "@quant-ai/contracts";
+export { ApiRoute, ApiSegment } from "@quant-ai/shared-types";
 
 /**
  * QuantAI application route endpoints as const literals for TanStack Router compatibility.

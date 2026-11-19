@@ -14,7 +14,7 @@ import {
   DEFAULT_VWAP_CONFIG,
   detectVolatilitySqueeze,
   SqueezeResult,
-} from "@quant-ai/contracts";
+} from "@quant-ai/shared-types";
 
 /**
  * Technical snapshot aggregation computed across multiple indicators.

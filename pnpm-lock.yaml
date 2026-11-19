@@ -232,12 +232,24 @@ importers:
       '@nestjs/websockets':
         specifier: ^11.2.11
         version: 11.2.11(@nestjs/common@11.2.10(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@7.2.0))(@nestjs/core@11.2.10)(@nestjs/platform-socket.io@11.2.11)(reflect-metadata@0.2.2)(rxjs@7.8.2)
-      '@quant-ai/contracts':
-        specifier: workspace:*
-        version: link:../../packages/contracts
       '@quant-ai/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@quant-ai/events':
+        specifier: workspace:*
+        version: link:../../packages/events
+      '@quant-ai/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
+      '@yuva-devlab/errors':
+        specifier: ^0.2.0
+        version: 0.2.0
+      '@yuva-devlab/events':
+        specifier: ^0.2.5
+        version: 0.2.5
+      '@yuva-devlab/logger':
+        specifier: ^1.3.3
+        version: 1.3.3
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -275,9 +287,12 @@ importers:
 
   apps/web:
     dependencies:
-      '@quant-ai/contracts':
+      '@quant-ai/events':
         specifier: workspace:*
-        version: link:../../packages/contracts
+        version: link:../../packages/events
+      '@quant-ai/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
       '@quant-ai/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -311,6 +326,9 @@ importers:
       recharts:
         specifier: ^2.15.4
         version: 2.15.4(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      socket.io-client:
+        specifier: ^4.8.4
+        version: 4.8.4(supports-color@7.2.0)
       zod:
         specifier: ^3.25.76
         version: 3.25.76
@@ -352,8 +370,39 @@ importers:
         specifier: ^4.1.10
         version: 4.1.12(@types/node@22.20.5)(jsdom@20.0.3(supports-color@7.2.0))(vite@8.1.5(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2))
 
-  packages/contracts:
+  packages/database:
     dependencies:
+      '@prisma/client':
+        specifier: ^6.19.3
+        version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
+      '@quant-ai/shared-types':
+        specifier: workspace:*
+        version: link:../shared-types
+    devDependencies:
+      '@types/node':
+        specifier: ^22.16.5
+        version: 22.20.5
+      prisma:
+        specifier: ^6.19.3
+        version: 6.19.3(typescript@5.9.3)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vitest:
+        specifier: ^4.1.10
+        version: 4.1.12(@types/node@22.20.5)(jsdom@20.0.3(supports-color@7.2.0))(vite@8.1.5(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2))
+
+  packages/events:
+    dependencies:
+      '@quant-ai/shared-types':
+        specifier: workspace:*
+        version: link:../shared-types
+      '@yuva-devlab/events':
+        specifier: ^0.2.5
+        version: 0.2.5
+      '@yuva-devlab/logger':
+        specifier: ^1.3.3
+        version: 1.3.3
       zod:
         specifier: ^3.25.76
         version: 3.25.76
@@ -371,21 +420,18 @@ importers:
         specifier: ^4.1.10
         version: 4.1.12(@types/node@22.20.5)(jsdom@20.0.3(supports-color@7.2.0))(vite@8.1.5(@types/node@22.20.5)(esbuild@0.27.7)(jiti@2.7.0)(terser@5.51.2))
 
-  packages/database:
+  packages/shared-types:
     dependencies:
-      '@prisma/client':
-        specifier: ^6.19.3
-        version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
-      '@quant-ai/contracts':
-        specifier: workspace:*
-        version: link:../contracts
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
     devDependencies:
       '@types/node':
         specifier: ^22.16.5
         version: 22.20.5
-      prisma:
-        specifier: ^6.19.3
-        version: 6.19.3(typescript@5.9.3)
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.33)(supports-color@7.2.0)(typescript@5.9.3)
       typescript:
         specifier: ^5.8.3
         version: 5.9.3
@@ -395,9 +441,9 @@ importers:
 
   packages/ui:
     dependencies:
-      '@quant-ai/contracts':
+      '@quant-ai/shared-types':
         specifier: workspace:*
-        version: link:../contracts
+        version: link:../shared-types
       '@yuva-devlab/tokens':
         specifier: ^2.2.0
         version: 2.2.0
@@ -2886,6 +2932,18 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
+  '@yuva-devlab/errors@0.2.0':
+    resolution: {integrity: sha512-eGunJ1eDbkGfEida3MJx9gaWRTeWjx/UPFUHUs+r7m++hkbShw4VKekaH5MMb7gIIc5sUmb4mESgir0TYnE30w==}
+
+  '@yuva-devlab/events@0.2.5':
+    resolution: {integrity: sha512-WJkRlSMgM9vP5Hm9ipseRA8uPOrIlC4W5lTmJAlzsNiECfaOKwbyIKQeQ2tdDKbfSgOZ5ZYoJmURqYXpYS6oIQ==}
+
+  '@yuva-devlab/logger@1.3.3':
+    resolution: {integrity: sha512-uXFLJcqXE7ivcWkPUhG7KWeHTkMar0EN7tCUnQ0bPkxWQsNWLWgEcAx5iBMKLG7ylI/CoAp4IFoTua3z4/HIug==}
+
+  '@yuva-devlab/regex@0.3.0':
+    resolution: {integrity: sha512-/vYCn3B9N7g4V8lSCFB7Cu5VqTsElMO+bY7TIXxi34IarmSvLJlMlrbC3SwWPxiZPpW4v/tFhWS42ewPXwMqeA==}
+
   '@yuva-devlab/tokens@2.2.0':
     resolution: {integrity: sha512-XUsVuiZeb1PT8GFNgLmzTAFqoL6D6LkoEtD8Odvy3IwycBZwfGpzqmg78RshBqfpemzz+eCr2wmmhDq2Lxhtgg==}
 
@@ -3539,6 +3597,9 @@ packages:
   encodeurl@2.0.3:
     resolution: {integrity: sha512-mIteYONiEfc4xWf2F1WXovh1c8npzS00vNeiUPdwFF+QlVJni+gNvpQltLMQhob8rew/bWWc/bGTuUr0EUGt0w==}
     engines: {node: '>= 0.8'}
+
+  engine.io-client@6.6.8:
+    resolution: {integrity: sha512-DPN6+2uNi3A2cbSR3gqJepLVOnSQmbaJT4USgU+TgGPczEqLQT0i6t05jHrf4TT6rcxABrGp/1As0FyqwIZlGg==}
 
   engine.io-parser@5.2.3:
     resolution: {integrity: sha512-HqD3yTBfnBxIrbnM1DoD6Pcq8NECnh8d4As1Qgh0z5Gg3jRRIqijury0CL3ghu/edArpUYiYqQiDUQBIs4np3Q==}
@@ -4950,6 +5011,10 @@ packages:
   socket.io-adapter@2.5.8:
     resolution: {integrity: sha512-6Oy52pbg+kvdCVvjcN+FnY7BvxZ7cIHNScbvztT/It5d0vbwoJoVZmF2gjJmnV0/4WlXRfG15zc45ySk9Ah8bw==}
 
+  socket.io-client@4.8.4:
+    resolution: {integrity: sha512-7wjKAvVXYOJsbmUgkWbnhPD4bFpkqrUR0++XOjpGFmqDqsqV1CI93VTraeExLxpjxEqrWgFoSRZu1ihjLWfkAA==}
+    engines: {node: '>=10.0.0'}
+
   socket.io-parser@4.2.7:
     resolution: {integrity: sha512-IH/iSeO9T6gz1KkFleGDWkG9N3dl4jXVYUtMhIqH10Md0ttMer8nUNWiP1DKuNrybD2xBrixLJdCC9J6ECoYkg==}
     engines: {node: '>=10.0.0'}
@@ -5583,6 +5648,10 @@ packages:
 
   xmlchars@2.2.0:
     resolution: {integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==}
+
+  xmlhttprequest-ssl@2.1.2:
+    resolution: {integrity: sha512-TEU+nJVUUnA4CYJFLvK5X9AOeH4KvDvhIfm0vV1GaQRtchnG0hgK5p8hw/xjv8cunWYCsiPCSDzObPyhEwq3KQ==}
+    engines: {node: '>=0.4.0'}
 
   y18n@5.0.8:
     resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
@@ -8062,6 +8131,19 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
+  '@yuva-devlab/errors@0.2.0': {}
+
+  '@yuva-devlab/events@0.2.5':
+    dependencies:
+      '@yuva-devlab/errors': 0.2.0
+      '@yuva-devlab/logger': 1.3.3
+      '@yuva-devlab/regex': 0.3.0
+      zod: 3.25.76
+
+  '@yuva-devlab/logger@1.3.3': {}
+
+  '@yuva-devlab/regex@0.3.0': {}
+
   '@yuva-devlab/tokens@2.2.0': {}
 
   '@yuva-devlab/ui@4.0.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(@yuva-devlab/tokens@2.2.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(sonner@2.0.8(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))':
@@ -8680,6 +8762,18 @@ snapshots:
   empathic@2.0.0: {}
 
   encodeurl@2.0.3: {}
+
+  engine.io-client@6.6.8(supports-color@7.2.0):
+    dependencies:
+      '@socket.io/component-emitter': 3.1.2
+      debug: 4.4.3(supports-color@7.2.0)
+      engine.io-parser: 5.2.3
+      ws: 8.21.3
+      xmlhttprequest-ssl: 2.1.2
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
 
   engine.io-parser@5.2.3: {}
 
@@ -10137,6 +10231,17 @@ snapshots:
       - supports-color
       - utf-8-validate
 
+  socket.io-client@4.8.4(supports-color@7.2.0):
+    dependencies:
+      '@socket.io/component-emitter': 3.1.2
+      debug: 4.4.3(supports-color@7.2.0)
+      engine.io-client: 6.6.8(supports-color@7.2.0)
+      socket.io-parser: 4.2.7(supports-color@7.2.0)
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
   socket.io-parser@4.2.7(supports-color@7.2.0):
     dependencies:
       '@socket.io/component-emitter': 3.1.2
@@ -10725,6 +10830,8 @@ snapshots:
       js-yaml: 4.3.2
 
   xmlchars@2.2.0: {}
+
+  xmlhttprequest-ssl@2.1.2: {}
 
   y18n@5.0.8: {}
 

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { IndexCategory, IndexQuote, MarketIndex } from "@quant-ai/contracts";
+import { IndexCategory, IndexQuote, MarketIndex } from "@quant-ai/shared-types";
 
 /**
  * Service managing live and cached market benchmark data feeds across categories.

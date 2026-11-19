@@ -9,8 +9,10 @@
 export enum EventTopic {
   MARKET_TICKS = "quantai.market.ticks",
   SIGNALS_GENERATED = "quantai.signals.generated",
+  PREDICTION_GENERATED = "quantai.predictions.generated",
   REGIME_TRANSITIONS = "quantai.regimes.transitions",
   DELIBERATION_SPEECH = "quantai.deliberation.speech",
+  DELIBERATION_COMPLETED = "quantai.deliberation.completed",
   ORDER_EXECUTED = "quantai.orders.executed",
 }
 

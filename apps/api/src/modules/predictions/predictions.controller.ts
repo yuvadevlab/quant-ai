@@ -11,7 +11,7 @@ import {
   SwaggerSummary,
   SwaggerTag,
   TrajectoryPoint,
-} from "@quant-ai/contracts";
+} from "@quant-ai/shared-types";
 import { PredictionsService } from "./predictions.service";
 
 /**

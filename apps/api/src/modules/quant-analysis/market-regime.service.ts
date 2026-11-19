@@ -5,7 +5,7 @@ import {
   MarketMetrics,
   RegimeClassificationResult,
   RegimeConfig,
-} from "@quant-ai/contracts";
+} from "@quant-ai/shared-types";
 
 /**
  * Service identifying active market regimes and volatility states.

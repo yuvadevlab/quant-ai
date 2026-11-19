@@ -10,7 +10,7 @@ import {
   RealtimeRoom,
   RealtimeSubscriptionStatus,
   SignalRegime,
-} from "@quant-ai/contracts";
+} from "@quant-ai/shared-types";
 import { MarketService } from "../src/modules/market/market.service";
 import { PredictionsService } from "../src/modules/predictions/predictions.service";
 import { MarketRegimeService } from "../src/modules/quant-analysis/market-regime.service";
@@ -23,6 +23,8 @@ import { EventBusService } from "../src/modules/infrastructure/event-bus.service
 import { DatabaseService } from "../src/modules/infrastructure/database.service";
 import { HealthController } from "../src/modules/health/health.controller";
 import { RealtimeGateway } from "../src/modules/realtime/realtime.gateway";
+import { RealtimeService } from "../src/modules/realtime/realtime.service";
+import { MarketTickService } from "../src/modules/market/market-tick.service";
 
 describe("NestJS Domain Services", () => {
   it("MarketService provides benchmark indices with sparklines and category filtering", () => {
@@ -164,5 +166,35 @@ describe("NestJS Domain Services", () => {
       room: RealtimeRoom.TICKERS,
     });
     expect(unsubRes.status).toBe(RealtimeSubscriptionStatus.UNSUBSCRIBED);
+  });
+
+  it("MarketTickService generates, caches in Redis, and publishes ticks", async () => {
+    const config = new ConfigService();
+    const redis = new RedisService(config);
+    const bus = new EventBusService(config);
+    const gateway = new RealtimeGateway();
+    const realtimeService = new RealtimeService(gateway);
+
+    const tickService = new MarketTickService(config, redis, bus, realtimeService);
+
+    let receivedTickSymbol = "";
+    const unsub = bus.subscribe<{ payload: { symbol: string } }>(
+      EventTopic.MARKET_TICKS,
+      (event) => {
+        receivedTickSymbol = event.payload.symbol;
+      },
+    );
+
+    const tick = await tickService.generateAndPublishTick(MarketIndex.NIFTY_50);
+    expect(tick.symbol).toBe(MarketIndex.NIFTY_50);
+    expect(tick.price).toBeGreaterThan(0);
+    expect(receivedTickSymbol).toBe(MarketIndex.NIFTY_50);
+
+    const cachedTick = await redis.get<{ symbol: string; price: number }>(
+      `${CachePrefix.TICKER}${MarketIndex.NIFTY_50}`,
+    );
+    expect(cachedTick?.symbol).toBe(MarketIndex.NIFTY_50);
+    expect(cachedTick?.price).toBe(tick.price);
+    unsub();
   });
 });

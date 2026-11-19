@@ -21,7 +21,8 @@ WORKDIR /app
 COPY --from=deps /app ./
 COPY packages ./packages
 COPY apps/web ./apps/web
-RUN pnpm --filter @quant-ai/contracts build
+RUN pnpm --filter @quant-ai/shared-types build
+RUN pnpm --filter @quant-ai/events build
 RUN pnpm --filter @quant-ai/web build
 
 FROM node:24-alpine AS runner

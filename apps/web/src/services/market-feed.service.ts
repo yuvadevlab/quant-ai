@@ -5,7 +5,7 @@
  * Author: yuva.devlab@gmail.com
  */
 
-import { IndexCategory } from "@quant-ai/contracts";
+import { IndexCategory } from "@quant-ai/shared-types";
 
 /**
  * Benchmark Index Tick definition.

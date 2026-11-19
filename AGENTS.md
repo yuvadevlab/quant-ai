@@ -54,23 +54,20 @@ quant-ai/
 ├── docker-compose.yml             # Local dev orchestrator (workstation:3005, quant-engine:8000)
 │
 ├── apps/
-│   └── workstation/               # @quant-ai/workstation (TanStack Start / React 19 UI & SSR)
-│       ├── src/
-│       │   ├── components/layout/ # QuantShell, QuantSidebar, QuantTopbar, MarketTickerStrip
-│       │   ├── components/ui/     # MetricCard, Sparkline, StatusBadge
-│       │   ├── components/quantai/# Overview, Predictions, Monitor, Screener, Copilot
-│       │   ├── services/          # Market feed & client signal streaming adapters
-│       │   ├── lib/ui-copy/       # Centralized UI Copy Catalogs (Zero hardcoded strings)
-│       │   ├── constants/         # AppRoute, QueryParamKey
-│       │   └── routes/            # Thin TanStack Router endpoints
-│       └── vite.config.ts
+│   ├── web/                       # @quant-ai/web (TanStack Start / React 19 UI & SSR)
+│   │   ├── src/components/layout/ # QuantShell, QuantSidebar, QuantTopbar, MarketTickerStrip
+│   │   ├── src/features/          # Domain views: Overview, Predictions, Monitor, Screener, Copilot
+│   │   ├── src/services/          # Market feed & client signal streaming adapters
+│   │   ├── src/lib/ui-copy/       # Centralized UI Copy Catalogs (Zero hardcoded strings)
+│   │   └── src/routes/            # Thin TanStack Router endpoints
+│   └── api/                       # @quant-ai/api (NestJS Enterprise REST & WebSocket Gateway)
+│       └── src/modules/           # Market, Predictions, Screener, QuantAnalysis, Realtime, Infrastructure
 │
 ├── packages/
-│   └── contracts/                 # @quant-ai/contracts (Shared domain types, enums & pure math)
-│       └── src/
-│           ├── enums.ts           # SignalStatus, SignalDirection, SignalRegime, MarketIndex
-│           ├── signals.ts         # Signal interfaces & Zod validation schemas
-│           └── math.ts            # Deterministic MFE/MAE & Brier score formulas
+│   ├── shared-types/              # @quant-ai/shared-types (SSOT domain enums, endpoints, query keys, math)
+│   ├── events/                    # @quant-ai/events (Domain event envelopes powered by @yuva-devlab/events)
+│   ├── database/                  # @quant-ai/database (Prisma ORM schema, repositories & PostgreSQL client)
+│   └── ui/                        # @quant-ai/ui (Domain UI components styled via W3C cascade layers)
 │
 ├── services/
 │   └── quant-engine/              # Python FastAPI & NumPy Vectorized Compute Service

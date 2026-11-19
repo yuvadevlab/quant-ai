@@ -7,7 +7,7 @@ import {
   SignalRegime,
   SignalStatus,
   TrajectoryPoint,
-} from "@quant-ai/contracts";
+} from "@quant-ai/shared-types";
 
 /**
  * Service managing immutable prediction ledgers and outcome tracking.

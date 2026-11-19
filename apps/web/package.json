@@ -17,7 +17,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@quant-ai/contracts": "workspace:*",
+    "@quant-ai/events": "workspace:*",
+    "@quant-ai/shared-types": "workspace:*",
     "@quant-ai/ui": "workspace:*",
     "@tanstack/react-query": "^5.101.1",
     "@tanstack/react-router": "1.170.41",
@@ -29,6 +30,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "recharts": "^2.15.4",
+    "socket.io-client": "^4.8.4",
     "zod": "^3.25.76"
   },
   "devDependencies": {

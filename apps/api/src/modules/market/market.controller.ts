@@ -11,7 +11,7 @@ import {
   IndexQuote,
   SwaggerSummary,
   SwaggerTag,
-} from "@quant-ai/contracts";
+} from "@quant-ai/shared-types";
 import { MarketService } from "./market.service";
 
 /**

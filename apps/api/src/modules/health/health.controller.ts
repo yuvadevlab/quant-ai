@@ -11,7 +11,7 @@ import {
   ServiceIdentity,
   SwaggerSummary,
   SwaggerTag,
-} from "@quant-ai/contracts";
+} from "@quant-ai/shared-types";
 import { ConfigService } from "../infrastructure/config.service";
 import { DatabaseService } from "../infrastructure/database.service";
 

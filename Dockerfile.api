@@ -34,8 +34,10 @@ COPY --from=deps /app ./
 COPY packages ./packages
 COPY apps/api ./apps/api
 
-# Build the shared contracts and NestJS API
-RUN pnpm --filter @quant-ai/contracts build
+# Build the shared packages and NestJS API
+RUN pnpm --filter @quant-ai/shared-types build
+RUN pnpm --filter @quant-ai/events build
+RUN pnpm --filter @quant-ai/database build
 RUN pnpm --filter @quant-ai/api build
 
 # ─── Stage 3: Production Runner ───────────────────────────────────────────────

@@ -1,20 +1,46 @@
 /**
- * @file src/components/layout/MarketTickerStrip.tsx
- * @description High-frequency streaming ticker strip for major Indian benchmarks (NSE & BSE). */
+ * @fileoverview High-frequency streaming ticker strip for major Indian benchmarks (NSE & BSE).
+ * Consumes real-time WebSocket tick events with fallback to static benchmarks.
+ * @author yuva.devlab@gmail.com
+ */
 
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { getBenchmarkTicks } from "../../services/market-feed.service";
+import { useRealtimeTicks } from "../../hooks/use-realtime-ticks";
 
 /**
  * Real-time Indian Benchmark Ticker Strip component.
- * Displays live index ticks with SVG sparkline trajectories and session clock.
+ * Displays live index ticks with SVG sparkline trajectories and WebSocket stream state.
  */
 export function MarketTickerStrip() {
-  const ticks = getBenchmarkTicks();
+  const staticTicks = getBenchmarkTicks();
+  const { ticks: liveTicks, isConnected } = useRealtimeTicks();
+
+  const ticks = staticTicks.map((tick) => {
+    const live = liveTicks[tick.name];
+    if (!live) return tick;
+
+    const formattedPrice = live.price.toLocaleString("en-IN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+    const sign = live.change >= 0 ? "+" : "";
+    const pctSign = live.percentChange >= 0 ? "+" : "";
+    const formattedChange = `${sign}${live.change.toFixed(2)} (${pctSign}${live.percentChange.toFixed(2)}%)`;
+
+    return {
+      ...tick,
+      price: formattedPrice,
+      change: formattedChange,
+      positive: live.change >= 0,
+    };
+  });
 
   return (
     <div className="ticker-strip" aria-label="Real-time Indian Benchmark Ticker" role="region">
-      <div className="ticker-badge">LIVE DESK</div>
+      <div className={`ticker-badge ${isConnected ? "is-connected" : ""}`}>
+        {isConnected ? "LIVE WS" : "LIVE DESK"}
+      </div>
       <div className="ticker-scroll-content">
         {ticks.map((tick) => {
           const isUp = tick.positive;
@@ -43,7 +69,7 @@ export function MarketTickerStrip() {
       </div>
       <div className="ticker-time-badge" aria-label="Session time">
         <span className="pulse-ping" aria-hidden="true" />
-        10:48 IST
+        {isConnected ? "WS STREAM" : "POLL 1s"}
       </div>
     </div>
   );
