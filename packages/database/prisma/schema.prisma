@@ -1,0 +1,118 @@
+// ==============================================================================
+// QuantAI — Prisma ORM Database Schema
+// Author: yuva.devlab@gmail.com
+// ==============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Indian benchmark market indices (NIFTY 50, BANK NIFTY, sectoral tiers).
+model BenchmarkIndex {
+  id            String   @id @default(cuid())
+  symbol        String   @unique
+  name          String
+  category      String
+  exchange      String   @default("NSE")
+  currentPrice  Float
+  change        Float
+  percentChange Float
+  dayHigh       Float
+  dayLow        Float
+  sparkline     Float[]
+  updatedAt     DateTime @updatedAt
+  createdAt     DateTime @default(now())
+
+  @@index([category])
+  @@map("benchmark_indices")
+}
+
+/// Quantitative prediction forecast records and life-cycle state.
+model Prediction {
+  id          String            @id
+  ticker      String
+  name        String
+  direction   String
+  status      String
+  entry       Float
+  target      Float
+  stopLoss    Float
+  currentPrice Float
+  confidence  Float
+  riskReward  Float
+  timeHorizon String
+  regime      String
+  summary     String
+  verdicts    AgentVerdict[]
+  trajectory  TrajectoryPoint[]
+  createdAt   DateTime          @default(now())
+  expiresAt   DateTime
+
+  @@index([ticker, status])
+  @@map("predictions")
+}
+
+/// Multi-agent debate transcript speeches and verdicts.
+model AgentVerdict {
+  id           String     @id @default(cuid())
+  predictionId String
+  prediction   Prediction @relation(fields: [predictionId], references: [id], onDelete: Cascade)
+  agentRole    String
+  stance       String
+  confidence   Float
+  reasoning    String     @db.Text
+  createdAt    DateTime   @default(now())
+
+  @@index([predictionId])
+  @@map("agent_verdicts")
+}
+
+/// Monte Carlo probabilistic trajectory confidence cone points.
+model TrajectoryPoint {
+  id           String     @id @default(cuid())
+  predictionId String
+  prediction   Prediction @relation(fields: [predictionId], references: [id], onDelete: Cascade)
+  step         Int
+  expected     Float
+  upperP95     Float
+  upperP75     Float
+  lowerP25     Float
+  lowerP05     Float
+
+  @@index([predictionId, step])
+  @@map("trajectory_points")
+}
+
+/// Real-time microsecond ticks for market instruments.
+model MarketTick {
+  id        String   @id @default(cuid())
+  symbol    String
+  price     Float
+  volume    Float
+  timestamp DateTime @default(now())
+
+  @@index([symbol, timestamp(sort: Desc)])
+  @@map("market_ticks")
+}
+
+/// Screened universe items with momentum and breakout classifications.
+model ScreenerStock {
+  symbol        String   @id
+  company       String
+  sector        String
+  price         Float
+  changePercent Float
+  volumeRatio   Float
+  rsi           Float
+  isBreakout    Boolean  @default(false)
+  isSurge       Boolean  @default(false)
+  updatedAt     DateTime @updatedAt
+
+  @@index([isBreakout, isSurge])
+  @@map("screener_stocks")
+}

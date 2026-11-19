@@ -2,8 +2,12 @@ packages:
   - "apps/*"
   - "packages/*"
 allowBuilds:
+  "@prisma/client": true
+  "@prisma/engines": true
   "@scarf/scarf": true
   esbuild: true
+  prisma: true
+
 minimumReleaseAgeExclude:
   - "@yuva-devlab/tokens@2.2.0"
   - "@yuva-devlab/ui@4.0.0"

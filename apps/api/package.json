@@ -22,6 +22,7 @@
     "@nestjs/terminus": "^11.0.0",
     "@nestjs/websockets": "^11.2.11",
     "@quant-ai/contracts": "workspace:*",
+    "@quant-ai/database": "workspace:*",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "socket.io": "^4.8.4",
