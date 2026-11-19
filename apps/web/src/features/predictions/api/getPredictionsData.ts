@@ -3,6 +3,7 @@
  * @description Data provider for the Prediction Lab & Signal Audit Ledger.
  */
 
+import { queryOptions } from "@tanstack/react-query";
 import { signals, type Signal } from "@/components/quantai/data";
 
 export interface PredictionsData {
@@ -31,3 +32,13 @@ export async function getPredictionsData(): Promise<PredictionsData> {
     riskReward: "1 : 2.65",
   };
 }
+
+/**
+ * Canonical TanStack Query options for prediction ledger queries.
+ */
+export const predictionsQueryOptions = () =>
+  queryOptions({
+    queryKey: ["predictions-ledger"],
+    queryFn: () => getPredictionsData(),
+    staleTime: 1000 * 30,
+  });

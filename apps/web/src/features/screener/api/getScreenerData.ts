@@ -3,6 +3,7 @@
  * @description Data provider for the Quantitative Market Screener.
  */
 
+import { queryOptions } from "@tanstack/react-query";
 import { screenerItems, type ScreenerItem } from "@/components/quantai/data";
 
 export interface ScreenerData {
@@ -33,3 +34,13 @@ export async function getScreenerData(): Promise<ScreenerData> {
     sectors,
   };
 }
+
+/**
+ * Canonical TanStack Query options for the quantitative screener.
+ */
+export const screenerQueryOptions = () =>
+  queryOptions({
+    queryKey: ["screener-data"],
+    queryFn: () => getScreenerData(),
+    staleTime: 1000 * 30,
+  });

@@ -1,5 +1,6 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { OverviewPage, getOverviewData } from "@/features/overview";
+import { OverviewPage, overviewQueryOptions } from "@/features/overview";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -20,9 +21,11 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  loader: async () => await getOverviewData(),
+  loader: async ({ context: { queryClient } }) => {
+    return await queryClient.ensureQueryData(overviewQueryOptions());
+  },
   component: function HomePage() {
-    const data = Route.useLoaderData();
+    const { data } = useSuspenseQuery(overviewQueryOptions());
     return <OverviewPage initialData={data} />;
   },
 });

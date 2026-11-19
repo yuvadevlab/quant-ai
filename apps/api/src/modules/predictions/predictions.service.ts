@@ -1,5 +1,13 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Signal, SignalDirection, SignalRegime, SignalStatus } from "@quant-ai/contracts";
+import {
+  AgentRole,
+  AgentStance,
+  Signal,
+  SignalDirection,
+  SignalRegime,
+  SignalStatus,
+  TrajectoryPoint,
+} from "@quant-ai/contracts";
 
 /**
  * Service managing immutable prediction ledgers and outcome tracking.
@@ -38,20 +46,20 @@ export class PredictionsService {
       ],
       agents: [
         {
-          role: "Quant Analyst",
-          stance: "BULLISH",
+          role: AgentRole.MOMENTUM_ANALYST,
+          stance: AgentStance.BULLISH,
           confidence: 89,
           summary: "Z-score of 2.1 relative to 20-day standard deviation bands.",
         },
         {
-          role: "Technical Analyst",
-          stance: "BULLISH",
+          role: AgentRole.RED_TEAM_SKEPTIC,
+          stance: AgentStance.BULLISH,
           confidence: 86,
           summary: "Bullish cup & handle pattern confirmed with MACD divergence.",
         },
         {
-          role: "Risk Validator",
-          stance: "NEUTRAL",
+          role: AgentRole.QUANT_RISK_OFFICER,
+          stance: AgentStance.NEUTRAL,
           confidence: 90,
           summary: "Reward to risk of 3.0 exceeds 2.0 institutional threshold.",
         },
@@ -105,5 +113,30 @@ export class PredictionsService {
       throw new NotFoundException(`Prediction with ID ${id} not found`);
     }
     return signal;
+  }
+
+  /**
+   * Retrieves or computes trajectory cone points for a prediction.
+   *
+   * @param id The prediction unique identifier.
+   * @returns Array of trajectory points with expected, upper, and lower quantile bounds.
+   */
+  getTrajectory(id: string): readonly TrajectoryPoint[] {
+    const signal = this.findById(id);
+    if (signal.trajectory.length > 0) {
+      return signal.trajectory;
+    }
+
+    // Dynamic projection when explicit historical points are not precomputed
+    const steps = 10;
+    const priceDelta = (signal.target - signal.entry) / steps;
+    const bandSpread = Math.abs(signal.entry - signal.stopLoss) * 0.5;
+
+    return Array.from({ length: steps + 1 }, (_, index) => ({
+      time: `Day ${index}`,
+      expected: Math.round(signal.entry + priceDelta * index),
+      upper: Math.round(signal.entry + priceDelta * index + bandSpread * (1 + index * 0.1)),
+      lower: Math.round(signal.entry + priceDelta * index - bandSpread * (1 + index * 0.1)),
+    }));
   }
 }

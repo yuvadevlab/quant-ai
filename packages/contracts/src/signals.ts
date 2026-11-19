@@ -2,6 +2,7 @@
  * @fileoverview Signal and prediction data transfer contracts. */
 
 import { z } from "zod";
+import { AgentRole, AgentStance } from "./deliberation.types";
 import { SignalDirection, SignalRegime, SignalStatus } from "./enums";
 
 /**
@@ -19,8 +20,8 @@ export interface TrajectoryPoint {
  * Specialized agent deliberation breakdown.
  */
 export interface AgentDeliberation {
-  readonly role: string;
-  readonly stance: "BULLISH" | "BEARISH" | "NEUTRAL";
+  readonly role: AgentRole | string;
+  readonly stance: AgentStance;
   readonly confidence: number;
   readonly summary: string;
 }

@@ -1,5 +1,6 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { PredictionsPage, getPredictionsData } from "@/features/predictions";
+import { PredictionsPage, predictionsQueryOptions } from "@/features/predictions";
 
 export const Route = createFileRoute("/predictions/")({
   head: () => ({
@@ -15,9 +16,11 @@ export const Route = createFileRoute("/predictions/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  loader: async () => await getPredictionsData(),
+  loader: async ({ context: { queryClient } }) => {
+    return await queryClient.ensureQueryData(predictionsQueryOptions());
+  },
   component: function PredictionsRoute() {
-    const data = Route.useLoaderData();
+    const { data } = useSuspenseQuery(predictionsQueryOptions());
     return <PredictionsPage initialData={data} />;
   },
 });

@@ -1,5 +1,6 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { ScreenerPage, getScreenerData } from "@/features/screener";
+import { ScreenerPage, screenerQueryOptions } from "@/features/screener";
 
 export const Route = createFileRoute("/screener")({
   head: () => ({
@@ -14,9 +15,11 @@ export const Route = createFileRoute("/screener")({
       { property: "og:type", content: "website" },
     ],
   }),
-  loader: async () => await getScreenerData(),
+  loader: async ({ context: { queryClient } }) => {
+    return await queryClient.ensureQueryData(screenerQueryOptions());
+  },
   component: function ScreenerRoute() {
-    const data = Route.useLoaderData();
+    const { data } = useSuspenseQuery(screenerQueryOptions());
     return <ScreenerPage initialData={data} />;
   },
 });

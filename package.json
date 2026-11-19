@@ -10,16 +10,19 @@
   "license": "MIT",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@12.5.1",
   "scripts": {
-    "dev": "pnpm --filter @quant-ai/web dev",
+    "dev": "turbo dev",
     "dev:web": "pnpm --filter @quant-ai/web dev --port 3005",
     "dev:api": "pnpm --filter @quant-ai/api dev",
-    "build": "pnpm --filter @quant-ai/contracts build && pnpm --filter @quant-ai/ui build && pnpm --filter @quant-ai/api build && pnpm --filter @quant-ai/web build",
-    "lint": "eslint .",
+    "build": "turbo build",
+    "clean": "turbo clean",
+    "lint": "turbo lint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "pnpm --filter @quant-ai/contracts typecheck && pnpm --filter @quant-ai/ui typecheck && pnpm --filter @quant-ai/api typecheck && pnpm --filter @quant-ai/web typecheck",
-    "test": "pnpm --filter @quant-ai/contracts test && pnpm --filter @quant-ai/ui test && pnpm --filter @quant-ai/api test && pnpm --filter @quant-ai/web test"
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "check": "pnpm lint && pnpm typecheck && pnpm test"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
@@ -33,6 +36,7 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^15.15.0",
     "prettier": "^3.7.3",
+    "turbo": "^2.11.12",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1"
   }

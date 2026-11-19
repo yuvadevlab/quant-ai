@@ -1,5 +1,6 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { MonitorPage, getMonitorData } from "@/features/monitor";
+import { MonitorPage, monitorQueryOptions } from "@/features/monitor";
 
 export const Route = createFileRoute("/predictions/$id")({
   head: ({ params }) => ({
@@ -19,9 +20,12 @@ export const Route = createFileRoute("/predictions/$id")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  loader: async ({ params }) => await getMonitorData(params.id),
+  loader: async ({ context: { queryClient }, params }) => {
+    return await queryClient.ensureQueryData(monitorQueryOptions(params.id));
+  },
   component: function PredictionMonitorPage() {
-    const data = Route.useLoaderData();
+    const { id } = Route.useParams();
+    const { data } = useSuspenseQuery(monitorQueryOptions(id));
     if (!data) {
       return null;
     }

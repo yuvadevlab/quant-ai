@@ -3,6 +3,7 @@
  * @description SSR and client data provider for the Executive Market Overview Desk.
  */
 
+import { queryOptions } from "@tanstack/react-query";
 import {
   marketBreadth,
   marketTicks,
@@ -34,3 +35,13 @@ export async function getOverviewData(): Promise<OverviewDeskData> {
     spotlightSignals: activeSignals,
   };
 }
+
+/**
+ * Canonical TanStack Query options for the overview market desk.
+ */
+export const overviewQueryOptions = () =>
+  queryOptions({
+    queryKey: ["overview-desk"],
+    queryFn: () => getOverviewData(),
+    staleTime: 1000 * 30,
+  });

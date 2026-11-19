@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from "@nestjs/common";
 import { ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
-import { Signal } from "@quant-ai/contracts";
+import { Signal, TrajectoryPoint } from "@quant-ai/contracts";
 import { PredictionsService } from "./predictions.service";
 
 /**
@@ -33,5 +33,18 @@ export class PredictionsController {
   @ApiParam({ name: "id", example: "PRED-8942" })
   findById(@Param("id") id: string): Signal {
     return this.predictionsService.findById(id);
+  }
+
+  /**
+   * Retrieves price projection trajectory points with quantile confidence cones.
+   *
+   * @param id The prediction identifier.
+   * @returns Array of trajectory points.
+   */
+  @Get(":id/trajectory")
+  @ApiOperation({ summary: "Get prediction trajectory quantile confidence cone" })
+  @ApiParam({ name: "id", example: "PRED-8942" })
+  getTrajectory(@Param("id") id: string): readonly TrajectoryPoint[] {
+    return this.predictionsService.getTrajectory(id);
   }
 }

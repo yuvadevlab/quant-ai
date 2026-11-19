@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { AgentStance } from "@quant-ai/contracts";
 import { ScreenerItem, ScreenerQueryDto } from "./screener.types";
 
 /**
@@ -14,7 +15,7 @@ export class ScreenerService {
       changePercent: 1.93,
       volumeRatio: 2.8,
       rsi: 68.4,
-      trend: "BULLISH",
+      trend: AgentStance.BULLISH,
       breakoutType: "20-Day High Breakout",
       sector: "Energy",
     },
@@ -25,7 +26,7 @@ export class ScreenerService {
       changePercent: 0.85,
       volumeRatio: 1.4,
       rsi: 54.2,
-      trend: "NEUTRAL",
+      trend: AgentStance.NEUTRAL,
       sector: "Banking",
     },
     {
@@ -35,7 +36,7 @@ export class ScreenerService {
       changePercent: -1.15,
       volumeRatio: 1.9,
       rsi: 42.1,
-      trend: "BEARISH",
+      trend: AgentStance.BEARISH,
       sector: "Technology",
     },
     {
@@ -45,7 +46,7 @@ export class ScreenerService {
       changePercent: 1.58,
       volumeRatio: 2.1,
       rsi: 61.8,
-      trend: "BULLISH",
+      trend: AgentStance.BULLISH,
       breakoutType: "Cup & Handle Breakout",
       sector: "Technology",
     },
@@ -56,7 +57,7 @@ export class ScreenerService {
       changePercent: 1.12,
       volumeRatio: 1.7,
       rsi: 59.5,
-      trend: "BULLISH",
+      trend: AgentStance.BULLISH,
       sector: "Banking",
     },
     {
@@ -66,7 +67,7 @@ export class ScreenerService {
       changePercent: 2.35,
       volumeRatio: 3.1,
       rsi: 72.1,
-      trend: "BULLISH",
+      trend: AgentStance.BULLISH,
       breakoutType: "52-Week High Breakout",
       sector: "Telecom",
     },
@@ -77,7 +78,7 @@ export class ScreenerService {
       changePercent: 0.45,
       volumeRatio: 1.2,
       rsi: 51.3,
-      trend: "NEUTRAL",
+      trend: AgentStance.NEUTRAL,
       sector: "Capital Goods",
     },
   ];
