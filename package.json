@@ -1,8 +1,12 @@
 {
-  "name": "quant-ai-monorepo",
+  "name": "quant-ai",
   "version": "1.0.0",
   "description": "Enterprise AI quantitative market intelligence and trading workstation for Indian financial markets",
-  "author": "yuva.devlab@gmail.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuvadevlab/quant-ai.git"
+  },
+  "author": "Yuva DevLab <yuva.devlab@gmail.com>",
   "license": "MIT",
   "private": true,
   "type": "module",
