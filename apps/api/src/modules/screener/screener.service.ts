@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { AgentStance } from "@quant-ai/contracts";
+import { AgentStance } from "@quant-ai/shared-types";
 import { ScreenerItem, ScreenerQueryDto } from "./screener.types";
 
 /**

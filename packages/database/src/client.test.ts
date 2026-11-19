@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { DefaultConnectionUrl } from "@quant-ai/contracts";
+import { DefaultConnectionUrl } from "@quant-ai/shared-types";
 import { createPrismaClient } from "./client.js";
 
 describe("Prisma Database Client Factory", () => {

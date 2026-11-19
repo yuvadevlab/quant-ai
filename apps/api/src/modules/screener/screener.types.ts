@@ -1,4 +1,4 @@
-import { AgentStance } from "@quant-ai/contracts";
+import { AgentStance } from "@quant-ai/shared-types";
 
 /**
  * Screened financial instrument record.

@@ -1,14 +1,14 @@
 /**
- * @file src/features/overview/components/OverviewIndicesGrid.tsx
- * @description Benchmark indices metric cards grid with category filtering for Indian markets.
- * Author: yuva.devlab@gmail.com
+ * @fileoverview Benchmark indices metric cards grid with category filtering and real-time tick streaming.
+ * @author yuva.devlab@gmail.com
  */
 
 import { useState } from "react";
-import { IndexCategory } from "@quant-ai/contracts";
+import { IndexCategory } from "@quant-ai/shared-types";
 import { IndexMetricCard } from "@quant-ai/ui";
 import { OVERVIEW_COPY } from "@/lib/ui-copy";
 import type { MarketTick } from "@/services/market-feed.service";
+import { useRealtimeTicks } from "@/hooks/use-realtime-ticks";
 
 export interface OverviewIndicesGridProps {
   readonly ticks: readonly MarketTick[];
@@ -23,20 +23,55 @@ interface FilterOption {
 
 const FILTER_OPTIONS: readonly FilterOption[] = [
   { key: "ALL", label: OVERVIEW_COPY.INDEX_FILTERS.ALL },
-  { key: IndexCategory.BROAD_MARKET, label: OVERVIEW_COPY.INDEX_FILTERS.BROAD_MARKET },
-  { key: IndexCategory.FINANCIALS, label: OVERVIEW_COPY.INDEX_FILTERS.FINANCIALS },
-  { key: IndexCategory.SECTORAL, label: OVERVIEW_COPY.INDEX_FILTERS.SECTORAL },
-  { key: IndexCategory.VOLATILITY, label: OVERVIEW_COPY.INDEX_FILTERS.VOLATILITY },
+  {
+    key: IndexCategory.BROAD_MARKET,
+    label: OVERVIEW_COPY.INDEX_FILTERS.BROAD_MARKET,
+  },
+  {
+    key: IndexCategory.FINANCIALS,
+    label: OVERVIEW_COPY.INDEX_FILTERS.FINANCIALS,
+  },
+  {
+    key: IndexCategory.SECTORAL,
+    label: OVERVIEW_COPY.INDEX_FILTERS.SECTORAL,
+  },
+  {
+    key: IndexCategory.VOLATILITY,
+    label: OVERVIEW_COPY.INDEX_FILTERS.VOLATILITY,
+  },
 ];
 
 /**
- * Interactive benchmark indices grid with instant category filtering.
+ * Interactive benchmark indices grid with instant category filtering and live WebSocket price updates.
  */
 export function OverviewIndicesGrid({ ticks }: OverviewIndicesGridProps) {
   const [activeCategory, setActiveCategory] = useState<FilterCategory>("ALL");
+  const { ticks: liveTicks } = useRealtimeTicks();
+
+  const hydratedTicks = ticks.map((tick) => {
+    const live = liveTicks[tick.name];
+    if (!live) return tick;
+
+    const formattedPrice = live.price.toLocaleString("en-IN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+    const sign = live.change >= 0 ? "+" : "";
+    const pctSign = live.percentChange >= 0 ? "+" : "";
+    const formattedChange = `${sign}${live.change.toFixed(2)} (${pctSign}${live.percentChange.toFixed(2)}%)`;
+
+    return {
+      ...tick,
+      price: formattedPrice,
+      change: formattedChange,
+      positive: live.change >= 0,
+    };
+  });
 
   const filteredTicks =
-    activeCategory === "ALL" ? ticks : ticks.filter((tick) => tick.category === activeCategory);
+    activeCategory === "ALL"
+      ? hydratedTicks
+      : hydratedTicks.filter((tick) => tick.category === activeCategory);
 
   return (
     <div className="indices-section">
@@ -63,6 +98,7 @@ export function OverviewIndicesGrid({ ticks }: OverviewIndicesGridProps) {
             change={index.change}
             isPositive={index.positive}
             sparklinePoints={index.path}
+            isNeutral={Boolean(index.isVix)}
           />
         ))}
       </section>

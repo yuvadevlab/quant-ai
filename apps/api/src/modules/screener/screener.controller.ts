@@ -5,7 +5,7 @@
 
 import { Body, Controller, Get, HttpCode, Post } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
-import { ApiSegment, SwaggerSummary, SwaggerTag } from "@quant-ai/contracts";
+import { ApiSegment, SwaggerSummary, SwaggerTag } from "@quant-ai/shared-types";
 import { ScreenerService } from "./screener.service";
 import { ScreenerItem, ScreenerQueryDto } from "./screener.types";
 

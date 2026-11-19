@@ -3,7 +3,7 @@
  * @description Standardized financial signal direction and lifecycle status badge.
  */
 
-import { SignalDirection, SignalStatus } from "@quant-ai/contracts";
+import { SignalDirection, SignalStatus } from "@quant-ai/shared-types";
 import { cn } from "@yuva-devlab/ui";
 
 /**

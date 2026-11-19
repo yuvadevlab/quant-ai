@@ -4,7 +4,7 @@
  */
 
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import { HealthStatus } from "@quant-ai/contracts";
+import { HealthStatus } from "@quant-ai/shared-types";
 import { createPrismaClient, type PrismaClient } from "@quant-ai/database";
 import { ConfigService } from "./config.service";
 

@@ -31,8 +31,9 @@ COPY --from=deps /app ./
 COPY packages ./packages
 COPY apps/web ./apps/web
 
-# Build shared contracts and workstation web app
-RUN pnpm --filter @quant-ai/contracts build
+# Build shared types, events, and workstation web app
+RUN pnpm --filter @quant-ai/shared-types build
+RUN pnpm --filter @quant-ai/events build
 RUN pnpm --filter @quant-ai/web build
 
 # ─── Stage 3: Runner ──────────────────────────────────────────────────────────

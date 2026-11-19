@@ -9,7 +9,7 @@ import {
   synthesizeAgentConsensus,
   TradeExpectancyInput,
   TradeExpectancyResult,
-} from "@quant-ai/contracts";
+} from "@quant-ai/shared-types";
 
 /**
  * High-level price parameter inputs for expectancy calculation.

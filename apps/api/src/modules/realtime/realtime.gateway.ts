@@ -22,7 +22,7 @@ import {
   RealtimeServerEvent,
   RealtimeSubscriptionStatus,
   WsNamespace,
-} from "@quant-ai/contracts";
+} from "@quant-ai/shared-types";
 import type {
   ClientSubscriptionPayload,
   RealtimeTickPayload,

@@ -3,7 +3,7 @@
  * @description High-conviction algorithmic trading signal spotlight card.
  */
 
-import { SignalDirection } from "@quant-ai/contracts";
+import { SignalDirection } from "@quant-ai/shared-types";
 import type { ReactNode } from "react";
 import { cn } from "@yuva-devlab/ui";
 import { ConfidenceMeter } from "./ConfidenceMeter";

@@ -9,7 +9,7 @@ import {
   SignalDirection,
   SignalRegime,
   SignalStatus,
-} from "@quant-ai/contracts";
+} from "@quant-ai/shared-types";
 import { createPrismaClient } from "./client.js";
 
 const DEFAULT_BASE_PRICES: Record<string, number> = {
