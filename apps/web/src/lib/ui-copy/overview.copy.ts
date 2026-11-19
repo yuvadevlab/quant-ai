@@ -26,6 +26,13 @@ export const OVERVIEW_COPY = {
     VIX_LEVEL: "VIX 13.4 (Neutral)",
     PULLBACK_ODDS: "Pullback Risk: 18%",
   },
+  INDEX_FILTERS: {
+    ALL: "All Benchmarks",
+    BROAD_MARKET: "Broad Market",
+    FINANCIALS: "Banking & Financials",
+    SECTORAL: "Sectoral Leaders",
+    VOLATILITY: "Volatility & Macro",
+  },
   HOT_SIGNALS: {
     TITLE: "High-Confidence Active Signals",
     VIEW_ALL: "View Full Predictions Lab →",

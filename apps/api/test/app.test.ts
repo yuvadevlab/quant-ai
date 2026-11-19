@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Candle, SignalRegime } from "@quant-ai/contracts";
+import { Candle, IndexCategory, MarketIndex, SignalRegime } from "@quant-ai/contracts";
 import { MarketService } from "../src/modules/market/market.service";
 import { PredictionsService } from "../src/modules/predictions/predictions.service";
 import { MarketRegimeService } from "../src/modules/quant-analysis/market-regime.service";
@@ -8,11 +8,17 @@ import { TechnicalAnalysisService } from "../src/modules/quant-analysis/technica
 import { ScreenerService } from "../src/modules/screener/screener.service";
 
 describe("NestJS Domain Services", () => {
-  it("MarketService provides benchmark indices with sparklines", () => {
+  it("MarketService provides benchmark indices with sparklines and category filtering", () => {
     const service = new MarketService();
     const indices = service.getBenchmarkIndices();
-    expect(indices.length).toBeGreaterThanOrEqual(4);
-    expect(indices[0]?.sparkline.length).toBeGreaterThan(0);
+    expect(indices.length).toBeGreaterThanOrEqual(15);
+    expect(indices.some((i) => i.symbol === MarketIndex.NIFTY_NEXT_50)).toBe(true);
+    expect(indices.some((i) => i.symbol === MarketIndex.NIFTY_MIDCAP_100)).toBe(true);
+    expect(indices.some((i) => i.symbol === MarketIndex.NIFTY_IT)).toBe(true);
+
+    const sectoral = service.getIndicesByCategory(IndexCategory.SECTORAL);
+    expect(sectoral.length).toBeGreaterThanOrEqual(5);
+    expect(sectoral.every((s) => s.category === IndexCategory.SECTORAL)).toBe(true);
   });
 
   it("PredictionsService returns active prediction PRED-8942 and trajectory cone", () => {

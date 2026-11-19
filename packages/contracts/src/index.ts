@@ -4,6 +4,8 @@
  */
 
 export * from "./enums";
+export * from "./indices.types";
+export * from "./indices.constants";
 export * from "./signals";
 export * from "./math";
 export * from "./indicators.types";
