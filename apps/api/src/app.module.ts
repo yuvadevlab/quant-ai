@@ -6,6 +6,8 @@ import { MarketModule } from "./modules/market/market.module";
 import { PredictionsModule } from "./modules/predictions/predictions.module";
 import { QuantAnalysisModule } from "./modules/quant-analysis/quant-analysis.module";
 import { ScreenerModule } from "./modules/screener/screener.module";
+import { ChatModule } from "./modules/chat/chat.module";
+import { PortfolioModule } from "./modules/portfolio/portfolio.module";
 
 /**
  * Root application module aggregating core domain and infrastructure modules.
@@ -19,6 +21,8 @@ import { ScreenerModule } from "./modules/screener/screener.module";
     PredictionsModule,
     ScreenerModule,
     QuantAnalysisModule,
+    ChatModule,
+    PortfolioModule,
   ],
 })
 export class AppModule {}

@@ -1,15 +1,15 @@
 /**
  * @fileoverview Type contracts for market indices, metadata, and benchmark telemetry.
- * Author: yuva.devlab@gmail.com
+ * @author yuva.devlab@gmail.com
  */
 
-import { IndexCategory, MarketIndex } from "./enums";
+import { IndexCategory } from "./enums";
 
 /**
- * Static metadata descriptor for a financial market index.
+ * Metadata descriptor for a financial market index or benchmark asset.
  */
 export interface IndexMetadata {
-  readonly symbol: MarketIndex;
+  readonly symbol: string;
   readonly category: IndexCategory;
   readonly displayName: string;
   readonly description: string;
@@ -17,10 +17,10 @@ export interface IndexMetadata {
 }
 
 /**
- * Real-time or snapshot quote payload for an index.
+ * Real-time or snapshot quote payload for an index or tracked benchmark.
  */
 export interface IndexQuote {
-  readonly symbol: MarketIndex;
+  readonly symbol: string;
   readonly category: IndexCategory;
   readonly price: number;
   readonly change: number;

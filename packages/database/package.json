@@ -6,16 +6,18 @@
   "license": "MIT",
   "private": true,
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
   "scripts": {
-    "build": "prisma generate && tsc",
+    "build": "prisma generate && tsup src/index.ts --format esm,cjs --dts --external @prisma/client",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/",
     "test": "prisma generate && vitest run src/",
@@ -31,6 +33,7 @@
   "devDependencies": {
     "@types/node": "^22.16.5",
     "prisma": "^6.19.3",
+    "tsup": "^8.5.1",
     "typescript": "^5.8.3",
     "vitest": "^4.1.10"
   }

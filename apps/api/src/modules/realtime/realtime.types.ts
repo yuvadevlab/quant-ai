@@ -4,7 +4,7 @@
  */
 
 import type { RealtimeRoom } from "./realtime.enums";
-import type { MarketIndex, SignalRegime } from "@quant-ai/shared-types";
+import type { SignalRegime } from "@quant-ai/shared-types";
 
 /**
  * Client channel subscription payload.
@@ -18,7 +18,7 @@ export interface ClientSubscriptionPayload {
  * Real-time index tick broadcast payload.
  */
 export interface RealtimeTickPayload {
-  readonly symbol: MarketIndex | string;
+  readonly symbol: string;
   readonly price: number;
   readonly change: number;
   readonly percentChange: number;
@@ -29,11 +29,22 @@ export interface RealtimeTickPayload {
  * Real-time regime transition broadcast payload.
  */
 export interface RealtimeRegimePayload {
-  readonly symbol: MarketIndex | string;
+  readonly symbol: string;
   readonly currentRegime: SignalRegime;
   readonly previousRegime: SignalRegime;
   readonly confidence: number;
   readonly timestamp: string;
+}
+
+/**
+ * Real-time signal update payload.
+ */
+export interface RealtimeSignalPayload {
+  readonly id: string;
+  readonly ticker: string;
+  readonly currentPrice: number;
+  readonly pnlPercent: number;
+  readonly status: string;
 }
 
 /**

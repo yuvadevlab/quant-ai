@@ -4,6 +4,7 @@
  */
 
 import { queryOptions } from "@tanstack/react-query";
+import { SectorFilter } from "@/constants/market.constants";
 import { screenerItems, type ScreenerItem } from "@/components/quantai/data";
 
 export interface ScreenerData {
@@ -18,7 +19,7 @@ export interface ScreenerData {
  */
 export async function getScreenerData(): Promise<ScreenerData> {
   const sectors = [
-    "ALL",
+    SectorFilter.ALL,
     "Energy",
     "Banking",
     "PSU Banking",

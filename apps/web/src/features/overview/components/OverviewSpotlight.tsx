@@ -6,6 +6,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import type { Signal } from "@/components/quantai/data";
+import { UiSignalDirection } from "@/components/quantai/data";
 import { AppRoute } from "@/constants/routes.constants";
 
 export interface OverviewSpotlightProps {
@@ -37,7 +38,7 @@ export function OverviewSpotlight({ signals }: OverviewSpotlightProps) {
               </div>
               <div className="signal-badge-col">
                 <span
-                  className={`direction-badge ${signal.direction === "BUY" ? "badge-buy" : "badge-sell"}`}
+                  className={`direction-badge ${signal.direction === UiSignalDirection.BUY ? "badge-buy" : "badge-sell"}`}
                 >
                   {signal.direction}
                 </span>

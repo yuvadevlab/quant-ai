@@ -9,6 +9,7 @@ import type {
   RealtimeTickPayload,
   RealtimeRegimePayload,
   RealtimeAgentSpeechPayload,
+  RealtimeSignalPayload,
 } from "./realtime.types";
 
 /**
@@ -43,6 +44,19 @@ export class RealtimeService {
       this.realtimeGateway.broadcastRegimeChange(regime);
     } catch (error) {
       this.logger.warn(`Failed to broadcast regime change: ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Publishes signal updates to WebSocket clients.
+   *
+   * @param signal Signal update payload
+   */
+  public emitSignalUpdate(signal: RealtimeSignalPayload): void {
+    try {
+      this.realtimeGateway.broadcastSignalUpdate(signal);
+    } catch (error) {
+      this.logger.warn(`Failed to broadcast signal update: ${(error as Error).message}`);
     }
   }
 

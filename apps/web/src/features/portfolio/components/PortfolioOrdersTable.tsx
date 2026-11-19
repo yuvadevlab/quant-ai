@@ -4,6 +4,7 @@
  */
 
 import { ShieldCheck } from "lucide-react";
+import { OrderSide } from "@/constants/market.constants";
 import type { PortfolioData } from "../api/getPortfolioData";
 
 export interface PortfolioOrdersTableProps {
@@ -44,7 +45,9 @@ export function PortfolioOrdersTable({ executions }: PortfolioOrdersTableProps) 
                   <strong>{ord.symbol}</strong>
                 </td>
                 <td>
-                  <span className={`side-badge ${ord.type === "BUY" ? "badge-buy" : "badge-sell"}`}>
+                  <span
+                    className={`side-badge ${ord.type === OrderSide.BUY ? "badge-buy" : "badge-sell"}`}
+                  >
                     {ord.type}
                   </span>
                 </td>

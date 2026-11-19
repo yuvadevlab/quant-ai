@@ -1,7 +1,7 @@
 /**
  * @file src/features/monitor/components/MonitorPage.tsx
- * @description Master Predictive Trajectory Monitor page wrapper.
- * Composes layout shell, signal header, KPI metrics, interactive cone chart, multi-agent deliberation, and invalidation rules.
+ * @description Master Predictive Trajectory Monitor page wrapper with live WebSocket deliberation and pricing streams.
+ * @author yuva.devlab@gmail.com
  */
 
 import { Link } from "@tanstack/react-router";
@@ -9,16 +9,30 @@ import { InvalidationCard, MonitorKpiGrid, SignalHeader } from "@quant-ai/ui";
 import { ArrowLeft, ChevronRight, Sparkles } from "lucide-react";
 import { QuantShell } from "@/components/layout";
 import { AppRoute } from "@/constants/routes.constants";
+import { UiSignalStatus } from "@/components/quantai/data";
+import { useRealtimeDeliberation } from "@/hooks/use-realtime-deliberation";
+import { useRealtimeTicks } from "@/hooks/use-realtime-ticks";
 import { MonitorConeSection } from "./MonitorConeSection";
 import { MonitorAgentsSection } from "./MonitorAgentsSection";
 import type { MonitorData } from "../api/getMonitorData";
+import type { Signal } from "@/components/quantai/data";
 
 export interface MonitorPageProps {
   readonly initialData: MonitorData;
 }
 
 export function MonitorPage({ initialData }: MonitorPageProps) {
-  const { signal, isActive } = initialData;
+  const { signal } = initialData;
+  const { agentSpeeches, latestSignalUpdate, isConnected } = useRealtimeDeliberation(signal.id);
+  const { ticks } = useRealtimeTicks();
+
+  const liveTick = ticks[signal.symbol];
+  const currentPrice = liveTick?.price ? `₹${liveTick.price.toLocaleString("en-IN")}` : signal.last;
+  const currentChange = liveTick
+    ? `${liveTick.percentChange >= 0 ? "+" : ""}${liveTick.percentChange.toFixed(2)}%`
+    : signal.change;
+  const currentStatus = (latestSignalUpdate?.status as Signal["status"]) ?? signal.status;
+  const isActive = currentStatus === UiSignalStatus.ACTIVE;
 
   return (
     <QuantShell>
@@ -39,15 +53,15 @@ export function MonitorPage({ initialData }: MonitorPageProps) {
           direction={signal.direction}
           horizon={signal.horizon}
           companyName={signal.companyName}
-          status={signal.status}
+          status={currentStatus}
           isActive={isActive}
         />
 
         <MonitorKpiGrid
           entry={signal.entry}
           entryPrice={signal.entryPrice}
-          last={signal.last}
-          change={signal.change}
+          last={currentPrice}
+          change={currentChange}
           direction={signal.direction}
           target1={signal.target1}
           target2={signal.target2}
@@ -58,7 +72,13 @@ export function MonitorPage({ initialData }: MonitorPageProps) {
 
         <MonitorConeSection signal={signal} isActive={isActive} />
 
-        <MonitorAgentsSection agents={signal.agents} />
+        <MonitorAgentsSection
+          predictionId={signal.id}
+          ticker={signal.symbol}
+          agents={signal.agents}
+          liveSpeeches={agentSpeeches}
+          isConnected={isConnected}
+        />
 
         <InvalidationCard
           title="Automated Invalidation Rule"

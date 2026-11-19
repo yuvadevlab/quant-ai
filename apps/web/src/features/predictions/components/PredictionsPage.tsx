@@ -6,7 +6,8 @@
 
 import { useMemo, useState } from "react";
 import { QuantShell } from "@/components/layout";
-import { LedgerFilterTab } from "@/constants";
+import { HorizonFilter, LedgerFilterTab } from "@/constants";
+import { UiSignalStatus } from "@/components/quantai/data";
 import { PredictionsHeader } from "./PredictionsHeader";
 import { PredictionsKpiGrid } from "./PredictionsKpiGrid";
 import { PredictionsToolbar } from "./PredictionsToolbar";
@@ -19,19 +20,20 @@ export interface PredictionsPageProps {
 
 export function PredictionsPage({ initialData }: PredictionsPageProps) {
   const [activeFilter, setActiveFilter] = useState<LedgerFilterTab>(LedgerFilterTab.ALL);
-  const [horizonFilter, setHorizonFilter] = useState("All styles");
+  const [horizonFilter, setHorizonFilter] = useState<string>(HorizonFilter.ALL);
   const [search, setSearch] = useState("");
 
   const filteredSignals = useMemo(() => {
     return initialData.signals.filter((signal) => {
       const matchesTab =
         activeFilter === LedgerFilterTab.ALL ||
-        (activeFilter === LedgerFilterTab.ACTIVE && signal.status === "Active") ||
-        (activeFilter === LedgerFilterTab.TARGET_HIT && signal.status === "Target hit") ||
-        (activeFilter === LedgerFilterTab.STOP_HIT && signal.status === "Stop loss hit");
+        (activeFilter === LedgerFilterTab.ACTIVE && signal.status === UiSignalStatus.ACTIVE) ||
+        (activeFilter === LedgerFilterTab.TARGET_HIT &&
+          signal.status === UiSignalStatus.TARGET_HIT) ||
+        (activeFilter === LedgerFilterTab.STOP_HIT && signal.status === UiSignalStatus.STOP_HIT);
 
       const matchesHorizon =
-        horizonFilter === "All styles" ||
+        horizonFilter === HorizonFilter.ALL ||
         signal.horizon.toLowerCase() === horizonFilter.toLowerCase();
 
       const matchesSearch =
@@ -47,9 +49,9 @@ export function PredictionsPage({ initialData }: PredictionsPageProps) {
   const counts = useMemo(
     () => ({
       all: initialData.signals.length,
-      active: initialData.signals.filter((s) => s.status === "Active").length,
-      targetHit: initialData.signals.filter((s) => s.status === "Target hit").length,
-      stopHit: initialData.signals.filter((s) => s.status === "Stop loss hit").length,
+      active: initialData.signals.filter((s) => s.status === UiSignalStatus.ACTIVE).length,
+      targetHit: initialData.signals.filter((s) => s.status === UiSignalStatus.TARGET_HIT).length,
+      stopHit: initialData.signals.filter((s) => s.status === UiSignalStatus.STOP_HIT).length,
     }),
     [initialData.signals],
   );

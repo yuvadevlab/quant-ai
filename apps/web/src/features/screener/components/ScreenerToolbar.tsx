@@ -1,13 +1,15 @@
 /**
  * @file src/features/screener/components/ScreenerToolbar.tsx
  * @description Filter tabs, search box, and sector selector for the screener desk.
+ * @author yuva.devlab@gmail.com
  */
 
 import { Search } from "lucide-react";
+import { SectorFilter, ScreenerTab } from "@/constants/market.constants";
 
 export interface ScreenerToolbarProps {
-  readonly activeTab: "all" | "breakouts" | "options" | "momentum";
-  readonly onSelectTab: (tab: "all" | "breakouts" | "options" | "momentum") => void;
+  readonly activeTab: ScreenerTab;
+  readonly onSelectTab: (tab: ScreenerTab) => void;
   readonly searchQuery: string;
   readonly onSearchChange: (query: string) => void;
   readonly selectedSector: string;
@@ -32,57 +34,59 @@ export function ScreenerToolbar({
         <div className="tab-pill-group">
           <button
             type="button"
-            className={`tab-pill ${activeTab === "all" ? "active" : ""}`}
-            onClick={() => onSelectTab("all")}
+            className={`tab-pill ${activeTab === ScreenerTab.ALL ? "active" : ""}`}
+            onClick={() => onSelectTab(ScreenerTab.ALL)}
           >
             All Setups ({totalCount})
           </button>
           <button
             type="button"
-            className={`tab-pill ${activeTab === "breakouts" ? "active" : ""}`}
-            onClick={() => onSelectTab("breakouts")}
+            className={`tab-pill ${activeTab === ScreenerTab.BREAKOUTS ? "active" : ""}`}
+            onClick={() => onSelectTab(ScreenerTab.BREAKOUTS)}
           >
             Breakouts
           </button>
           <button
             type="button"
-            className={`tab-pill ${activeTab === "options" ? "active" : ""}`}
-            onClick={() => onSelectTab("options")}
+            className={`tab-pill ${activeTab === ScreenerTab.OPTIONS ? "active" : ""}`}
+            onClick={() => onSelectTab(ScreenerTab.OPTIONS)}
           >
             Options OI Surges
           </button>
           <button
             type="button"
-            className={`tab-pill ${activeTab === "momentum" ? "active" : ""}`}
-            onClick={() => onSelectTab("momentum")}
+            className={`tab-pill ${activeTab === ScreenerTab.MOMENTUM ? "active" : ""}`}
+            onClick={() => onSelectTab(ScreenerTab.MOMENTUM)}
           >
             High Momentum (RSI &gt; 60)
           </button>
         </div>
 
-        <div className="search-filter-wrapper">
-          <div className="search-box">
-            <Search size={15} className="search-icon" />
-            <input
-              type="text"
-              placeholder="Search symbol or company..."
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="search-input"
-            />
-          </div>
+        <div className="search-wrap">
+          <Search size={14} className="search-icon" />
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search symbol, pattern, thesis..."
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+          />
+        </div>
+      </div>
 
-          <select
-            className="sector-select"
-            value={selectedSector}
-            onChange={(e) => onSelectSector(e.target.value)}
-          >
-            {sectors.map((sec) => (
-              <option key={sec} value={sec}>
-                {sec === "ALL" ? "All Sectors" : sec}
-              </option>
-            ))}
-          </select>
+      <div className="sector-filter-row">
+        <span className="sector-label">SECTOR:</span>
+        <div className="sector-pills">
+          {sectors.map((sec) => (
+            <button
+              key={sec}
+              type="button"
+              className={`sector-pill ${selectedSector === sec ? "active" : ""}`}
+              onClick={() => onSelectSector(sec)}
+            >
+              {sec === SectorFilter.ALL ? "All Sectors" : sec}
+            </button>
+          ))}
         </div>
       </div>
     </div>

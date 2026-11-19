@@ -4,7 +4,7 @@
  */
 
 import { queryOptions } from "@tanstack/react-query";
-import { signals, type Signal } from "@/components/quantai/data";
+import { signals, UiSignalStatus, type Signal } from "@/components/quantai/data";
 
 export interface MonitorData {
   readonly signal: Signal;
@@ -23,7 +23,7 @@ export async function getMonitorData(signalId: string): Promise<MonitorData> {
 
   return {
     signal,
-    isActive: signal.status === "Active",
+    isActive: signal.status === UiSignalStatus.ACTIVE,
   };
 }
 

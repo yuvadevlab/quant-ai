@@ -4,7 +4,13 @@
  */
 
 import { queryOptions } from "@tanstack/react-query";
-import { marketBreadth, sectorPerformance, signals, type Signal } from "@/components/quantai/data";
+import {
+  marketBreadth,
+  sectorPerformance,
+  signals,
+  UiSignalStatus,
+  type Signal,
+} from "@/components/quantai/data";
 import {
   getBenchmarkTicks,
   type MarketBreadth,
@@ -25,7 +31,7 @@ export interface OverviewDeskData {
  * @returns OverviewDeskData payload
  */
 export async function getOverviewData(): Promise<OverviewDeskData> {
-  const activeSignals = signals.filter((s) => s.status === "Active").slice(0, 3);
+  const activeSignals = signals.filter((s) => s.status === UiSignalStatus.ACTIVE).slice(0, 3);
 
   return {
     ticks: getBenchmarkTicks(),

@@ -6,6 +6,7 @@
  */
 
 export * from "./enums";
+export * from "./instruments.types";
 export * from "./indices.types";
 export * from "./indices.constants";
 export * from "./signals";

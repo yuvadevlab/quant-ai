@@ -4,6 +4,7 @@
  */
 
 import { ArrowDownRight, ArrowUpRight, Briefcase } from "lucide-react";
+import { PositionSide } from "@/constants/market.constants";
 import type { PortfolioData } from "../api/getPortfolioData";
 
 export interface PortfolioPositionsTableProps {
@@ -48,7 +49,7 @@ export function PortfolioPositionsTable({ positions }: PortfolioPositionsTablePr
                 </td>
                 <td>
                   <span
-                    className={`side-badge ${pos.side === "LONG" ? "badge-buy" : "badge-sell"}`}
+                    className={`side-badge ${pos.side === PositionSide.LONG ? "badge-buy" : "badge-sell"}`}
                   >
                     {pos.side}
                   </span>

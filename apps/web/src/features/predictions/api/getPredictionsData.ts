@@ -4,7 +4,7 @@
  */
 
 import { queryOptions } from "@tanstack/react-query";
-import { signals, type Signal } from "@/components/quantai/data";
+import { signals, UiSignalStatus, type Signal } from "@/components/quantai/data";
 
 export interface PredictionsData {
   readonly signals: readonly Signal[];
@@ -21,7 +21,7 @@ export interface PredictionsData {
  * @returns PredictionsData payload
  */
 export async function getPredictionsData(): Promise<PredictionsData> {
-  const activeCount = signals.filter((s) => s.status === "Active").length;
+  const activeCount = signals.filter((s) => s.status === UiSignalStatus.ACTIVE).length;
 
   return {
     signals,

@@ -6,14 +6,13 @@
 
 import { z } from "zod";
 import { createEventEnvelope, type DomainEventEnvelope } from "@yuva-devlab/events";
-import { MarketIndex } from "@quant-ai/shared-types";
 import { EventTopic } from "@quant-ai/shared-types";
 
 /**
  * Zod validator for high-frequency market tick stream payloads.
  */
 export const MarketTickPayloadSchema = z.object({
-  symbol: z.nativeEnum(MarketIndex),
+  symbol: z.string().min(1),
   name: z.string().min(1),
   price: z.number().positive(),
   change: z.number(),

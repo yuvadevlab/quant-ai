@@ -5,7 +5,7 @@
 
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import type { Signal } from "@/components/quantai/data";
+import { UiSignalDirection, UiSignalStatus, type Signal } from "@/components/quantai/data";
 
 export interface PredictionsTableProps {
   readonly signals: readonly Signal[];
@@ -32,13 +32,13 @@ export function PredictionsTable({ signals }: PredictionsTableProps) {
           </thead>
           <tbody>
             {signals.map((signal) => {
-              const isBuy = signal.direction === "BUY";
+              const isBuy = signal.direction === UiSignalDirection.BUY;
               const statusClass =
-                signal.status === "Active"
+                signal.status === UiSignalStatus.ACTIVE
                   ? "pill-active"
-                  : signal.status === "Target hit"
+                  : signal.status === UiSignalStatus.TARGET_HIT
                     ? "pill-target"
-                    : signal.status === "Stop loss hit"
+                    : signal.status === UiSignalStatus.STOP_HIT
                       ? "pill-stop"
                       : "pill-expired";
 
@@ -72,7 +72,7 @@ export function PredictionsTable({ signals }: PredictionsTableProps) {
                   <td className="mono font-semibold">{signal.last}</td>
                   <td>
                     <span className={`outcome-pill ${statusClass}`}>
-                      {signal.status === "Active" && <span className="pulse-ping" />}
+                      {signal.status === UiSignalStatus.ACTIVE && <span className="pulse-ping" />}
                       {signal.status.toUpperCase()}
                     </span>
                   </td>

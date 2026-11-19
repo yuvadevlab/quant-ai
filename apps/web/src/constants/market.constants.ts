@@ -1,78 +1,42 @@
 /**
  * @file src/constants/market.constants.ts
- * @description Centralized domain enums and canonical constants for Indian financial markets & quantitative algorithms. */
-
-/**
- * Major Indian stock market indices tracked by QuantAI.
+ * @description Centralized domain enums and canonical constants for financial markets, UI tabs, and strategies.
+ * @author yuva.devlab@gmail.com
  */
-export enum MarketIndex {
-  NIFTY_50 = "NIFTY_50",
-  BANK_NIFTY = "BANK_NIFTY",
-  NIFTY_FIN_SERVICE = "NIFTY_FIN_SERVICE",
-  NIFTY_MIDCAP_100 = "NIFTY_MIDCAP_100",
-  NIFTY_AUTO = "NIFTY_AUTO",
-  NIFTY_IT = "NIFTY_IT",
-  NIFTY_PHARMA = "NIFTY_PHARMA",
-}
+
+export {
+  AssetClass,
+  IndexCategory,
+  ModelProvider,
+  OptionType,
+  SignalDirection,
+  SignalRegime,
+  SignalStatus,
+  TradeHorizon,
+  TradeStrategy,
+} from "@quant-ai/shared-types";
 
 /**
- * Quantitative algorithmic signal directions.
- */
-export enum SignalDirection {
-  LONG = "LONG",
-  SHORT = "SHORT",
-  NEUTRAL = "NEUTRAL",
-}
-
-/**
- * Life-cycle execution states of a predictive signal.
- */
-export enum SignalStatus {
-  ACTIVE = "ACTIVE",
-  TARGET_HIT = "TARGET_HIT",
-  STOP_HIT = "STOP_HIT",
-  INVALIDATED = "INVALIDATED",
-  EXPIRED = "EXPIRED",
-}
-
-/**
- * Prediction forecast time horizons.
+ * High-level prediction forecast time horizons for UI filters.
  */
 export enum SignalHorizon {
   INTRADAY = "INTRADAY",
   SWING_1W = "SWING_1W",
   POSITIONAL_1M = "POSITIONAL_1M",
   MULTI_MONTH = "MULTI_MONTH",
+  OPTIONS = "OPTIONS",
+  SCALP = "SCALP",
 }
 
 /**
- * Macro market volatility & trend regimes.
+ * Filter tabs for index grid views.
  */
-export enum MarketRegime {
-  TRENDING_BULLISH = "TRENDING_BULLISH",
-  TRENDING_BEARISH = "TRENDING_BEARISH",
-  HIGH_VOLATILITY_CHOP = "HIGH_VOLATILITY_CHOP",
-  LOW_VOLATILITY_RANGE = "LOW_VOLATILITY_RANGE",
-}
-
-/**
- * AI Reasoning Engine Model Providers.
- */
-export enum ModelProvider {
-  GEMINI_2_5_PRO = "GEMINI_2_5_PRO",
-  GEMINI_2_5_FLASH = "GEMINI_2_5_FLASH",
-  DEEPSEEK_R1 = "DEEPSEEK_R1",
-  CLAUDE_3_7_SONNET = "CLAUDE_3_7_SONNET",
-}
-
-/**
- * Multi-Agent consensus deliberation roles.
- */
-export enum AgentRole {
-  MACRO_ANALYST = "MACRO_ANALYST",
-  MOMENTUM_SPECIALIST = "MOMENTUM_SPECIALIST",
-  VOLATILITY_SURFACE = "VOLATILITY_SURFACE",
-  SYNTHESIS_LEAD = "SYNTHESIS_LEAD",
+export enum IndexCategoryFilter {
+  ALL = "ALL",
+  BROAD_MARKET = "BROAD_MARKET",
+  FINANCIALS = "FINANCIALS",
+  SECTORAL = "SECTORAL",
+  VOLATILITY = "VOLATILITY",
 }
 
 /**
@@ -83,4 +47,49 @@ export enum LedgerFilterTab {
   ACTIVE = "ACTIVE",
   TARGET_HIT = "TARGET_HIT",
   STOP_HIT = "STOP_HIT",
+}
+
+/**
+ * Screener category filter tabs.
+ */
+export enum ScreenerTab {
+  ALL = "all",
+  BREAKOUTS = "breakouts",
+  OPTIONS = "options",
+  MOMENTUM = "momentum",
+}
+
+/**
+ * Chat conversation actor types.
+ */
+export enum ChatMessageType {
+  ASSISTANT = "assistant",
+  USER = "user",
+}
+
+/**
+ * Order execution sides.
+ */
+export enum OrderSide {
+  BUY = "BUY",
+  SELL = "SELL",
+}
+
+/**
+ * Portfolio position directional sides.
+ */
+export enum PositionSide {
+  LONG = "LONG",
+  SHORT = "SHORT",
+}
+
+/**
+ * Filter constants for UI horizon and sector dropdowns.
+ */
+export enum HorizonFilter {
+  ALL = "All styles",
+}
+
+export enum SectorFilter {
+  ALL = "ALL",
 }

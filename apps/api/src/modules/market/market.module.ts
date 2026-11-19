@@ -4,16 +4,17 @@
  */
 
 import { Module } from "@nestjs/common";
+import { LiveMarketFeedService, StochasticMarketSimulator } from "./feed";
 import { MarketController } from "./market.controller";
 import { MarketService } from "./market.service";
 import { MarketTickService } from "./market-tick.service";
 
 /**
- * Module responsible for market benchmarks and high-frequency streams.
+ * Module responsible for market benchmarks, universal live feeds, and high-frequency streams.
  */
 @Module({
   controllers: [MarketController],
-  providers: [MarketService, MarketTickService],
-  exports: [MarketService, MarketTickService],
+  providers: [MarketService, MarketTickService, LiveMarketFeedService, StochasticMarketSimulator],
+  exports: [MarketService, MarketTickService, LiveMarketFeedService, StochasticMarketSimulator],
 })
 export class MarketModule {}

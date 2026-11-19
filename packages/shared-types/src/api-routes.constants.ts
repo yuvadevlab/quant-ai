@@ -18,6 +18,11 @@ export enum ApiSegment {
   BREAKOUTS = "breakouts",
   SURGES = "surges",
   REALTIME = "realtime",
+  PORTFOLIO = "portfolio",
+  CHAT = "chat",
+  MESSAGE = "message",
+  DELIBERATION = "deliberation",
+  TRIGGER = "trigger",
   ROOT = "",
 }
 
@@ -51,5 +56,8 @@ export const ApiRoute = {
     `/${ApiSegment.API}/${ApiSegment.PREDICTIONS}/${id}/${ApiSegment.TRAJECTORY}`,
   SCREENER_BREAKOUTS: `/${ApiSegment.API}/${ApiSegment.SCREENER}/${ApiSegment.BREAKOUTS}`,
   SCREENER_SURGES: `/${ApiSegment.API}/${ApiSegment.SCREENER}/${ApiSegment.SURGES}`,
+  PORTFOLIO: `/${ApiSegment.API}/${ApiSegment.PORTFOLIO}`,
+  CHAT_MESSAGE: `/${ApiSegment.API}/${ApiSegment.CHAT}/${ApiSegment.MESSAGE}`,
+  DELIBERATION_TRIGGER: `/${ApiSegment.API}/${ApiSegment.DELIBERATION}/${ApiSegment.TRIGGER}`,
   SWAGGER_DOCS: `/${ApiSegment.DOCS}`,
 } as const;

@@ -5,7 +5,7 @@
 
 import { Link } from "@tanstack/react-router";
 import { ArrowDownRight, ArrowUpRight, Sparkles } from "lucide-react";
-import type { ScreenerItem } from "@/components/quantai/data";
+import { OiAction, SignalCandidate, type ScreenerItem } from "@/components/quantai/data";
 import { AppRoute } from "@/constants/routes.constants";
 
 export interface ScreenerTableProps {
@@ -76,7 +76,8 @@ export function ScreenerTable({ items }: ScreenerTableProps) {
                 <td>
                   <span
                     className={`oi-tag ${
-                      item.oiAction === "Long Buildup" || item.oiAction === "Short Covering"
+                      item.oiAction === OiAction.LONG_BUILDUP ||
+                      item.oiAction === OiAction.SHORT_COVERING
                         ? "oi-bullish"
                         : "oi-bearish"
                     }`}
@@ -96,7 +97,7 @@ export function ScreenerTable({ items }: ScreenerTableProps) {
                     className={`candidate-badge ${
                       item.signalCandidate.includes("BUY")
                         ? "badge-buy"
-                        : item.signalCandidate === "SELL"
+                        : item.signalCandidate === SignalCandidate.SELL
                           ? "badge-sell"
                           : "badge-neutral"
                     }`}

@@ -28,6 +28,7 @@ import type {
   RealtimeTickPayload,
   RealtimeRegimePayload,
   RealtimeAgentSpeechPayload,
+  RealtimeSignalPayload,
 } from "./realtime.types";
 
 /**
@@ -133,6 +134,14 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
   public broadcastRegimeChange(payload: RealtimeRegimePayload): void {
     if (!this.server) return;
     this.server.to(RealtimeRoom.REGIMES).emit(RealtimeServerEvent.REGIME_CHANGE, payload);
+  }
+
+  /**
+   * Broadcasts signal trajectory updates to SIGNALS room.
+   */
+  public broadcastSignalUpdate(payload: RealtimeSignalPayload): void {
+    if (!this.server) return;
+    this.server.to(RealtimeRoom.SIGNALS).emit(RealtimeServerEvent.SIGNAL_UPDATE, payload);
   }
 
   /**

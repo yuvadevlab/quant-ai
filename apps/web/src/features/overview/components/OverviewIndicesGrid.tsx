@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import { IndexCategory } from "@quant-ai/shared-types";
+import { IndexCategoryFilter } from "@/constants/market.constants";
 import { IndexMetricCard } from "@quant-ai/ui";
 import { OVERVIEW_COPY } from "@/lib/ui-copy";
 import type { MarketTick } from "@/services/market-feed.service";
@@ -14,7 +15,7 @@ export interface OverviewIndicesGridProps {
   readonly ticks: readonly MarketTick[];
 }
 
-type FilterCategory = IndexCategory | "ALL";
+type FilterCategory = IndexCategory | IndexCategoryFilter.ALL;
 
 interface FilterOption {
   readonly key: FilterCategory;
@@ -22,7 +23,7 @@ interface FilterOption {
 }
 
 const FILTER_OPTIONS: readonly FilterOption[] = [
-  { key: "ALL", label: OVERVIEW_COPY.INDEX_FILTERS.ALL },
+  { key: IndexCategoryFilter.ALL, label: OVERVIEW_COPY.INDEX_FILTERS.ALL },
   {
     key: IndexCategory.BROAD_MARKET,
     label: OVERVIEW_COPY.INDEX_FILTERS.BROAD_MARKET,
@@ -45,7 +46,7 @@ const FILTER_OPTIONS: readonly FilterOption[] = [
  * Interactive benchmark indices grid with instant category filtering and live WebSocket price updates.
  */
 export function OverviewIndicesGrid({ ticks }: OverviewIndicesGridProps) {
-  const [activeCategory, setActiveCategory] = useState<FilterCategory>("ALL");
+  const [activeCategory, setActiveCategory] = useState<FilterCategory>(IndexCategoryFilter.ALL);
   const { ticks: liveTicks } = useRealtimeTicks();
 
   const hydratedTicks = ticks.map((tick) => {
@@ -69,7 +70,7 @@ export function OverviewIndicesGrid({ ticks }: OverviewIndicesGridProps) {
   });
 
   const filteredTicks =
-    activeCategory === "ALL"
+    activeCategory === IndexCategoryFilter.ALL
       ? hydratedTicks
       : hydratedTicks.filter((tick) => tick.category === activeCategory);
 
