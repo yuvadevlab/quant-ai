@@ -1,11 +1,28 @@
 import { describe, expect, it } from "vitest";
-import { Candle, IndexCategory, MarketIndex, SignalRegime } from "@quant-ai/contracts";
+import {
+  CachePrefix,
+  Candle,
+  EventTopic,
+  HealthStatus,
+  IndexCategory,
+  MarketIndex,
+  NetworkPort,
+  RealtimeRoom,
+  RealtimeSubscriptionStatus,
+  SignalRegime,
+} from "@quant-ai/contracts";
 import { MarketService } from "../src/modules/market/market.service";
 import { PredictionsService } from "../src/modules/predictions/predictions.service";
 import { MarketRegimeService } from "../src/modules/quant-analysis/market-regime.service";
 import { MultiAgentDeliberationService } from "../src/modules/quant-analysis/multi-agent-deliberation.service";
 import { TechnicalAnalysisService } from "../src/modules/quant-analysis/technical-analysis.service";
 import { ScreenerService } from "../src/modules/screener/screener.service";
+import { ConfigService } from "../src/modules/infrastructure/config.service";
+import { RedisService } from "../src/modules/infrastructure/redis.service";
+import { EventBusService } from "../src/modules/infrastructure/event-bus.service";
+import { DatabaseService } from "../src/modules/infrastructure/database.service";
+import { HealthController } from "../src/modules/health/health.controller";
+import { RealtimeGateway } from "../src/modules/realtime/realtime.gateway";
 
 describe("NestJS Domain Services", () => {
   it("MarketService provides benchmark indices with sparklines and category filtering", () => {
@@ -93,5 +110,59 @@ describe("NestJS Domain Services", () => {
     expect(debate).toHaveLength(3);
     const consensus = service.synthesizeConsensus(debate);
     expect(consensus.isVetoedBySkeptic).toBe(false);
+  });
+
+  it("Infrastructure services validate environment, cache, and event bus", async () => {
+    const config = new ConfigService();
+    expect(config.port).toBe(NetworkPort.API);
+    expect(config.wsPort).toBe(NetworkPort.WS);
+
+    const db = new DatabaseService(config);
+    db.onModuleInit();
+    const health = await db.ping();
+    expect(health.status).toBe(HealthStatus.UP);
+
+    const redis = new RedisService(config);
+    const testKey = `${CachePrefix.TICKER}RELIANCE`;
+    const testPrice = 2985.5;
+    await redis.set(testKey, testPrice, 60);
+    expect(await redis.get(testKey)).toBe(testPrice);
+    await redis.delete(testKey);
+    expect(await redis.get(testKey)).toBeNull();
+
+    const bus = new EventBusService(config);
+    let receivedPayload = "";
+    const unsub = bus.subscribe<string>(EventTopic.MARKET_TICKS, (data) => {
+      receivedPayload = data;
+    });
+    const samplePayload = "NIFTY_SURGE";
+    await bus.publish(EventTopic.MARKET_TICKS, samplePayload);
+    expect(receivedPayload).toBe(samplePayload);
+    unsub();
+
+    const healthCtrl = new HealthController(config, db);
+    const status = await healthCtrl.check();
+    expect(status.status).toBe(HealthStatus.HEALTHY);
+    expect(status.infrastructure.database.status).toBe(HealthStatus.UP);
+  });
+
+  it("RealtimeGateway manages subscriptions and broadcasts safely", () => {
+    const gateway = new RealtimeGateway();
+    const fakeSocket = {
+      id: "sock-123",
+      join: (room: string) => room,
+      leave: (room: string) => room,
+      emit: () => {},
+    } as unknown as Parameters<RealtimeGateway["handleConnection"]>[0];
+
+    const subRes = gateway.handleSubscribe(fakeSocket, {
+      room: RealtimeRoom.TICKERS,
+    });
+    expect(subRes.status).toBe(RealtimeSubscriptionStatus.SUBSCRIBED);
+
+    const unsubRes = gateway.handleUnsubscribe(fakeSocket, {
+      room: RealtimeRoom.TICKERS,
+    });
+    expect(unsubRes.status).toBe(RealtimeSubscriptionStatus.UNSUBSCRIBED);
   });
 });

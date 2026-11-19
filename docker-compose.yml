@@ -1,34 +1,151 @@
+name: quant-ai
+
 services:
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile.web
-    ports:
-      - "3005:3005"
+  postgres:
+    image: postgres:16-alpine
+    container_name: quantai-postgres
+    restart: unless-stopped
     environment:
-      - NODE_ENV=development
-      - VITE_API_URL=http://localhost:4005/api
-    depends_on:
-      - api
+      POSTGRES_USER: ${POSTGRES_USER:-quantai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-quantai_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-quantai_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-quantai} -d ${POSTGRES_DB:-quantai_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quantai-net
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: quantai-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quantai-net
+
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v24.2.14
+    container_name: quantai-redpanda
+    restart: unless-stopped
+    command:
+      - redpanda
+      - start
+      - --smp
+      - "1"
+      - --memory
+      - "512M"
+      - --overprovisioned
+      - --kafka-addr
+      - internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr
+      - internal://redpanda:9092,external://localhost:19092
+    ports:
+      - "19092:19092"
+      - "9644:9644"
+      - "8081:8081"
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -q 'Healthy:.*true'"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks:
+      - quantai-net
 
   api:
     build:
       context: .
       dockerfile: Dockerfile.api
+    container_name: quantai-api
+    restart: unless-stopped
     ports:
-      - "4005:4005"
+      - "${PORT:-4005}:4005"
+      - "${WS_PORT:-4006}:4006"
     environment:
       - NODE_ENV=development
       - PORT=4005
+      - WS_PORT=4006
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-quantai}:${POSTGRES_PASSWORD:-quantai_secret}@postgres:5432/${POSTGRES_DB:-quantai_db}
+      - REDIS_URL=redis://redis:6379
+      - KAFKA_BROKERS=redpanda:9092
+      - EVENT_BROKER=redpanda
       - QUANT_ENGINE_URL=http://quant-engine:8000
     depends_on:
-      - quant-engine
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      redpanda:
+        condition: service_started
+      quant-engine:
+        condition: service_started
+    networks:
+      - quantai-net
 
   quant-engine:
     build:
       context: services/quant-engine
       dockerfile: Dockerfile
+    container_name: quantai-engine
+    restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "${QUANT_ENGINE_PORT:-8000}:8000"
     environment:
       - PYTHONUNBUFFERED=1
+      - PORT=8000
+      - POSTGRES_URL=postgresql://${POSTGRES_USER:-quantai}:${POSTGRES_PASSWORD:-quantai_secret}@postgres:5432/${POSTGRES_DB:-quantai_db}
+      - REDIS_URL=redis://redis:6379
+      - KAFKA_BROKERS=redpanda:9092
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - quantai-net
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: quantai-web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-3005}:3005"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:4005/api
+      - VITE_WS_URL=ws://localhost:4006
+    depends_on:
+      - api
+    networks:
+      - quantai-net
+
+volumes:
+  postgres_data:
+    name: quantai_postgres_data
+  redis_data:
+    name: quantai_redis_data
+  redpanda_data:
+    name: quantai_redpanda_data
+
+networks:
+  quantai-net:
+    name: quantai-network
+    driver: bridge

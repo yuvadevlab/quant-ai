@@ -1,15 +1,21 @@
+/**
+ * @fileoverview Controller exposing quantitative screener and momentum scan endpoints.
+ * @author yuva.devlab@gmail.com
+ */
+
 import { Body, Controller, Get, HttpCode, Post } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiSegment, SwaggerSummary, SwaggerTag } from "@quant-ai/contracts";
 import { ScreenerService } from "./screener.service";
 import { ScreenerItem, ScreenerQueryDto } from "./screener.types";
 
 /**
  * Controller exposing quantitative screener and momentum scan endpoints.
  */
-@ApiTags("Screener")
-@Controller("screener")
+@ApiTags(SwaggerTag.SCREENER)
+@Controller(ApiSegment.SCREENER)
 export class ScreenerController {
-  constructor(private readonly screenerService: ScreenerService) {}
+  public constructor(private readonly screenerService: ScreenerService) {}
 
   /**
    * Retrieves all instruments in the screener universe.
@@ -18,7 +24,7 @@ export class ScreenerController {
    */
   @Get()
   @ApiOperation({ summary: "Get all screened market instruments" })
-  findAll(): readonly ScreenerItem[] {
+  public findAll(): readonly ScreenerItem[] {
     return this.screenerService.findAll();
   }
 
@@ -27,9 +33,9 @@ export class ScreenerController {
    *
    * @returns Array of volume anomaly candidates.
    */
-  @Get("volume-surge")
-  @ApiOperation({ summary: "Get instruments experiencing volume surge" })
-  findVolumeSurges(): readonly ScreenerItem[] {
+  @Get(ApiSegment.SURGES)
+  @ApiOperation({ summary: SwaggerSummary.SCREENER_SURGES })
+  public findVolumeSurges(): readonly ScreenerItem[] {
     return this.screenerService.findVolumeSurges();
   }
 
@@ -38,9 +44,9 @@ export class ScreenerController {
    *
    * @returns Array of breakout candidates.
    */
-  @Get("breakouts")
-  @ApiOperation({ summary: "Get active breakout candidates" })
-  findBreakouts(): readonly ScreenerItem[] {
+  @Get(ApiSegment.BREAKOUTS)
+  @ApiOperation({ summary: SwaggerSummary.SCREENER_BREAKOUTS })
+  public findBreakouts(): readonly ScreenerItem[] {
     return this.screenerService.findBreakouts();
   }
 
@@ -52,8 +58,10 @@ export class ScreenerController {
    */
   @Post("filter")
   @HttpCode(200)
-  @ApiOperation({ summary: "Filter instrument universe by quantitative parameters" })
-  filter(@Body() query: ScreenerQueryDto): readonly ScreenerItem[] {
+  @ApiOperation({
+    summary: "Filter instrument universe by quantitative parameters",
+  })
+  public filter(@Body() query: ScreenerQueryDto): readonly ScreenerItem[] {
     return this.screenerService.filter(query);
   }
 }
