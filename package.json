@@ -1,0 +1,43 @@
+{
+  "name": "quant-ai",
+  "version": "1.0.0",
+  "description": "Enterprise AI quantitative market intelligence and trading workstation for Indian financial markets",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuvadevlab/quant-ai.git"
+  },
+  "author": "Yuva DevLab <yuva.devlab@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.5.1",
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:web": "pnpm --filter @quant-ai/web dev --port 3005",
+    "dev:api": "pnpm --filter @quant-ai/api dev",
+    "build": "turbo build",
+    "clean": "turbo clean",
+    "lint": "turbo lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "check": "pnpm lint && pnpm typecheck && pnpm test"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "@commitlint/types": "^19.8.0",
+    "@eslint/js": "^9.32.0",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.6",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^15.15.0",
+    "prettier": "^3.7.3",
+    "turbo": "^2.11.12",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.56.1"
+  }
+}

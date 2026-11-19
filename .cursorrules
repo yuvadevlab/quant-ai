@@ -1,0 +1,13 @@
+# QuantAI — Cursor IDE Invariants & Agent Rules
+
+# Author: yuva.devlab@gmail.com
+
+# Canonical Guide: AGENTS.md
+
+- Pure platform CSS only using `@layer dl-*` and `@yuva-devlab/tokens`. Never use or introduce utility-first CSS frameworks.
+- Zero hardcoded strings: Import user-visible copy from `src/lib/ui-copy/`.
+- Enums over raw string unions: Import from `src/constants/`.
+- Maximum file length: 250 lines. Deconstruct at 200 lines.
+- 100% JSDoc on all exported symbols.
+- Never commit or push without explicit user instruction.
+- Run `pnpm typecheck` and `pnpm lint` to verify all modifications.

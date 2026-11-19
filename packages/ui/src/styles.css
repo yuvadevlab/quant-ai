@@ -1,0 +1,71 @@
+/**
+ * @file packages/ui/src/styles.css
+ * @description Master stylesheet for QuantAI UI library.
+ * Architecture: W3C Cascade Layers (dl-reset -> dl-tokens -> dl-components -> dl-layout -> dl-utilities -> dl-app).
+ * Pure Platform CSS architecture.
+ */
+
+/* ── 0. Establish Layer Precedence ───────────────────────────────────────── */
+@layer dl-reset, dl-tokens, dl-components, dl-layout, dl-utilities, dl-app;
+
+/* ── 1. Canonical Design Tokens & Themes ──────────────────────────────────── */
+@import "@yuva-devlab/tokens/root.css";
+@import "@yuva-devlab/tokens/typography.css";
+@import "@yuva-devlab/tokens/themes/quantai.css";
+@import "@yuva-devlab/tokens/utilities.css";
+
+/* ── 2. Structural Layout Tokens, Keyframes, Components & Platform Utilities ─────────── */
+@import "./styles/reset.css";
+@import "./styles/layout-tokens.css";
+@import "./styles/shell.css";
+@import "./styles/sidebar.css";
+@import "./styles/market-status.css";
+@import "./styles/ticker.css";
+@import "./styles/header.css";
+@import "./styles/indices.css";
+@import "./styles/panels.css";
+@import "./styles/sectors.css";
+@import "./styles/signals-spotlight.css";
+@import "./styles/signals-card.css";
+@import "./styles/launchpad.css";
+@import "./styles/metric-card.css";
+@import "./styles/forms.css";
+@import "./styles/tables.css";
+@import "./styles/table-cells.css";
+@import "./styles/monitor-cone.css";
+@import "./styles/monitor-agents.css";
+@import "./styles/chat-thread.css";
+@import "./styles/chat-composer.css";
+@import "./styles/settings.css";
+@import "./styles/badges.css";
+@import "./styles/error.css";
+@import "./styles/footer.css";
+@import "./styles/utilities.css";
+
+/* ── 3. Accessibility & Screen Reader Utilities ────────────────────────────── */
+@layer dl-utilities {
+  .sr-only,
+  .dl-sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border-width: 0 !important;
+  }
+
+  .not-sr-only,
+  .dl-not-sr-only {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    clip: auto !important;
+    white-space: normal !important;
+  }
+}

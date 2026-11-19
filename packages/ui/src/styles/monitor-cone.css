@@ -1,0 +1,168 @@
+/**
+ * @file packages/ui/src/styles/monitor-cone.css
+ * @description Modular stylesheet for monitor-cone.
+ * Architecture: W3C Cascade Layer @layer dl-components
+ */
+
+@layer dl-components {
+  /* ==========================================================================
+   Trajectory Monitor (Visual Cone Chart & Multi-Agent Deliberation)
+   ========================================================================== */
+
+  .chart-legend-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .dot-actual {
+    background-color: var(--chart-actual);
+    box-shadow: 0 0 6px var(--chart-actual);
+  }
+  .dot-expected {
+    background-color: var(--color-gain);
+  }
+
+  .legend-box {
+    width: 12px;
+    height: 8px;
+    border-radius: 2px;
+  }
+
+  .box-cone {
+    background-color: color-mix(in srgb, var(--primary) 30%, transparent);
+  }
+
+  .legend-line {
+    width: 14px;
+    height: 2px;
+  }
+
+  .line-target {
+    background-color: var(--color-gain);
+  }
+  .line-stop {
+    background-color: var(--color-loss);
+  }
+
+  .trajectory-chart-viewport {
+    position: relative;
+    background-color: color-mix(in srgb, var(--background) 95%, black);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 24px 20px 24px 60px;
+    height: 360px;
+    overflow: hidden;
+  }
+
+  .chart-price-axis {
+    position: absolute;
+    left: 10px;
+    top: 24px;
+    bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+  }
+
+  .trajectory-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .chart-gridline {
+    stroke: color-mix(in srgb, var(--foreground) 5%, transparent);
+    stroke-width: 1;
+  }
+
+  .chart-level-target2 {
+    stroke: var(--color-gain);
+    stroke-width: 1.2;
+    stroke-dasharray: 6 4;
+  }
+
+  .chart-level-target1 {
+    stroke: var(--color-gain);
+    stroke-width: 1.8;
+    stroke-dasharray: 8 4;
+  }
+
+  .chart-level-entry {
+    stroke: var(--brand-cyan);
+    stroke-width: 1.5;
+  }
+
+  .chart-level-stop {
+    stroke: var(--color-loss);
+    stroke-width: 1.8;
+    stroke-dasharray: 6 4;
+  }
+
+  .chart-path-expected {
+    stroke: var(--color-gain);
+    stroke-width: 2.2;
+    fill: none;
+  }
+
+  .chart-path-actual {
+    stroke: var(--chart-actual);
+    stroke-width: 2.8;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .chart-point-dot {
+    fill: var(--primary-foreground);
+    stroke: var(--chart-actual);
+    stroke-width: 2;
+  }
+
+  .beacon-halo {
+    fill: var(--chart-actual);
+    opacity: 0.3;
+  }
+
+  .beacon-core {
+    fill: var(--primary-foreground);
+  }
+
+  .chart-floating-level {
+    position: absolute;
+    right: 16px;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    border-radius: var(--radius-sm);
+  }
+
+  .level-target2 {
+    top: 36px;
+    background-color: var(--color-gain-bg);
+    color: var(--color-gain);
+  }
+  .level-target1 {
+    top: 96px;
+    background-color: var(--color-gain-bg);
+    color: var(--color-gain);
+  }
+}

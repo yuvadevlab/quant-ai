@@ -1,0 +1,44 @@
+/**
+ * @file packages/ui/src/styles/utilities.css
+ * @description Modular stylesheet for utilities.
+ * Architecture: W3C Cascade Layer @layer dl-utilities
+ */
+
+@layer dl-utilities {
+  /* Text Tones */
+  .text-gain {
+    color: var(--color-gain) !important;
+  }
+  .text-loss {
+    color: var(--color-loss) !important;
+  }
+  .text-muted {
+    color: var(--text-muted) !important;
+  }
+  .text-brand {
+    color: var(--brand-cyan) !important;
+  }
+
+  /* Pulse Ping Animation */
+  @keyframes pulseGlow {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.4;
+      transform: scale(1.3);
+    }
+  }
+
+  .pulse-ping {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: var(--color-gain);
+    box-shadow: 0 0 8px var(--color-gain);
+    animation: pulseGlow 2s infinite ease-in-out;
+  }
+}

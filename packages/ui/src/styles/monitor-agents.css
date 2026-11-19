@@ -1,0 +1,165 @@
+/**
+ * @file packages/ui/src/styles/monitor-agents.css
+ * @description Modular stylesheet for monitor-agents.
+ * Architecture: W3C Cascade Layer @layer dl-components
+ */
+
+@layer dl-components {
+  .level-entry {
+    top: 176px;
+    background-color: color-mix(in srgb, var(--primary) 15%, transparent);
+    color: var(--brand-cyan);
+  }
+  .level-sl {
+    top: 232px;
+    background-color: var(--color-loss-bg);
+    color: var(--color-loss);
+  }
+
+  .chart-hover-box {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-active);
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--background) 60%, black);
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    white-space: nowrap;
+    z-index: 20;
+  }
+
+  .tooltip-time {
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .tooltip-price {
+    font-size: 14px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    color: var(--primary);
+  }
+
+  .tooltip-dev {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .telemetry-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .telemetry-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background-color: var(--bg-card-subtle);
+    border: 1px solid var(--border-subtle);
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+  }
+
+  .progress-bar-wrap {
+    height: 6px;
+    background-color: color-mix(in srgb, var(--foreground) 8%, transparent);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-top: 4px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--chart-actual), var(--success));
+    border-radius: var(--radius-full);
+  }
+
+  /* Multi-Agent Breakdown */
+  .agents-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .agent-card {
+    background-color: var(--bg-card-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .agent-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .agent-badge {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    color: var(--text-dim);
+  }
+
+  .agent-score {
+    font-size: 15px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+  }
+
+  .agent-verdict {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* Invalidation Warning Card */
+  .invalidation-card {
+    background-color: color-mix(in srgb, var(--warning) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--warning) 25%, transparent);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .invalidation-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background-color: color-mix(in srgb, var(--warning) 15%, transparent);
+    color: var(--color-amber);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .invalidation-text {
+    flex: 1;
+  }
+
+  .invalidation-text h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--foreground);
+  }
+
+  .invalidation-text p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+}

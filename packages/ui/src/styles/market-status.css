@@ -1,0 +1,74 @@
+/**
+ * @file packages/ui/src/styles/market-status.css
+ * @description Modular stylesheet for market-status.
+ * Architecture: W3C Cascade Layer @layer dl-components
+ */
+
+@layer dl-components {
+  /* Sidebar Footer */
+  .sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .footer-status-card {
+    background-color: var(--bg-card-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 12px;
+  }
+
+  .status-live-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+  }
+
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-gain);
+    box-shadow: 0 0 6px var(--color-gain);
+  }
+
+  .status-caption {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .status-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px solid color-mix(in srgb, var(--foreground) 5%, transparent);
+  }
+
+  .meta-fii {
+    color: var(--color-gain);
+  }
+
+  .footer-collapsed-dot {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+  }
+
+  /* Main Stage */
+  .quant-main-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+}

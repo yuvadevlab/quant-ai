@@ -1,0 +1,34 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:4005/api
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "4005:4005"
+    environment:
+      - NODE_ENV=development
+      - PORT=4005
+      - QUANT_ENGINE_URL=http://quant-engine:8000
+    depends_on:
+      - quant-engine
+
+  quant-engine:
+    build:
+      context: services/quant-engine
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1

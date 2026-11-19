@@ -1,0 +1,108 @@
+/**
+ * @file packages/ui/src/styles/metric-card.css
+ * @description Modular stylesheet for metric-card.
+ * Architecture: W3C Cascade Layer @layer dl-components
+ */
+
+@layer dl-components {
+  /* ==========================================================================
+   Metric Cards Grid (Prediction Lab & Portfolio)
+   ========================================================================== */
+
+  .metric-grid,
+  .portfolio-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .monitor-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+  }
+
+  .metric-card,
+  .kpi-metric-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .metric-top,
+  .kpi-icon-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .metric-top-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .metric-icon {
+    color: var(--brand-cyan);
+  }
+
+  .icon-blue {
+    color: var(--chart-actual);
+  }
+  .icon-green {
+    color: var(--color-gain);
+  }
+  .icon-emerald {
+    color: var(--success);
+  }
+  .icon-amber {
+    color: var(--color-amber);
+  }
+
+  .metric-label,
+  .kpi-title {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+  }
+
+  .metric-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: var(--radius-sm);
+    background-color: color-mix(in srgb, var(--foreground) 5%, transparent);
+    color: var(--text-muted);
+  }
+
+  .badge-green {
+    background-color: var(--color-gain-bg);
+    color: var(--color-gain);
+  }
+
+  .metric-value,
+  .kpi-big-number {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--foreground);
+    line-height: 1.1;
+  }
+
+  .metric-hint,
+  .kpi-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .metric-divider {
+    color: var(--text-dim);
+  }
+}

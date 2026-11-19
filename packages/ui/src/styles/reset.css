@@ -1,0 +1,99 @@
+/**
+ * @file packages/ui/src/styles/reset.css
+ * @description Modular stylesheet for reset.
+ * Architecture: W3C Cascade Layer @layer dl-reset
+ */
+
+@layer dl-reset {
+  /* ==========================================================================
+   QuantAI — Intelligent Market Analytics & Predictive Workstation
+   Standard: Pure Platform CSS, W3C Cascade Layers, High Contrast & Accessibility
+   ========================================================================== */
+
+  :root {
+    /* Inherit Typography from @yuva-devlab/tokens */
+    --font-sans: var(--theme-font-sans, "Inter", -apple-system, BlinkMacSystemFont, sans-serif);
+    --font-mono: var(--theme-font-mono, "JetBrains Mono", ui-monospace, monospace);
+
+    /* Color Palette mapped directly to @yuva-devlab/tokens */
+    --bg-app: var(--background);
+    --bg-sidebar: var(--sidebar);
+    --bg-card: var(--card);
+    --bg-card-hover: oklch(from var(--card) calc(l + 0.04) c h);
+    --bg-card-subtle: oklch(from var(--card) calc(l - 0.02) c h);
+    --bg-input: var(--input);
+
+    --border-subtle: var(--border);
+    --border-active: var(--ring);
+    --border-focus: var(--primary);
+
+    --text-primary: var(--foreground);
+    --text-secondary: oklch(from var(--foreground) calc(l - 0.15) c h);
+    --text-muted: var(--muted-foreground);
+    --text-dim: oklch(from var(--muted-foreground) calc(l - 0.15) c h);
+
+    --brand-cyan: var(--primary);
+    --brand-cyan-glow: oklch(from var(--primary) l c h / 20%);
+    --brand-blue: var(--chart-actual);
+
+    --color-gain: var(--success);
+    --color-gain-bg: oklch(from var(--success) l c h / 12%);
+    --color-loss: var(--destructive);
+    --color-loss-bg: oklch(from var(--destructive) l c h / 12%);
+    --color-amber: var(--warning);
+    --color-amber-bg: oklch(from var(--warning) l c h / 12%);
+
+    --radius-sm: calc(var(--radius, 0.75rem) * 0.5);
+    --radius-md: calc(var(--radius, 0.75rem) * 0.75);
+    --radius-lg: var(--radius, 0.75rem);
+    --radius-xl: calc(var(--radius, 0.75rem) * 1.25);
+    --radius-full: 9999px;
+
+    --shadow-card: 0 4px 20px color-mix(in srgb, var(--background) 80%, black);
+    --shadow-glow: 0 0 24px oklch(from var(--primary) l c h / 15%);
+  }
+
+  /* Base Styles */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html,
+  body {
+    height: 100%;
+    background-color: var(--bg-app);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+  }
+
+  .mono {
+    font-family: var(--font-mono);
+  }
+
+  .highlight {
+    color: var(--primary);
+  }
+}

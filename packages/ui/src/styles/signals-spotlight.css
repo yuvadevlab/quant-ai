@@ -1,0 +1,128 @@
+/**
+ * @file packages/ui/src/styles/signals-spotlight.css
+ * @description Modular stylesheet for signals-spotlight.
+ * Architecture: W3C Cascade Layer @layer dl-components
+ */
+
+@layer dl-components {
+  /* ==========================================================================
+   Active Signals Spotlight Section
+   ========================================================================== */
+
+  .signals-spotlight-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .spotlight-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--brand-cyan);
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--foreground);
+    letter-spacing: -0.3px;
+    margin-top: 4px;
+  }
+
+  .view-all-signals-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brand-cyan);
+  }
+
+  .view-all-signals-link:hover {
+    text-decoration: underline;
+  }
+
+  .signals-spotlight-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .signal-spotlight-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    box-shadow: var(--shadow-card);
+    transition:
+      transform 0.15s,
+      border-color 0.15s;
+  }
+
+  .signal-spotlight-card:hover {
+    border-color: var(--border-active);
+    transform: translateY(-2px);
+  }
+
+  .card-top-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .signal-id-tag {
+    font-size: 10px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+  }
+
+  .signal-symbol {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--foreground);
+    margin-top: 2px;
+  }
+
+  .signal-company {
+    font-size: 11.5px;
+    color: var(--text-muted);
+  }
+
+  .signal-badge-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .direction-badge {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: var(--radius-sm);
+  }
+
+  .badge-buy {
+    background-color: var(--color-gain-bg);
+    color: var(--color-gain);
+    border: 1px solid color-mix(in srgb, var(--success) 30%, transparent);
+  }
+
+  .badge-sell {
+    background-color: var(--color-loss-bg);
+    color: var(--color-loss);
+    border: 1px solid color-mix(in srgb, var(--destructive) 30%, transparent);
+  }
+}

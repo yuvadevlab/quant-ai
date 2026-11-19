@@ -1,0 +1,36 @@
+{
+  "name": "@quant-ai/api",
+  "version": "1.0.0",
+  "description": "Enterprise NestJS quantitative market intelligence and trading API gateway",
+  "author": "yuva.devlab@gmail.com",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "nest start --watch",
+    "build": "nest build",
+    "start": "node dist/main.js",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.0.1",
+    "@nestjs/terminus": "^11.0.0",
+    "@quant-ai/contracts": "workspace:*",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/schematics": "^11.0.0",
+    "@nestjs/testing": "^11.0.1",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.16.5",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.10"
+  }
+}
