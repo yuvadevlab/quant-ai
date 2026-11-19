@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  AiProviderType,
   CachePrefix,
   Candle,
   EventTopic,
@@ -15,6 +16,7 @@ import { MarketService } from "../src/modules/market/market.service";
 import { PredictionsService } from "../src/modules/predictions/predictions.service";
 import { MarketRegimeService } from "../src/modules/quant-analysis/market-regime.service";
 import { MultiAgentDeliberationService } from "../src/modules/quant-analysis/multi-agent-deliberation.service";
+import { AiProviderFactory } from "../src/modules/quant-analysis/ai-provider.factory";
 import { TechnicalAnalysisService } from "../src/modules/quant-analysis/technical-analysis.service";
 import { ScreenerService } from "../src/modules/screener/screener.service";
 import { ConfigService } from "../src/modules/infrastructure/config.service";
@@ -195,6 +197,40 @@ describe("NestJS Domain Services", () => {
     );
     expect(cachedTick?.symbol).toBe(MarketIndex.NIFTY_50);
     expect(cachedTick?.price).toBe(tick.price);
+    unsub();
+  });
+
+  it("conducts multi-agent adversarial deliberation and publishes domain envelope", async () => {
+    const config = new ConfigService();
+    const bus = new EventBusService(config);
+    const gateway = new RealtimeGateway();
+    const realtime = new RealtimeService(gateway);
+    const factory = new AiProviderFactory(config);
+    const deliberationService = new MultiAgentDeliberationService(factory, bus, realtime);
+
+    let deliberationEventReceived = false;
+    const unsub = bus.subscribe(EventTopic.DELIBERATION_COMPLETED, () => {
+      deliberationEventReceived = true;
+    });
+
+    const outcome = await deliberationService.conductAdversarialDeliberation(
+      {
+        predictionId: "PRED-8942",
+        ticker: "NIFTY 50",
+        currentPrice: 24350,
+        targetPrice: 24580,
+        stopLossPrice: 24210,
+        rsi: 62.4,
+        atr: 110.5,
+        regime: SignalRegime.BULLISH_EXPANSION,
+      },
+      AiProviderType.SIMULATED,
+    );
+
+    expect(outcome.predictionId).toBe("PRED-8942");
+    expect(outcome.verdicts).toHaveLength(3);
+    expect(outcome.compositeConfidence).toBeGreaterThan(50);
+    expect(deliberationEventReceived).toBe(true);
     unsub();
   });
 });

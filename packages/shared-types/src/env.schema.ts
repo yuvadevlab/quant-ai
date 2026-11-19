@@ -29,6 +29,9 @@ export const ApiEnvironmentSchema = z.object({
   JWT_SECRET: z.string().min(8).default(DefaultSecret.DEV_JWT),
   AI_PROVIDER: z.nativeEnum(AiProviderType).default(AiProviderType.GEMINI),
   GEMINI_API_KEY: z.string().optional().default(""),
+  ANTHROPIC_API_KEY: z.string().optional().default(""),
+  GROQ_API_KEY: z.string().optional().default(""),
+  OLLAMA_BASE_URL: z.string().optional().default("http://localhost:11434"),
 });
 
 /**

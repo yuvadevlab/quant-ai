@@ -37,6 +37,8 @@ export enum EventBrokerType {
  */
 export enum AiProviderType {
   GEMINI = "gemini",
-  OPENAI = "openai",
   ANTHROPIC = "anthropic",
+  GROQ = "groq",
+  OLLAMA = "ollama",
+  SIMULATED = "simulated",
 }

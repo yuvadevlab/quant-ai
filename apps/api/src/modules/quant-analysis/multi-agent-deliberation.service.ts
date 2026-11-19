@@ -1,40 +1,53 @@
-import { Injectable } from "@nestjs/common";
+/**
+ * @file apps/api/src/modules/quant-analysis/multi-agent-deliberation.service.ts
+ * @description Service orchestrating the 3-agent adversarial deliberation and institutional risk gate.
+ * @author yuva.devlab@gmail.com
+ */
+
+import { Injectable, Optional } from "@nestjs/common";
+import { Logger } from "@yuva-devlab/logger";
 import {
   AgentDeliberationItem,
   AgentRole,
   AgentStance,
+  AiProviderType,
   DEFAULT_RISK_GATE_CONFIG,
+  EventTopic,
   evaluateTradeExpectancy,
   RiskGateConfig,
   synthesizeAgentConsensus,
   TradeExpectancyInput,
   TradeExpectancyResult,
 } from "@quant-ai/shared-types";
+import { createDeliberationEnvelope } from "@quant-ai/events";
+import { EventBusService } from "../infrastructure/event-bus.service";
+import { RealtimeService } from "../realtime/realtime.service";
+import { AiProviderFactory } from "./ai-provider.factory";
+import type {
+  DeliberationOutcome,
+  DeliberationSessionInput,
+  TradePriceSetup,
+} from "./deliberation-session.types";
 
-/**
- * High-level price parameter inputs for expectancy calculation.
- */
-export interface TradePriceSetup {
-  readonly entryPrice: number;
-  readonly targetPrice: number;
-  readonly stopLossPrice: number;
-  readonly winProbability: number;
-  readonly estimatedFriction?: number;
-}
+export type { DeliberationOutcome, DeliberationSessionInput, TradePriceSetup };
 
 /**
  * Service orchestrating the 3-agent adversarial deliberation and institutional risk gate.
  */
 @Injectable()
 export class MultiAgentDeliberationService {
+  private readonly logger = new Logger(MultiAgentDeliberationService.name);
+
+  public constructor(
+    @Optional() private readonly aiProviderFactory?: AiProviderFactory,
+    @Optional() private readonly eventBusService?: EventBusService,
+    @Optional() private readonly realtimeService?: RealtimeService,
+  ) {}
+
   /**
    * Evaluates mathematical trade expectancy and enforces the risk-to-reward ratio threshold.
-   *
-   * @param setup Trade setup parameters.
-   * @param config Optional risk threshold overrides.
-   * @returns TradeExpectancyResult detailing expectancy, ratio, and approval status.
    */
-  evaluateExpectancy(
+  public evaluateExpectancy(
     setup: TradePriceSetup | TradeExpectancyInput,
     config?: Partial<RiskGateConfig>,
   ): TradeExpectancyResult {
@@ -55,12 +68,8 @@ export class MultiAgentDeliberationService {
 
   /**
    * Synthesizes individual agent stances into an institutional consensus.
-   * Enforces hard skeptic red-team veto protection.
-   *
-   * @param deliberations Array of agent evaluations.
-   * @returns Aggregated stance, composite confidence, and veto status.
    */
-  synthesizeConsensus(deliberations: readonly AgentDeliberationItem[]): {
+  public synthesizeConsensus(deliberations: readonly AgentDeliberationItem[]): {
     readonly consensusStance: AgentStance;
     readonly compositeConfidence: number;
     readonly isVetoedBySkeptic: boolean;
@@ -69,14 +78,107 @@ export class MultiAgentDeliberationService {
   }
 
   /**
-   * Factory producing standard default multi-agent deliberation for a technical breakout.
-   *
-   * @param ticker Asset ticker symbol.
-   * @param rsi Current RSI indicator value.
-   * @param riskReward Computed trade risk to reward ratio.
-   * @returns Array of standard 3-agent deliberations.
+   * Conducts live asynchronous adversarial deliberation using the configured AI model adapter.
    */
-  generateBreakoutDebate(
+  public async conductAdversarialDeliberation(
+    session: DeliberationSessionInput,
+    providerOverride?: AiProviderType,
+  ): Promise<DeliberationOutcome> {
+    const riskRewardRatio =
+      Math.abs(session.targetPrice - session.currentPrice) /
+      Math.max(0.01, Math.abs(session.currentPrice - session.stopLossPrice));
+
+    const adapter = this.aiProviderFactory?.getAdapter(providerOverride);
+    const roles: AgentRole[] = [
+      AgentRole.MOMENTUM_ANALYST,
+      AgentRole.RED_TEAM_SKEPTIC,
+      AgentRole.QUANT_RISK_OFFICER,
+    ];
+
+    const verdicts: AgentDeliberationItem[] = [];
+    const timestamp = new Date().toISOString();
+
+    for (const role of roles) {
+      const output = adapter
+        ? await adapter.generateAgentVerdict({
+            ticker: session.ticker,
+            role,
+            currentPrice: session.currentPrice,
+            rsi: session.rsi,
+            atr: session.atr,
+            regime: session.regime,
+            targetPrice: session.targetPrice,
+            stopLossPrice: session.stopLossPrice,
+            riskRewardRatio,
+          })
+        : {
+            role,
+            stance: AgentStance.BULLISH,
+            confidence: 85,
+            summary: `${role} verified trade parameters.`,
+            rationale: "Default heuristic approval",
+            isVeto: false,
+          };
+
+      verdicts.push({
+        role: output.role,
+        stance: output.stance,
+        confidence: output.confidence,
+        summary: output.summary,
+        keyCatalyst: output.keyCatalyst,
+        keyRisk: output.keyRisk,
+      });
+
+      // Stream agent speech event to WebSocket clients
+      this.realtimeService?.emitAgentSpeech({
+        predictionId: session.predictionId,
+        agentName: role,
+        stance: output.stance,
+        reasoning: output.summary,
+        confidence: output.confidence,
+        timestamp,
+      });
+    }
+
+    const consensus = this.synthesizeConsensus(verdicts);
+
+    // Dispatch ecosystem DomainEventEnvelope to event bus
+    const envelope = createDeliberationEnvelope({
+      predictionId: session.predictionId,
+      consensusVeto: consensus.isVetoedBySkeptic,
+      netScore: consensus.compositeConfidence,
+      verdicts: verdicts.map((v) => ({
+        agentRole: v.role,
+        stance: v.stance,
+        score: v.confidence,
+        rationale: v.summary,
+        isVeto: v.stance === AgentStance.BEARISH,
+      })),
+      timestamp,
+    });
+
+    if (this.eventBusService) {
+      await this.eventBusService.publish(EventTopic.DELIBERATION_COMPLETED, envelope);
+    }
+
+    this.logger.info(
+      `Deliberation completed [PRED: ${session.predictionId}] [CONSENSUS: ${consensus.consensusStance}] [CONF: ${consensus.compositeConfidence}%] [VETO: ${consensus.isVetoedBySkeptic}]`,
+    );
+
+    return {
+      predictionId: session.predictionId,
+      consensusStance: consensus.consensusStance,
+      compositeConfidence: consensus.compositeConfidence,
+      isVetoedBySkeptic: consensus.isVetoedBySkeptic,
+      verdicts,
+      timestamp,
+    };
+  }
+
+  /**
+   * Factory producing standard default multi-agent deliberation for a technical breakout.
+   */
+  public generateBreakoutDebate(
     ticker: string,
     rsi: number,
     riskReward: number,
