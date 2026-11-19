@@ -1,28 +1,48 @@
 /**
- * @fileoverview Database connectivity and storage engine lifecycle service.
+ * @fileoverview Database connectivity and Prisma persistence service.
  * @author yuva.devlab@gmail.com
  */
 
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { HealthStatus } from "@quant-ai/contracts";
+import { createPrismaClient, type PrismaClient } from "@quant-ai/database";
 import { ConfigService } from "./config.service";
 
 /**
- * Service managing connection state for PostgreSQL and TimescaleDB persistence.
+ * Service managing PrismaClient lifecycle and PostgreSQL persistence.
  */
 @Injectable()
-export class DatabaseService implements OnModuleInit {
+export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(DatabaseService.name);
+  private prismaClient!: PrismaClient;
   private isConnected = false;
 
   public constructor(private readonly configService: ConfigService) {}
 
   /**
-   * Initializes database connection verification.
+   * Initializes Prisma connection.
    */
-  public onModuleInit(): void {
-    this.logger.log(`Database service initialized [Driver: ${this.configService.databaseDriver}]`);
+  public async onModuleInit(): Promise<void> {
+    this.logger.log(`Database service initializing [Driver: ${this.configService.databaseDriver}]`);
+    this.prismaClient = createPrismaClient(this.configService.databaseUrl);
     this.isConnected = true;
+  }
+
+  /**
+   * Graceful disconnection on module shutdown.
+   */
+  public async onModuleDestroy(): Promise<void> {
+    if (this.prismaClient) {
+      await this.prismaClient.$disconnect();
+      this.isConnected = false;
+    }
+  }
+
+  /**
+   * Access the underlying typed PrismaClient instance.
+   */
+  public get client(): PrismaClient {
+    return this.prismaClient;
   }
 
   /**
@@ -33,7 +53,7 @@ export class DatabaseService implements OnModuleInit {
   }
 
   /**
-   * Diagnostic health check for PostgreSQL storage engine.
+   * Diagnostic health check probe.
    */
   public async ping(): Promise<{
     status: HealthStatus.UP | HealthStatus.DOWN;

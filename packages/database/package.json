@@ -1,0 +1,37 @@
+{
+  "name": "@quant-ai/database",
+  "version": "1.0.0",
+  "description": "Prisma ORM database schema, migrations, repositories, and persistence client for QuantAI",
+  "author": "yuva.devlab@gmail.com",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "prisma generate && tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "test": "prisma generate && vitest run src/",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:seed": "node dist/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "@quant-ai/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.16.5",
+    "prisma": "^6.19.3",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.10"
+  }
+}
