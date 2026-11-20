@@ -66,10 +66,12 @@ export function PredictionsPage({ initialData }: PredictionsPageProps) {
           targetHitCount={counts.targetHit}
           stopHitCount={counts.stopHit}
           winRate={initialData.winRate}
+          winRateBadge={initialData.winRateBadge}
           profitFactor={initialData.profitFactor}
           riskReward={initialData.riskReward}
           avgGainText={initialData.avgGainText}
           avgLossText={initialData.avgLossText}
+          holdingHint={initialData.holdingHint}
         />
         <PredictionsToolbar
           activeFilter={activeFilter}

@@ -213,24 +213,22 @@ export class MarketService implements OnModuleInit, OnModuleDestroy {
 
   private async hydrateLiveIndices(): Promise<void> {
     const symbols = Array.from(this.liveIndices.keys());
-    await Promise.all(
-      symbols.map(async (symbol) => {
-        try {
-          const live = await this.liveMarketFeed.getLiveQuote(symbol);
-          const existing = this.liveIndices.get(symbol);
-          if (existing) {
-            this.liveIndices.set(symbol, {
-              ...existing,
-              price: live.price,
-              change: live.change,
-              changePercent: live.percentChange,
-              sparkline: live.sparkline.length > 0 ? live.sparkline : [live.price],
-            });
-          }
-        } catch {
-          this.logger.warn(`[hydrateLiveIndices] Could not hydrate live quote for ${symbol}`);
+    for (const symbol of symbols) {
+      try {
+        const live = await this.liveMarketFeed.getLiveQuote(symbol);
+        const existing = this.liveIndices.get(symbol);
+        if (existing) {
+          this.liveIndices.set(symbol, {
+            ...existing,
+            price: live.price,
+            change: live.change,
+            changePercent: live.percentChange,
+            sparkline: live.sparkline.length > 0 ? live.sparkline : [live.price],
+          });
         }
-      }),
-    );
+      } catch {
+        this.logger.warn(`[hydrateLiveIndices] Could not hydrate live quote for ${symbol}`);
+      }
+    }
   }
 }

@@ -6,25 +6,15 @@
 
 import React, { useCallback, useMemo, useState } from "react";
 import { DevLabAuthProvider } from "@yuva-devlab/auth-client";
-import { AuthPrompt, StorageKey } from "@quant-ai/shared-types";
+import { AuthPrompt, AuthQueryParamKey, StorageKey } from "@quant-ai/shared-types";
 import { APP_ID, DEVLAB_PORTAL_API_URL, DEVLAB_PORTAL_WEB_URL } from "../../lib/app-constants";
 import { DEVLAB_PORTAL_ROUTES } from "../../lib/portal-routes";
+import { isJwtExpired, parseJwtClaims } from "../../lib/jwt";
 import { AuthContext, type AuthContextValue, type AuthUser } from "./auth-context";
 
 export interface AuthProviderProps {
   readonly initialToken?: string | null;
   readonly children: React.ReactNode;
-}
-
-function parseJwtPayload(jwt: string): Record<string, unknown> | null {
-  try {
-    const parts = jwt.split(".");
-    const part = parts[1];
-    if (!part || parts.length !== 3) return null;
-    return JSON.parse(atob(part));
-  } catch {
-    return null;
-  }
 }
 
 function readCookieToken(): string | null {
@@ -36,73 +26,104 @@ function readCookieToken(): string | null {
   return match?.[1] ? decodeURIComponent(match[1]) : null;
 }
 
+function resolveInitialToken(initialToken: string | null): string | null {
+  if (typeof window === "undefined") return initialToken;
+
+  // 1. Check URL parameters for return SSO tokens from DevLab Portal
+  const params = new URLSearchParams(window.location.search);
+  const urlToken =
+    params.get(AuthQueryParamKey.TOKEN) || params.get(AuthQueryParamKey.ACCESS_TOKEN);
+
+  if (urlToken && !isJwtExpired(urlToken)) {
+    localStorage.setItem(StorageKey.TOKEN, urlToken);
+    localStorage.setItem(StorageKey.DEVLAB_ACCESS_TOKEN, urlToken);
+    document.cookie = `${StorageKey.TOKEN}=${encodeURIComponent(urlToken)}; path=/; max-age=604800; SameSite=Lax`;
+    document.cookie = `${StorageKey.DEVLAB_ACCESS_TOKEN}=${encodeURIComponent(urlToken)}; path=/; max-age=604800; SameSite=Lax`;
+
+    params.delete(AuthQueryParamKey.TOKEN);
+    params.delete(AuthQueryParamKey.ACCESS_TOKEN);
+    const remaining = params.toString();
+    const cleanUrl =
+      window.location.pathname + (remaining ? `?${remaining}` : "") + window.location.hash;
+    window.history.replaceState({}, document.title, cleanUrl);
+    return urlToken;
+  }
+
+  // 2. Check explicitly provided token
+  if (initialToken && !isJwtExpired(initialToken)) {
+    localStorage.setItem(StorageKey.TOKEN, initialToken);
+    localStorage.setItem(StorageKey.DEVLAB_ACCESS_TOKEN, initialToken);
+    return initialToken;
+  }
+
+  // 3. Check localStorage
+  const stored =
+    localStorage.getItem(StorageKey.TOKEN) ||
+    localStorage.getItem(StorageKey.DEVLAB_ACCESS_TOKEN) ||
+    localStorage.getItem(StorageKey.DEVLAB_AUTH_TOKEN);
+
+  if (stored) {
+    if (isJwtExpired(stored)) {
+      localStorage.removeItem(StorageKey.TOKEN);
+      localStorage.removeItem(StorageKey.DEVLAB_ACCESS_TOKEN);
+      localStorage.removeItem(StorageKey.DEVLAB_AUTH_TOKEN);
+      localStorage.removeItem(StorageKey.USER);
+      return null;
+    }
+    return stored;
+  }
+
+  // 4. Check cookie
+  const cookieToken = readCookieToken();
+  if (cookieToken && !isJwtExpired(cookieToken)) {
+    localStorage.setItem(StorageKey.TOKEN, cookieToken);
+    localStorage.setItem(StorageKey.DEVLAB_ACCESS_TOKEN, cookieToken);
+    return cookieToken;
+  }
+
+  return null;
+}
+
+function resolveInitialUser(activeToken: string | null): AuthUser | null {
+  if (typeof window === "undefined" || !activeToken || isJwtExpired(activeToken)) {
+    return null;
+  }
+
+  const storedUser =
+    localStorage.getItem(StorageKey.USER) || localStorage.getItem(StorageKey.DEVLAB_AUTH_USER);
+  if (storedUser) {
+    try {
+      return JSON.parse(storedUser) as AuthUser;
+    } catch {
+      // Fall through to JWT claims
+    }
+  }
+
+  const claims = parseJwtClaims(activeToken);
+  if (claims && typeof claims.email === "string") {
+    const email = claims.email;
+    const sub = typeof claims.sub === "string" ? claims.sub : "";
+    const rawName = typeof claims.name === "string" ? claims.name : undefined;
+    const fallbackName = email.split("@")[0] ?? "Trader";
+    const authUser: AuthUser = {
+      id: sub || (claims as Record<string, string>)["id"] || "",
+      email,
+      name: rawName ?? fallbackName,
+      roles: claims.roles ?? (claims.role ? [claims.role] : []),
+    };
+    localStorage.setItem(StorageKey.USER, JSON.stringify(authUser));
+    return authUser;
+  }
+
+  return null;
+}
+
 /**
  * QuantAI authentication provider supporting DevLab Portal SSO, token storage, and logout.
  */
 export function AuthProvider({ initialToken = null, children }: AuthProviderProps) {
-  const [token] = useState<string | null>(() => {
-    if (initialToken) {
-      if (typeof window !== "undefined") {
-        localStorage.setItem(StorageKey.TOKEN, initialToken);
-        localStorage.setItem(StorageKey.DEVLAB_ACCESS_TOKEN, initialToken);
-      }
-      return initialToken;
-    }
-    if (typeof window !== "undefined") {
-      const stored =
-        localStorage.getItem(StorageKey.TOKEN) ||
-        localStorage.getItem(StorageKey.DEVLAB_ACCESS_TOKEN) ||
-        localStorage.getItem(StorageKey.DEVLAB_AUTH_TOKEN);
-      if (stored) return stored;
-
-      const cookieToken = readCookieToken();
-      if (cookieToken) {
-        localStorage.setItem(StorageKey.TOKEN, cookieToken);
-        localStorage.setItem(StorageKey.DEVLAB_ACCESS_TOKEN, cookieToken);
-        return cookieToken;
-      }
-    }
-    return null;
-  });
-
-  const [user] = useState<AuthUser | null>(() => {
-    if (typeof window !== "undefined") {
-      const storedUser =
-        localStorage.getItem(StorageKey.USER) || localStorage.getItem(StorageKey.DEVLAB_AUTH_USER);
-      if (storedUser) {
-        try {
-          return JSON.parse(storedUser);
-        } catch {
-          // Fall through to JWT extraction
-        }
-      }
-
-      const activeToken =
-        initialToken ||
-        localStorage.getItem(StorageKey.TOKEN) ||
-        localStorage.getItem(StorageKey.DEVLAB_ACCESS_TOKEN) ||
-        readCookieToken();
-
-      if (activeToken) {
-        const payload = parseJwtPayload(activeToken);
-        if (payload && typeof payload["email"] === "string") {
-          const email = payload["email"];
-          const sub = typeof payload["sub"] === "string" ? payload["sub"] : "";
-          const id = typeof payload["id"] === "string" ? payload["id"] : "";
-          const rawName = typeof payload["name"] === "string" ? payload["name"] : undefined;
-          const fallbackName = email.split("@")[0] ?? "User";
-          const authUser: AuthUser = {
-            id: sub || id || "",
-            email,
-            name: rawName ?? fallbackName,
-          };
-          localStorage.setItem(StorageKey.USER, JSON.stringify(authUser));
-          return authUser;
-        }
-      }
-    }
-    return null;
-  });
+  const [token] = useState<string | null>(() => resolveInitialToken(initialToken));
+  const [user] = useState<AuthUser | null>(() => resolveInitialUser(token));
 
   const logout = useCallback(() => {
     if (typeof window !== "undefined") {
@@ -126,7 +147,7 @@ export function AuthProvider({ initialToken = null, children }: AuthProviderProp
     () => ({
       token,
       user,
-      isAuthenticated: Boolean(token && user),
+      isAuthenticated: Boolean(token && user && !isJwtExpired(token)),
       logout,
     }),
     [token, user, logout],

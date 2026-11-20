@@ -18,6 +18,9 @@ describe("Prisma Database Client Factory", () => {
     expect(client.agentVerdict).toBeDefined();
     expect(client.trajectoryPoint).toBeDefined();
     expect(client.screenerStock).toBeDefined();
+    expect(client.user).toBeDefined();
+    expect(client.chatSession).toBeDefined();
+    expect(client.chatMessage).toBeDefined();
   });
 
   it("initializes a PrismaClient instance with accelerateUrl", () => {

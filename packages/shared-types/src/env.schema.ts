@@ -10,6 +10,7 @@ import {
   DefaultNetworkHost,
   DefaultConnectionUrl,
   DefaultSecret,
+  DefaultAiModel,
 } from "./env.constants";
 
 /**
@@ -27,7 +28,16 @@ export const ApiEnvironmentSchema = z.object({
   EVENT_BROKER: z.nativeEnum(EventBrokerType).default(EventBrokerType.MEMORY),
   QUANT_ENGINE_URL: z.string().url().default(DefaultConnectionUrl.QUANT_ENGINE),
   JWT_SECRET: z.string().min(8).default(DefaultSecret.DEV_JWT),
-  AI_PROVIDER: z.nativeEnum(AiProviderType).default(AiProviderType.GEMINI),
+  AI_PROVIDER: z.nativeEnum(AiProviderType).default(AiProviderType.CLINE),
+  AI_PROVIDER_AGENT: z.nativeEnum(AiProviderType).optional(),
+  AI_PROVIDER_CHAT: z.nativeEnum(AiProviderType).optional(),
+  CLINE_BASE_URL: z.string().default(DefaultConnectionUrl.CLINE_BASE_URL),
+  CLINE_API_PATH: z.string().default(DefaultConnectionUrl.CLINE_API_PATH),
+  CLINE_API_KEY: z.string().optional().default(""),
+  CLINE_MODEL: z.string().default(DefaultAiModel.CLINE_DEFAULT),
+  CLINE_AGENT_MODEL: z.string().default(DefaultAiModel.CLINE_AGENT),
+  CLINE_CHAT_MODEL: z.string().default(DefaultAiModel.CLINE_CHAT),
+  CLINE_ANALYSIS_MODEL: z.string().default(DefaultAiModel.CLINE_ANALYSIS),
   GEMINI_API_KEY: z.string().optional().default(""),
   ANTHROPIC_API_KEY: z.string().optional().default(""),
   GROQ_API_KEY: z.string().optional().default(""),

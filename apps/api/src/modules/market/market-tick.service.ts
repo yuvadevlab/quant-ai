@@ -44,10 +44,10 @@ export class MarketTickService implements OnModuleInit, OnModuleDestroy {
       return;
     }
 
-    this.logger.info("[onModuleInit] Market tick streamer started (cadence: 1000ms)");
+    this.logger.info("[onModuleInit] Market tick streamer started (cadence: 2000ms)");
     this.timer = setInterval(() => {
       void this.broadcastNextTickBatch();
-    }, 1000);
+    }, 2000);
   }
 
   private async loadTrackedSymbolsFromDb(): Promise<void> {
@@ -133,7 +133,9 @@ export class MarketTickService implements OnModuleInit, OnModuleDestroy {
       try {
         await this.generateAndPublishTick(symbol);
       } catch (error) {
-        this.logger.error(`[broadcastNextTickBatch] Tick emission failed for ${symbol}`, error);
+        this.logger.warn(
+          `[broadcastNextTickBatch] Skipping tick for ${symbol}: ${error instanceof Error ? error.message : String(error)}`,
+        );
       }
     }
   }

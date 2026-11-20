@@ -24,7 +24,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
-    "db:seed": "node dist/seed.js"
+    "db:seed": "tsup src/seed.ts --format esm --no-dts --out-dir dist && node dist/seed.js"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

@@ -10,6 +10,7 @@ import {
   AgentDeliberationItem,
   AgentRole,
   AgentStance,
+  AiModelPurpose,
   AiProviderType,
   DEFAULT_RISK_GATE_CONFIG,
   EventTopic,
@@ -88,7 +89,11 @@ export class MultiAgentDeliberationService {
       Math.abs(session.targetPrice - session.currentPrice) /
       Math.max(0.01, Math.abs(session.currentPrice - session.stopLossPrice));
 
-    const adapter = this.aiProviderFactory?.getAdapter(providerOverride);
+    const adapter = this.aiProviderFactory?.getAdapter(
+      providerOverride,
+      undefined,
+      AiModelPurpose.DELIBERATION,
+    );
     const roles: AgentRole[] = [
       AgentRole.MOMENTUM_ANALYST,
       AgentRole.RED_TEAM_SKEPTIC,

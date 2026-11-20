@@ -6,7 +6,7 @@
 
 import { Injectable, Optional } from "@nestjs/common";
 import { Logger } from "@yuva-devlab/logger";
-import { AiProviderType, AgentRole, AgentStance } from "@quant-ai/shared-types";
+import { AiProviderType, AgentRole, AgentStance, AiModelPurpose } from "@quant-ai/shared-types";
 import { LiveMarketFeedService } from "../market/feed";
 import { AiProviderFactory } from "../quant-analysis/ai-provider.factory";
 import { CHAT_QUERY_SYMBOLS, CHAT_TEMPLATES } from "./chat.constants";
@@ -64,7 +64,11 @@ export class ChatService {
       }
     }
 
-    const adapter = this.aiProviderFactory?.getAdapter(providerOverride);
+    const adapter = this.aiProviderFactory?.getAdapter(
+      providerOverride,
+      undefined,
+      AiModelPurpose.CHAT,
+    );
     if (adapter) {
       this.logger.debug(
         `[handleUserMessage] AI Provider adapter selected: ${adapter.constructor.name}`,

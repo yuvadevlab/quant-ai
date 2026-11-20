@@ -11,19 +11,67 @@ datasource db {
   provider = "postgresql"
 }
 
+/// DevLab centralized user account shadow record.
+/// Authenticated via DevLab Portal OIDC/JWKS (RS256).
+/// Local signup is prohibited; accounts are provisioned Just-In-Time (JIT) on first SSO login.
+model User {
+  id              String           @id
+  email           String           @unique
+  name            String
+  passwordHash    String?          @map("password_hash")
+  avatarUrl       String?          @map("avatar_url")
+  preferences     Json             @default("{}")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  chatSessions    ChatSession[]
+  paperPositions  PaperPosition[]
+  paperExecutions PaperExecution[]
+
+  @@map("users")
+}
+
+/// User Copilot Chat Sessions.
+model ChatSession {
+  id        String        @id @default(cuid())
+  userId    String        @map("user_id")
+  title     String        @default("Market Copilot Session")
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  ChatMessage[]
+
+  @@index([userId])
+  @@map("chat_sessions")
+}
+
+/// Messages within a user Copilot Chat Session.
+model ChatMessage {
+  id        String      @id @default(cuid())
+  sessionId String      @map("session_id")
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String
+  content   String      @db.Text
+  metadata  Json        @default("{}")
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  @@index([sessionId])
+  @@map("chat_messages")
+}
+
 /// Indian benchmark market indices (NIFTY 50, BANK NIFTY, sectoral tiers).
+/// Master metadata only — live prices (CMP, Day High/Low, change %, volume) are streamed into memory/Redis.
 model BenchmarkIndex {
   id            String   @id @default(cuid())
   symbol        String   @unique
   name          String
   category      String
   exchange      String   @default("NSE")
-  currentPrice  Float
-  change        Float
-  percentChange Float
-  dayHigh       Float
-  dayLow        Float
-  sparkline     Float[]
+  currentPrice  Float?
+  change        Float?
+  percentChange Float?
+  dayHigh       Float?
+  dayLow        Float?
+  sparkline     Float[]  @default([])
   updatedAt     DateTime @updatedAt
   createdAt     DateTime @default(now())
 
@@ -33,24 +81,24 @@ model BenchmarkIndex {
 
 /// Quantitative prediction forecast records and life-cycle state.
 model Prediction {
-  id          String            @id
-  ticker      String
-  name        String
-  direction   String
-  status      String
-  entry       Float
-  target      Float
-  stopLoss    Float
+  id           String            @id
+  ticker       String
+  name         String
+  direction    String
+  status       String
+  entry        Float
+  target       Float
+  stopLoss     Float
   currentPrice Float
-  confidence  Float
-  riskReward  Float
-  timeHorizon String
-  regime      String
-  summary     String
-  verdicts    AgentVerdict[]
-  trajectory  TrajectoryPoint[]
-  createdAt   DateTime          @default(now())
-  expiresAt   DateTime
+  confidence   Float
+  riskReward   Float
+  timeHorizon  String
+  regime       String
+  summary      String
+  verdicts     AgentVerdict[]
+  trajectory   TrajectoryPoint[]
+  createdAt    DateTime          @default(now())
+  expiresAt    DateTime
 
   @@index([ticker, status])
   @@map("predictions")
@@ -99,15 +147,17 @@ model MarketTick {
   @@map("market_ticks")
 }
 
-/// Screened universe items with momentum and breakout classifications.
+/// Screened universe items metadata.
+/// Live metrics (RSI, volume ratio, CMP, change %) are calculated dynamically in real-time.
 model ScreenerStock {
   symbol        String   @id
   company       String
   sector        String
-  price         Float
-  changePercent Float
-  volumeRatio   Float
-  rsi           Float
+  exchange      String   @default("NSE")
+  price         Float?
+  changePercent Float?
+  volumeRatio   Float?
+  rsi           Float?
   isBreakout    Boolean  @default(false)
   isSurge       Boolean  @default(false)
   updatedAt     DateTime @updatedAt
@@ -136,7 +186,6 @@ model LlmProvider {
 }
 
 /// Dynamic registered LLM models offered by providers.
-/// Historical preservation: models are deprecated (is_deprecated=true) rather than deleted.
 model LlmModel {
   id              String      @id @default(cuid())
   providerId      String      @map("provider_id")
@@ -163,7 +212,6 @@ model LlmModel {
 }
 
 /// Dynamic system and market configuration parameters.
-/// Modifiable at runtime via API/DB without code redeployments.
 model SystemConfig {
   key         String   @id @db.VarChar(64)
   value       Json
@@ -177,6 +225,7 @@ model SystemConfig {
 /// Active simulated paper trading positions marked to market.
 model PaperPosition {
   id          String   @id @default(cuid())
+  userId      String?  @map("user_id")
   symbol      String   @unique
   instrument  String
   side        String   @default("LONG")
@@ -186,13 +235,16 @@ model PaperPosition {
   targetPrice Float    @map("target_price")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
+  @@index([userId])
   @@map("paper_positions")
 }
 
 /// Simulated trade executions and historical performance ledger.
 model PaperExecution {
   id         String   @id
+  userId     String?  @map("user_id")
   symbol     String
   type       String   @default("BUY")
   qty        Int
@@ -201,7 +253,9 @@ model PaperExecution {
   pnl        Float
   outcome    String
   timestamp  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
+  @@index([userId])
   @@index([symbol, timestamp(sort: Desc)])
   @@map("paper_executions")
 }

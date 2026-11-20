@@ -8,7 +8,8 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { type ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
+import { StorageKey } from "@quant-ai/shared-types";
 import { AuthProvider } from "../providers/auth";
 
 import appCss from "../styles.css?url";
@@ -116,6 +117,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const activeTheme = localStorage.getItem(StorageKey.THEME) || "quantai-dark";
+      document.documentElement.setAttribute("data-theme", activeTheme);
+      document.documentElement.setAttribute("data-brand", "quantai");
+      document.documentElement.classList.toggle("dark", activeTheme.includes("dark"));
+    }
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

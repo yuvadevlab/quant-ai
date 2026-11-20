@@ -40,5 +40,16 @@ export enum AiProviderType {
   ANTHROPIC = "anthropic",
   GROQ = "groq",
   OLLAMA = "ollama",
+  CLINE = "cline",
   SIMULATED = "simulated",
+}
+
+/**
+ * Purpose or specialized role for AI model routing.
+ */
+export enum AiModelPurpose {
+  AGENT = "agent",
+  CHAT = "chat",
+  DELIBERATION = "deliberation",
+  ANALYSIS = "analysis",
 }

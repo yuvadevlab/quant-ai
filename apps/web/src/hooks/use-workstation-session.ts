@@ -10,9 +10,11 @@ import { useQuery } from "@tanstack/react-query";
 import type { Signal as BackendSignal } from "@quant-ai/shared-types";
 import { apiFetch } from "@/lib/api-fetcher";
 import { mapBackendSignalToUi } from "@/features/predictions/api/getPredictionsData";
-import { UiSignalStatus, type Signal } from "@/components/quantai/data";
 import { useAuth } from "../providers/auth";
 import { useRealtimeTicks } from "./use-realtime-ticks";
+import { calculateSignalsTelemetry, type WorkstationTelemetry } from "./telemetry.util";
+
+export { calculateSignalsTelemetry, type WorkstationTelemetry };
 
 export interface UserSessionProfile {
   readonly email: string;
@@ -31,16 +33,6 @@ export interface MarketSessionInfo {
   readonly isOpen: boolean;
   readonly statusText: string;
   readonly sessionHours: string;
-}
-
-export interface WorkstationTelemetry {
-  readonly totalSignals: number;
-  readonly activeCount: number;
-  readonly targetHitCount: number;
-  readonly stopHitCount: number;
-  readonly winRatePercent: string;
-  readonly avgGainText: string;
-  readonly avgLossText: string;
 }
 
 export interface WorkstationSessionState {
@@ -112,51 +104,6 @@ export function getMarketSessionInfo(date: Date = new Date()): MarketSessionInfo
 }
 
 /**
- * Computes live mathematical hit-rate, excursions, and outcome telemetry from verified signal ledger.
- */
-export function calculateSignalsTelemetry(
-  allSignals: readonly Signal[] = [],
-): WorkstationTelemetry {
-  const activeCount = allSignals.filter((s) => s.status === UiSignalStatus.ACTIVE).length;
-  const targetHitCount = allSignals.filter((s) => s.status === UiSignalStatus.TARGET_HIT).length;
-  const stopHitCount = allSignals.filter((s) => s.status === UiSignalStatus.STOP_HIT).length;
-  const settled = targetHitCount + stopHitCount;
-  const winRateNumber = settled > 0 ? (targetHitCount / settled) * 100 : 0;
-
-  let totalGainPct = 0;
-  let gainCount = 0;
-  let totalLossPct = 0;
-  let lossCount = 0;
-
-  for (const s of allSignals) {
-    const entry = s.entryPrice || parseFloat(s.entry.replace(/,/g, ""));
-    const t1 = parseFloat(s.target1.replace(/,/g, ""));
-    const sl = parseFloat(s.stop.replace(/,/g, ""));
-    if (entry > 0 && t1 > 0) {
-      totalGainPct += ((t1 - entry) / entry) * 100;
-      gainCount++;
-    }
-    if (entry > 0 && sl > 0) {
-      totalLossPct += Math.abs((entry - sl) / entry) * 100;
-      lossCount++;
-    }
-  }
-
-  const avgGain = gainCount > 0 ? (totalGainPct / gainCount).toFixed(1) : "0.0";
-  const avgLoss = lossCount > 0 ? (totalLossPct / lossCount).toFixed(1) : "0.0";
-
-  return {
-    totalSignals: allSignals.length,
-    activeCount,
-    targetHitCount,
-    stopHitCount,
-    winRatePercent: `${winRateNumber.toFixed(1)}%`,
-    avgGainText: `+${avgGain}% avg gain`,
-    avgLossText: `−${avgLoss}% avg loss`,
-  };
-}
-
-/**
  * Universal workstation hook supplying dynamically computed user session, active model,
  * real-time NSE market session hours, and signal ledger hit rates.
  */
@@ -215,8 +162,8 @@ export function useWorkstationSession(): WorkstationSessionState {
 
   const activeModel = useMemo<ActiveAiModelInfo>(
     () => ({
-      id: defaultModel?.modelIdentifier || "gemini-2.5-pro",
-      name: defaultModel?.name || "Gemini 2.5 Pro",
+      id: defaultModel?.modelIdentifier || "nvidia/nemotron-3.5-super-vl:free",
+      name: defaultModel?.name || "NVIDIA Nemotron 3.5 Super VL",
       tier: "Active Multi-Agent Engine",
     }),
     [defaultModel],

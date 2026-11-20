@@ -18,10 +18,12 @@ export interface PredictionsData {
   readonly targetHitCount: number;
   readonly stopHitCount: number;
   readonly winRate: string;
+  readonly winRateBadge: string;
   readonly profitFactor: string;
   readonly riskReward: string;
   readonly avgGainText: string;
   readonly avgLossText: string;
+  readonly holdingHint: string;
 }
 
 export function mapBackendSignalToUi(s: BackendSignal): Signal {
@@ -76,10 +78,12 @@ export async function getPredictionsData(): Promise<PredictionsData> {
     targetHitCount: telemetry.targetHitCount,
     stopHitCount: telemetry.stopHitCount,
     winRate: telemetry.winRatePercent,
-    profitFactor: telemetry.totalSignals > 0 ? "2.41" : "0.00",
-    riskReward: "1 : 2.65",
+    winRateBadge: telemetry.winRateBadge,
+    profitFactor: telemetry.profitFactor,
+    riskReward: telemetry.riskReward,
     avgGainText: telemetry.avgGainText,
     avgLossText: telemetry.avgLossText,
+    holdingHint: telemetry.holdingHint,
   };
 }
 

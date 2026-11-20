@@ -1,6 +1,7 @@
 /**
  * @file apps/api/src/modules/market/feed/live-market-feed.service.ts
  * @description Dynamic multi-asset market data feed service resolving live quotes globally.
+ * Implements Singleflight request coalescing, Last Known Good (LKG) caching, and automatic symbol mapping.
  * @author yuva.devlab@gmail.com
  */
 
@@ -18,13 +19,12 @@ import type { LiveMarketQuote } from "./market-feed.types";
 import { GLOBAL_FEED_SYMBOL_MAP } from "./market-feed.constants";
 import { YahooFinanceHttpClient } from "./yahoo-finance-http.client";
 
-/**
- * Universal live market feed gateway for equities, indices, crypto, options, and commodities.
- */
 @Injectable()
 export class LiveMarketFeedService {
   private readonly logger = new Logger(LiveMarketFeedService.name);
   private readonly memoryCache = new Map<string, { quote: LiveMarketQuote; expiresAt: number }>();
+  private readonly lastKnownQuotes = new Map<string, LiveMarketQuote>();
+  private readonly inFlightRequests = new Map<string, Promise<LiveMarketQuote>>();
   private readonly simulator = new StochasticPriceSimulator();
 
   public constructor(
@@ -34,7 +34,7 @@ export class LiveMarketFeedService {
   ) {}
 
   /**
-   * Resolves and fetches live quote for any symbol worldwide.
+   * Resolves and fetches live quote for any symbol with request coalescing and fallback.
    *
    * @param symbol Ticker or instrument identifier.
    * @returns LiveMarketQuote record.
@@ -45,6 +45,46 @@ export class LiveMarketFeedService {
       return cached;
     }
 
+    const inFlight = this.inFlightRequests.get(symbol);
+    if (inFlight) {
+      return inFlight;
+    }
+
+    const requestPromise = this.fetchFromExchangeOrFallback(symbol);
+    this.inFlightRequests.set(symbol, requestPromise);
+
+    try {
+      return await requestPromise;
+    } finally {
+      this.inFlightRequests.delete(symbol);
+    }
+  }
+
+  /**
+   * Resolves raw symbol to external exchange feed ticker.
+   * Maps NSE indices to ^CNX/^NSE tickers and adds .NS suffix for Indian equities.
+   */
+  public resolveFeedTicker(symbol: string): string {
+    const trimmed = symbol.trim().toUpperCase();
+    const mapped = GLOBAL_FEED_SYMBOL_MAP[trimmed];
+    if (mapped) {
+      return mapped;
+    }
+
+    if (
+      trimmed.startsWith("^") ||
+      trimmed.includes(".NS") ||
+      trimmed.includes(".BO") ||
+      trimmed.includes("-") ||
+      trimmed.includes("=")
+    ) {
+      return trimmed;
+    }
+
+    return `${trimmed}.NS`;
+  }
+
+  private async fetchFromExchangeOrFallback(symbol: string): Promise<LiveMarketQuote> {
     try {
       const feedTicker = this.resolveFeedTicker(symbol);
       const result = await this.yahooHttpClient.fetchChart(feedTicker);
@@ -80,12 +120,20 @@ export class LiveMarketFeedService {
         timestamp: new Date().toISOString(),
       };
 
+      this.lastKnownQuotes.set(symbol, quote);
       this.cacheQuote(symbol, quote);
       return quote;
     } catch (err) {
       this.logger.warn(`[getLiveQuote] Exchange feed query failed for ${symbol}: ${String(err)}`);
 
-      // In automated test environments without internet, use calibrated simulator to prevent flakiness
+      // 1. Return Last Known Good quote if available
+      const lastKnown = this.lastKnownQuotes.get(symbol);
+      if (lastKnown) {
+        this.logger.info(`[getLiveQuote] Serving last known quote for ${symbol}`);
+        return { ...lastKnown, timestamp: new Date().toISOString() };
+      }
+
+      // 2. In automated test environments without internet, use calibrated simulator
       if (process.env.NODE_ENV === "test") {
         const simulated = this.simulator.generateNextTick(symbol);
         const fallbackQuote: LiveMarketQuote = {
@@ -107,25 +155,10 @@ export class LiveMarketFeedService {
         return fallbackQuote;
       }
 
-      // Institutional standard: Never fabricate fake prices when live financial feed is down
       throw new NotFoundException(
         `Real-time quote currently unavailable for symbol "${symbol}". Exchange data feed did not return live price.`,
       );
     }
-  }
-
-  /**
-   * Resolves ticker dynamically without hardcoded blue-chip arrays.
-   */
-  public resolveFeedTicker(symbol: string): string {
-    const trimmed = symbol.trim().toUpperCase();
-    const mapped = GLOBAL_FEED_SYMBOL_MAP[trimmed];
-    if (mapped) {
-      return mapped;
-    }
-
-    // Pass through as-is for universal multi-asset resolution (US equities, FX, Crypto, Commodities)
-    return trimmed;
   }
 
   private getCachedQuote(symbol: string): LiveMarketQuote | undefined {
@@ -136,7 +169,7 @@ export class LiveMarketFeedService {
     return undefined;
   }
 
-  private cacheQuote(symbol: string, quote: LiveMarketQuote, ttlMs = 4000): void {
+  private cacheQuote(symbol: string, quote: LiveMarketQuote, ttlMs = 10000): void {
     this.memoryCache.set(symbol, { quote, expiresAt: Date.now() + ttlMs });
     void this.redisService?.set(`${CachePrefix.TICKER}${symbol}`, quote, Math.ceil(ttlMs / 1000));
   }

@@ -18,6 +18,9 @@ export interface PredictionsKpiGridProps {
   readonly stopHitCount?: number;
   readonly avgGainText?: string;
   readonly avgLossText?: string;
+  readonly winRateBadge?: string;
+  readonly holdingHint?: string;
+  readonly profitFactorBadge?: string;
 }
 
 export function PredictionsKpiGrid({
@@ -30,6 +33,9 @@ export function PredictionsKpiGrid({
   stopHitCount = 0,
   avgGainText,
   avgLossText,
+  winRateBadge,
+  holdingHint,
+  profitFactorBadge,
 }: PredictionsKpiGridProps) {
   const copy = PREDICTIONS_COPY.KPIS;
 
@@ -57,7 +63,7 @@ export function PredictionsKpiGrid({
         label={copy.WIN_RATE}
         value={<span className="text-gain">{winRate}</span>}
         icon={<Target size={16} />}
-        badge={copy.WIN_RATE_BADGE}
+        badge={winRateBadge ?? copy.DEFAULT_WIN_RATE_BADGE}
         badgeClass="badge-green"
         hint={
           <>
@@ -76,12 +82,12 @@ export function PredictionsKpiGrid({
         label={copy.PROFIT_FACTOR}
         value={profitFactor}
         icon={<BarChart3 size={16} />}
-        badge={copy.PROFIT_FACTOR_BADGE}
+        badge={profitFactorBadge ?? copy.PROFIT_FACTOR_BADGE}
         hint={
           <>
-            <span className="text-gain">{avgGainText ?? copy.AVG_GAIN}</span>
+            <span className="text-gain">{avgGainText ?? copy.DEFAULT_AVG_GAIN}</span>
             <span className="metric-divider">·</span>
-            <span className="text-loss">{avgLossText ?? copy.AVG_LOSS}</span>
+            <span className="text-loss">{avgLossText ?? copy.DEFAULT_AVG_LOSS}</span>
           </>
         }
       />
@@ -92,7 +98,7 @@ export function PredictionsKpiGrid({
         icon={<TrendingUp size={16} />}
         badge={copy.POSITIVE_EXPECTANCY}
         badgeClass="badge-green"
-        hint={<span>{copy.HOLDING_HINT}</span>}
+        hint={<span>{holdingHint ?? copy.DEFAULT_HOLDING_HINT}</span>}
       />
     </section>
   );

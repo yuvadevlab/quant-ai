@@ -94,6 +94,51 @@ export class ConfigService {
     return this.envConfig.AI_PROVIDER;
   }
 
+  /** Agent role specific provider override (e.g. for heavy reasoning) */
+  public get aiProviderAgent(): AiProviderType | undefined {
+    return this.envConfig.AI_PROVIDER_AGENT;
+  }
+
+  /** Chat role specific provider override (e.g. for fast conversational responses) */
+  public get aiProviderChat(): AiProviderType | undefined {
+    return this.envConfig.AI_PROVIDER_CHAT;
+  }
+
+  /** Cline API Gateway base URL */
+  public get clineBaseUrl(): string {
+    return this.envConfig.CLINE_BASE_URL;
+  }
+
+  /** Cline API path */
+  public get clineApiPath(): string {
+    return this.envConfig.CLINE_API_PATH;
+  }
+
+  /** Cline API authentication key */
+  public get clineApiKey(): string {
+    return this.envConfig.CLINE_API_KEY ?? "";
+  }
+
+  /** Default Cline model */
+  public get clineModel(): string {
+    return this.envConfig.CLINE_MODEL;
+  }
+
+  /** Specialized Cline model for deliberation & agent reasoning */
+  public get clineAgentModel(): string {
+    return this.envConfig.CLINE_AGENT_MODEL;
+  }
+
+  /** Specialized Cline model for fast chat & copilot interactions */
+  public get clineChatModel(): string {
+    return this.envConfig.CLINE_CHAT_MODEL;
+  }
+
+  /** Specialized Cline model for statistical and technical pattern recognition */
+  public get clineAnalysisModel(): string {
+    return this.envConfig.CLINE_ANALYSIS_MODEL;
+  }
+
   /** Google Gemini API Key */
   public get geminiApiKey(): string {
     return this.envConfig.GEMINI_API_KEY ?? "";

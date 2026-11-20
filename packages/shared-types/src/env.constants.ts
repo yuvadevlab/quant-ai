@@ -23,6 +23,15 @@ export enum EnvKey {
   QUANT_ENGINE_PORT = "QUANT_ENGINE_PORT",
   JWT_SECRET = "JWT_SECRET",
   AI_PROVIDER = "AI_PROVIDER",
+  AI_PROVIDER_AGENT = "AI_PROVIDER_AGENT",
+  AI_PROVIDER_CHAT = "AI_PROVIDER_CHAT",
+  CLINE_BASE_URL = "CLINE_BASE_URL",
+  CLINE_API_PATH = "CLINE_API_PATH",
+  CLINE_API_KEY = "CLINE_API_KEY",
+  CLINE_MODEL = "CLINE_MODEL",
+  CLINE_AGENT_MODEL = "CLINE_AGENT_MODEL",
+  CLINE_CHAT_MODEL = "CLINE_CHAT_MODEL",
+  CLINE_ANALYSIS_MODEL = "CLINE_ANALYSIS_MODEL",
   GEMINI_API_KEY = "GEMINI_API_KEY",
   ANTHROPIC_API_KEY = "ANTHROPIC_API_KEY",
   GROQ_API_KEY = "GROQ_API_KEY",
@@ -71,6 +80,18 @@ export const DefaultConnectionUrl = {
   WS_GATEWAY: "ws://localhost:4006",
   CORS_DEV_WEB: "http://localhost:3005",
   CORS_DEV_WEB_IP: "http://127.0.0.1:3005",
+  CLINE_BASE_URL: "https://api.cline.bot/api/v1",
+  CLINE_API_PATH: "/chat/completions",
+} as const;
+
+/**
+ * Default multi-purpose AI model identifiers conforming to DevLab standards.
+ */
+export const DefaultAiModel = {
+  CLINE_DEFAULT: "nvidia/nemotron-3.5-super-vl:free",
+  CLINE_AGENT: "nvidia/nemotron-3.5-super-vl:free",
+  CLINE_CHAT: "upstage/solar-mini4",
+  CLINE_ANALYSIS: "meta-llama/llama-3.3-70b-instruct:free",
 } as const;
 
 /**
