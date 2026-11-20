@@ -1,16 +1,19 @@
 /**
  * @file src/features/screener/components/ScreenerPage.tsx
  * @description Master Institutional Screener page wrapper with filtering and sector tabs.
+ * Composes workstation shell and pure @quant-ai/ui presentation blocks with filter state.
  * @author yuva.devlab@gmail.com
  */
 
 import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { Sparkles } from "lucide-react";
 import { QuantShell } from "@/components/layout";
 import { SectorFilter, ScreenerTab } from "@/constants/market.constants";
 import { OiAction } from "@/components/quantai/data";
-import { ScreenerHeader } from "./ScreenerHeader";
-import { ScreenerToolbar } from "./ScreenerToolbar";
-import { ScreenerTable } from "./ScreenerTable";
+import { AppRoute } from "@/constants/routes.constants";
+import { SCREENER_COPY } from "@/lib/ui-copy/screener.copy";
+import { ScreenerHeader, ScreenerToolbar, ScreenerTable } from "@quant-ai/ui";
 import type { ScreenerData } from "../api/getScreenerData";
 
 export interface ScreenerPageProps {
@@ -42,10 +45,17 @@ export function ScreenerPage({ initialData }: ScreenerPageProps) {
   return (
     <QuantShell>
       <div className="desk-container">
-        <ScreenerHeader />
+        <ScreenerHeader
+          actionSlot={
+            <Link to={AppRoute.CHAT} className="btn-secondary">
+              <Sparkles size={16} />
+              <span>{SCREENER_COPY.HEADER.ASK_COPILOT}</span>
+            </Link>
+          }
+        />
         <ScreenerToolbar
           activeTab={activeTab}
-          onSelectTab={setActiveTab}
+          onSelectTab={(tab) => setActiveTab(tab as ScreenerTab)}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           selectedSector={selectedSector}
@@ -53,7 +63,19 @@ export function ScreenerPage({ initialData }: ScreenerPageProps) {
           sectors={initialData.sectors}
           totalCount={initialData.items.length}
         />
-        <ScreenerTable items={filteredItems} />
+        <ScreenerTable
+          items={filteredItems}
+          renderAnalyzeLink={(item) => (
+            <Link
+              to={AppRoute.CHAT}
+              className="btn-table-action"
+              title={`${SCREENER_COPY.TABLE.ANALYZE_TITLE_PREFIX} ${item.symbol} ${SCREENER_COPY.TABLE.ANALYZE_TITLE_SUFFIX}`}
+            >
+              <Sparkles size={14} />
+              <span>{SCREENER_COPY.TABLE.ANALYZE_ACTION}</span>
+            </Link>
+          )}
+        />
       </div>
     </QuantShell>
   );

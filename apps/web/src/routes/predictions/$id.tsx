@@ -21,7 +21,10 @@ export const Route = createFileRoute("/predictions/$id")({
     ],
   }),
   loader: async ({ context: { queryClient }, params }) => {
-    return await queryClient.ensureQueryData(monitorQueryOptions(params.id));
+    return await queryClient.query({
+      ...monitorQueryOptions(params.id),
+      staleTime: "static",
+    });
   },
   component: function PredictionMonitorPage() {
     const { id } = Route.useParams();

@@ -15,6 +15,7 @@ import {
   Sparkles,
   TrendingUp,
 } from "lucide-react";
+import { Button } from "@quant-ai/ui";
 import { AppRoute } from "../../constants";
 import { COMMON_COPY } from "../../lib/ui-copy";
 import { useWorkstationSession } from "../../hooks/use-workstation-session";
@@ -65,7 +66,9 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
             </div>
           )}
         </Link>
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           type="button"
           className="sidebar-collapse-btn"
           aria-label={isCollapsed ? copy.EXPAND : copy.COLLAPSE}
@@ -73,7 +76,7 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
           title={isCollapsed ? copy.EXPAND : copy.COLLAPSE}
         >
           {isCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
-        </button>
+        </Button>
       </div>
 
       <nav className="sidebar-nav" aria-label={copy.MAIN_NAV_ARIA}>

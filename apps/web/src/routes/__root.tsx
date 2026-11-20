@@ -9,6 +9,7 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { type ReactNode, useEffect } from "react";
+import { Button, Card, Badge } from "@quant-ai/ui";
 import { StorageKey } from "@quant-ai/shared-types";
 import { AuthProvider } from "../providers/auth";
 
@@ -17,8 +18,8 @@ import appCss from "../styles.css?url";
 function NotFoundComponent() {
   return (
     <div className="not-found-container">
-      <div className="not-found-card">
-        <span className="not-found-badge">404</span>
+      <Card className="not-found-card">
+        <Badge className="not-found-badge">404</Badge>
         <h1 className="not-found-title">Page not found</h1>
         <p className="not-found-description">
           The requested intelligence desk or analytics route does not exist.
@@ -28,7 +29,7 @@ function NotFoundComponent() {
             Return to Overview Desk
           </Link>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -39,15 +40,15 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 
   return (
     <div className="not-found-container">
-      <div className="not-found-card">
-        <span className="not-found-badge error-badge">SYSTEM ERROR</span>
+      <Card className="not-found-card">
+        <Badge className="not-found-badge error-badge">SYSTEM ERROR</Badge>
         <h1 className="not-found-title">Failed to render desk</h1>
         <p className="not-found-description">
           An unexpected render cycle exception occurred. You can retry or return to the overview
           desk.
         </p>
         <div className="not-found-actions">
-          <button
+          <Button
             onClick={() => {
               router.invalidate();
               reset();
@@ -55,12 +56,12 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
             className="btn-primary"
           >
             Retry Desk
-          </button>
+          </Button>
           <Link to="/" className="btn-secondary">
             Go Home
           </Link>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

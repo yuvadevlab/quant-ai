@@ -1,18 +1,23 @@
 /**
  * @file src/features/chat/components/ChatPage.tsx
  * @description Master AI Financial Copilot page wrapper connected to the backend inference engine.
+ * Composes workstation shell and pure @quant-ai/ui presentation blocks with message state.
  * @author yuva.devlab@gmail.com
  */
 
-import { useState, type FormEvent } from "react";
-import { Sparkles } from "lucide-react";
+import { useState, type SyntheticEvent } from "react";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { QuantShell } from "@/components/layout";
 import { ChatMessageType } from "@/constants/market.constants";
 import { CHAT_COPY } from "@/lib/ui-copy/chat.copy";
-import { ChatHeader } from "./ChatHeader";
-import { ChatThread, type ConversationItem } from "./ChatThread";
-import { ChatSuggestions } from "./ChatSuggestions";
-import { ChatComposer } from "./ChatComposer";
+import {
+  ChatHeader,
+  ChatThread,
+  ChatSuggestions,
+  ChatComposer,
+  type ChatThreadMessage,
+} from "@quant-ai/ui";
 import type { ChatInitialData } from "../api/getChatData";
 import { sendChatMessage } from "../api/sendChatMessage";
 
@@ -25,7 +30,7 @@ export function ChatPage({ initialData }: ChatPageProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const copy = CHAT_COPY;
 
-  const [messages, setMessages] = useState<ConversationItem[]>([
+  const [messages, setMessages] = useState<ChatThreadMessage[]>([
     {
       type: ChatMessageType.ASSISTANT,
       id: 1,
@@ -47,7 +52,7 @@ export function ChatPage({ initialData }: ChatPageProps) {
     },
   ]);
 
-  async function submitPrompt(event: FormEvent<HTMLFormElement>) {
+  async function submitPrompt(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
     const question = prompt.trim();
     if (!question || isSubmitting) return;
@@ -98,7 +103,16 @@ export function ChatPage({ initialData }: ChatPageProps) {
             </div>
           </div>
 
-          <ChatThread messages={messages} featuredSignal={initialData.featuredSignal} />
+          <ChatThread
+            messages={messages}
+            featuredSignal={initialData.featuredSignal}
+            renderTrajectoryLink={(signal) => (
+              <Link to="/predictions/$id" params={{ id: signal.id }} className="embed-action-btn">
+                <span>{copy.THREAD.VIEW_TRAJECTORY}</span>
+                <ArrowRight size={14} />
+              </Link>
+            )}
+          />
           <ChatSuggestions onSelectPrompt={setPrompt} />
           <ChatComposer prompt={prompt} onPromptChange={setPrompt} onSubmit={submitPrompt} />
         </div>

@@ -1,8 +1,10 @@
 /**
  * @file packages/ui/src/components/index.ts
  * @description Central component exports for @quant-ai/ui.
+ * @author yuva.devlab@gmail.com
  */
 
+// Core visual primitives & cards
 export * from "./MetricCard";
 export * from "./Sparkline";
 export * from "./StatusBadge";
@@ -22,3 +24,43 @@ export * from "./SignalHeader";
 export * from "./MonitorKpiGrid";
 export * from "./MarketBreadthCard";
 export * from "./SectorPerformanceCard";
+
+// Predictions Desk presentation blocks
+export * from "./PredictionsHeader";
+export * from "./PredictionsKpiGrid";
+export * from "./PredictionsToolbar";
+export * from "./PredictionsTable";
+
+// Screener Desk presentation blocks
+export * from "./ScreenerHeader";
+export * from "./ScreenerToolbar";
+export * from "./ScreenerTable";
+
+// Portfolio Desk presentation blocks
+export * from "./PortfolioHeader";
+export * from "./PortfolioKpiGrid";
+export * from "./PortfolioPositionsTable";
+export * from "./PortfolioOrdersTable";
+
+// Overview Desk presentation blocks
+export * from "./OverviewHero";
+export * from "./OverviewIndicesGrid";
+export * from "./OverviewBreadthSectors";
+export * from "./OverviewSpotlight";
+export * from "./WorkstationLaunchpad";
+
+// Copilot Chat Desk presentation blocks
+export * from "./ChatHeader";
+export * from "./ChatThread";
+export * from "./ChatComposer";
+export * from "./ChatSuggestions";
+
+// Settings Desk presentation blocks
+export * from "./SettingsHeader";
+export * from "./SettingsRiskLimits";
+export * from "./SettingsAiEngine";
+export * from "./SettingsSsoSection";
+
+// Monitor Desk presentation blocks
+export * from "./MonitorConeSection";
+export * from "./MonitorAgentsSection";

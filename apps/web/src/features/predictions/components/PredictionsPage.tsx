@@ -1,17 +1,23 @@
 /**
  * @file src/features/predictions/components/PredictionsPage.tsx
  * @description Master Prediction Lab & Signal Audit Ledger page wrapper.
- * Composes workstation shell, KPI summary cards, filter toolbar, and tabular signal audit ledger.
+ * Composes workstation shell, and pure @quant-ai/ui presentation blocks with filter state.
+ * @author yuva.devlab@gmail.com
  */
 
 import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { QuantShell } from "@/components/layout";
 import { HorizonFilter, LedgerFilterTab } from "@/constants";
 import { UiSignalStatus } from "@/components/quantai/data";
-import { PredictionsHeader } from "./PredictionsHeader";
-import { PredictionsKpiGrid } from "./PredictionsKpiGrid";
-import { PredictionsToolbar } from "./PredictionsToolbar";
-import { PredictionsTable } from "./PredictionsTable";
+import {
+  PredictionsHeader,
+  PredictionsKpiGrid,
+  PredictionsToolbar,
+  PredictionsTable,
+} from "@quant-ai/ui";
+import { PREDICTIONS_COPY } from "@/lib/ui-copy/predictions.copy";
 import type { PredictionsData } from "../api/getPredictionsData";
 
 export interface PredictionsPageProps {
@@ -75,14 +81,22 @@ export function PredictionsPage({ initialData }: PredictionsPageProps) {
         />
         <PredictionsToolbar
           activeFilter={activeFilter}
-          onSelectFilter={setActiveFilter}
+          onSelectFilter={(tab) => setActiveFilter(tab as LedgerFilterTab)}
           horizonFilter={horizonFilter}
           onSelectHorizon={setHorizonFilter}
           search={search}
           onSearchChange={setSearch}
           counts={counts}
         />
-        <PredictionsTable signals={filteredSignals} />
+        <PredictionsTable
+          signals={filteredSignals}
+          renderInspectLink={(signal) => (
+            <Link to="/predictions/$id" params={{ id: signal.id }} className="btn-table-action">
+              <span>{PREDICTIONS_COPY.TABLE.INSPECT_ACTION}</span>
+              <ArrowRight size={13} />
+            </Link>
+          )}
+        />
       </div>
     </QuantShell>
   );
