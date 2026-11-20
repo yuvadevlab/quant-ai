@@ -5,6 +5,7 @@
  */
 
 import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";
+import { Logger } from "@yuva-devlab/logger";
 import { AiProviderType, SignalRegime } from "@quant-ai/shared-types";
 import { LiveMarketFeedService } from "../market/feed";
 import {
@@ -38,6 +39,8 @@ interface EvaluateExpectancyDto {
  */
 @Controller("deliberation")
 export class DeliberationController {
+  private readonly logger = new Logger(DeliberationController.name);
+
   public constructor(
     private readonly deliberationService: MultiAgentDeliberationService,
     private readonly liveMarketFeed: LiveMarketFeedService,
@@ -51,6 +54,9 @@ export class DeliberationController {
   public async triggerDeliberation(
     @Body() dto: TriggerDeliberationDto,
   ): Promise<DeliberationOutcome> {
+    this.logger.info(
+      `[triggerDeliberation] Triggering debate for ${dto.ticker} (${dto.predictionId})`,
+    );
     let currentPrice = dto.currentPrice;
     if (typeof currentPrice !== "number" || currentPrice <= 0) {
       const live = await this.liveMarketFeed.getLiveQuote(dto.ticker);
@@ -84,6 +90,7 @@ export class DeliberationController {
   @Post("expectancy")
   @HttpCode(HttpStatus.OK)
   public evaluateExpectancy(@Body() dto: EvaluateExpectancyDto) {
+    this.logger.info("[evaluateExpectancy] Evaluating trade expectancy and risk gate");
     const setup: TradePriceSetup = {
       entryPrice: dto.entryPrice,
       targetPrice: dto.targetPrice,

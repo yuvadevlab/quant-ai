@@ -5,11 +5,12 @@
  */
 
 import { useState } from "react";
-import { AgentCard } from "@quant-ai/ui";
+import { AgentCard, Button } from "@quant-ai/ui";
 import { AgentRole, AgentStance } from "@quant-ai/shared-types";
 import { Bot, Radio, Sparkles } from "lucide-react";
 import type { Signal } from "@/components/quantai/data";
 import type { LiveAgentSpeech } from "@/hooks/use-realtime-deliberation";
+import { MONITOR_COPY } from "@/lib/ui-copy/monitor.copy";
 import { triggerDeliberation } from "../api/triggerDeliberation";
 
 export interface MonitorAgentsSectionProps {
@@ -28,6 +29,7 @@ export function MonitorAgentsSection({
   isConnected = false,
 }: MonitorAgentsSectionProps) {
   const [isTriggering, setIsTriggering] = useState(false);
+  const copy = MONITOR_COPY;
 
   // Check for live speech arrivals from WebSocket stream
   const liveMomentum = liveSpeeches[AgentRole.MOMENTUM_ANALYST];
@@ -54,33 +56,34 @@ export function MonitorAgentsSection({
         <div className="panel-title-wrap">
           <Bot size={18} className="panel-icon" />
           <div>
-            <h2 className="panel-title">Multi-Agent Deliberation Breakdown</h2>
-            <p className="panel-subtext">
-              Real-time adversarial debate committee. Institutional LLM specialists evaluate
-              momentum, tail risks, and Kelly expectancy.
-            </p>
+            <h2 className="panel-title">{copy.DELIBERATION.TITLE}</h2>
+            <p className="panel-subtext">{copy.DELIBERATION.SUBTITLE}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           {isConnected && (
             <span className="panel-status-pill text-gain flex items-center gap-1">
               <Radio size={12} className="animate-pulse" />
-              <span>{hasLiveUpdates ? "Live Stream Active" : "Stream Connected"}</span>
+              <span>
+                {hasLiveUpdates ? copy.HEADER.LIVE_STREAM_ACTIVE : copy.HEADER.STREAM_CONNECTED}
+              </span>
             </span>
           )}
           {predictionId && ticker && (
-            <button
+            <Button
               type="button"
               onClick={handleTrigger}
               disabled={isTriggering}
               className="btn-secondary flex items-center gap-1.5 text-xs py-1 px-2.5"
-              title="Trigger on-demand multi-agent adversarial debate"
+              title={copy.HEADER.TRIGGER_TOOLTIP}
             >
               <Sparkles size={12} className={isTriggering ? "animate-spin" : ""} />
-              <span>{isTriggering ? "Deliberating..." : "Trigger AI Deliberation"}</span>
-            </button>
+              <span>
+                {isTriggering ? copy.HEADER.DELIBERATING : copy.HEADER.TRIGGER_DELIBERATION}
+              </span>
+            </Button>
           )}
-          <span className="panel-status-pill">3 Specialized Agents</span>
+          <span className="panel-status-pill">{copy.HEADER.SPECIALISTS_COUNT}</span>
         </div>
       </div>
 

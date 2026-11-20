@@ -11,25 +11,7 @@ import {
   SignalStatus,
 } from "@quant-ai/shared-types";
 import { createPrismaClient } from "./client.js";
-
-const DEFAULT_BASE_PRICES: Record<string, number> = {
-  "NIFTY 50": 24350.25,
-  "NIFTY NEXT 50": 71200.8,
-  "NIFTY 100": 25100.4,
-  "NIFTY MIDCAP 100": 58450.6,
-  "NIFTY SMALLCAP 100": 18920.3,
-  "NIFTY 500": 22800.1,
-  "NIFTY BANK": 52180.4,
-  "NIFTY FINANCIAL SERVICES": 23410.9,
-  "NIFTY IT": 41890.3,
-  "NIFTY AUTO": 25680.1,
-  "NIFTY METAL": 9450.7,
-  "NIFTY PHARMA": 22340.5,
-  "NIFTY FMCG": 61200.4,
-  "NIFTY ENERGY": 39820.6,
-  "NIFTY REALTY": 1050.25,
-  "INDIA VIX": 13.85,
-};
+import { seedLlmProvidersAndModels } from "./seed-llm.js";
 
 /**
  * Executes database seed transaction.
@@ -41,30 +23,66 @@ export async function seedDatabase(
 
   try {
     for (const [symbol, meta] of Object.entries(MARKET_INDEX_REGISTRY)) {
-      const basePrice = DEFAULT_BASE_PRICES[symbol] ?? 10000;
       await prisma.benchmarkIndex.upsert({
         where: { symbol },
         update: {
-          currentPrice: basePrice,
-          dayHigh: basePrice * 1.01,
-          dayLow: basePrice * 0.99,
-          percentChange: 0.5,
-          change: basePrice * 0.005,
+          name: meta.displayName,
+          category: meta.category,
+          exchange: "NSE",
         },
         create: {
           symbol,
           name: meta.displayName,
           category: meta.category,
           exchange: "NSE",
-          currentPrice: basePrice,
-          change: basePrice * 0.005,
-          percentChange: 0.5,
-          dayHigh: basePrice * 1.01,
-          dayLow: basePrice * 0.99,
-          sparkline: [basePrice * 0.99, basePrice * 0.995, basePrice],
+          currentPrice: 0,
+          change: 0,
+          percentChange: 0,
+          dayHigh: 0,
+          dayLow: 0,
+          sparkline: [],
         },
       });
     }
+
+    await prisma.systemConfig.upsert({
+      where: { key: "market.breadth_config" },
+      update: {},
+      create: {
+        key: "market.breadth_config",
+        description:
+          "Configurable market breadth ratios, institutional flows, and regime thresholds",
+        value: {
+          totalUniverseCount: 2214,
+          fiiNetCr: 2145.0,
+          diiNetCr: 1280.0,
+          fiiCurrencyPrefix: "₹",
+          fiiUnitSuffix: "Cr",
+          vixLowThreshold: 15.0,
+          vixHighThreshold: 22.0,
+          bullishRegime: "Institutional Accumulation",
+          cautiousRegime: "Distribution & Profit Taking",
+          neutralRegime: "Consolidation & Rangebound",
+          lowVolText: "Low Volatility",
+          elevatedVolText: "Elevated Volatility",
+          highVolText: "Extreme Volatility",
+        },
+      },
+    });
+
+    await prisma.systemConfig.upsert({
+      where: { key: "market.sector_config" },
+      update: {},
+      create: {
+        key: "market.sector_config",
+        description: "Configurable sector momentum classification percentage thresholds",
+        value: {
+          strongThreshold: 1.5,
+          moderateThreshold: 0.5,
+          weakThreshold: -1.0,
+        },
+      },
+    });
 
     const predictionId = "PRED-8942";
     await prisma.prediction.upsert({
@@ -124,6 +142,8 @@ export async function seedDatabase(
         },
       },
     });
+
+    await seedLlmProvidersAndModels(prisma);
   } finally {
     await prisma.$disconnect();
   }

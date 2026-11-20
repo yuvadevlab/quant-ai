@@ -5,6 +5,7 @@
  */
 
 import { Controller, Get } from "@nestjs/common";
+import { Logger } from "@yuva-devlab/logger";
 import { PortfolioService } from "./portfolio.service";
 import type { PortfolioSummary } from "./portfolio.types";
 
@@ -13,6 +14,8 @@ import type { PortfolioSummary } from "./portfolio.types";
  */
 @Controller("portfolio")
 export class PortfolioController {
+  private readonly logger = new Logger(PortfolioController.name);
+
   public constructor(private readonly portfolioService: PortfolioService) {}
 
   /**
@@ -20,6 +23,7 @@ export class PortfolioController {
    */
   @Get()
   public getPortfolio(): PortfolioSummary {
+    this.logger.info("[getPortfolio] Fetching paper portfolio summary and valuations");
     return this.portfolioService.getPortfolioSummary();
   }
 }

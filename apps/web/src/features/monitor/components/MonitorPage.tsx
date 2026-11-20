@@ -12,6 +12,7 @@ import { AppRoute } from "@/constants/routes.constants";
 import { UiSignalStatus } from "@/components/quantai/data";
 import { useRealtimeDeliberation } from "@/hooks/use-realtime-deliberation";
 import { useRealtimeTicks } from "@/hooks/use-realtime-ticks";
+import { MONITOR_COPY } from "@/lib/ui-copy/monitor.copy";
 import { MonitorConeSection } from "./MonitorConeSection";
 import { MonitorAgentsSection } from "./MonitorAgentsSection";
 import type { MonitorData } from "../api/getMonitorData";
@@ -33,6 +34,7 @@ export function MonitorPage({ initialData }: MonitorPageProps) {
     : signal.change;
   const currentStatus = (latestSignalUpdate?.status as Signal["status"]) ?? signal.status;
   const isActive = currentStatus === UiSignalStatus.ACTIVE;
+  const copy = MONITOR_COPY;
 
   return (
     <QuantShell>
@@ -42,7 +44,7 @@ export function MonitorPage({ initialData }: MonitorPageProps) {
             <>
               <Link to={AppRoute.PREDICTIONS} className="breadcrumb-back-link">
                 <ArrowLeft size={14} />
-                <span>Prediction Ledger</span>
+                <span>{copy.HEADER.BREADCRUMB_BACK}</span>
               </Link>
               <ChevronRight size={14} />
               <span className="current">{signal.id}</span>
@@ -81,18 +83,19 @@ export function MonitorPage({ initialData }: MonitorPageProps) {
         />
 
         <InvalidationCard
-          title="Automated Invalidation Rule"
+          title={copy.INVALIDATION.TITLE}
           description={
             <>
-              If a 15-minute candle closes below <strong>{signal.stop}</strong> or if Call Open
-              Interest surges by &gt; 35% on the immediate strike, the trade hypothesis is
-              invalidated immediately.
+              {copy.INVALIDATION.DESCRIPTION_PREFIX} <strong>{signal.stop}</strong>{" "}
+              {copy.INVALIDATION.DESCRIPTION_SUFFIX}
             </>
           }
           action={
             <Link to={AppRoute.CHAT} className="btn-secondary">
               <Sparkles size={14} />
-              <span>Ask Copilot about {signal.symbol}</span>
+              <span>
+                {copy.INVALIDATION.ACTION_PREFIX} {signal.symbol}
+              </span>
             </Link>
           }
         />

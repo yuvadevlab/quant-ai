@@ -9,7 +9,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 /// Indian benchmark market indices (NIFTY 50, BANK NIFTY, sectoral tiers).
@@ -115,4 +114,94 @@ model ScreenerStock {
 
   @@index([isBreakout, isSurge])
   @@map("screener_stocks")
+}
+
+/// Registered AI model providers (Google Gemini, Anthropic, Ollama, OpenAI, Groq, etc.).
+model LlmProvider {
+  id           String      @id @default(cuid())
+  name         String      @db.VarChar(120)
+  slug         String      @unique @db.VarChar(64)
+  providerType String      @map("provider_type") @db.VarChar(64)
+  description  String?     @db.VarChar(500)
+  baseUrl      String?     @map("base_url") @db.VarChar(512)
+  config       Json        @default("{}")
+  isEnabled    Boolean     @default(true) @map("is_enabled")
+  sortOrder    Int         @default(0) @map("sort_order")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  createdBy    String?     @map("created_by") @db.VarChar(128)
+  models       LlmModel[]
+
+  @@map("llm_providers")
+}
+
+/// Dynamic registered LLM models offered by providers.
+/// Historical preservation: models are deprecated (is_deprecated=true) rather than deleted.
+model LlmModel {
+  id              String      @id @default(cuid())
+  providerId      String      @map("provider_id")
+  name            String      @db.VarChar(120)
+  modelIdentifier String      @map("model_identifier") @db.VarChar(120)
+  description     String?     @db.VarChar(500)
+  capabilities    Json        @default("{}")
+  defaultConfig   Json        @default("{}") @map("default_config")
+  contextWindow   Int         @default(8192) @map("context_window")
+  isDefault       Boolean     @default(false) @map("is_default")
+  isEnabled       Boolean     @default(true) @map("is_enabled")
+  isDeprecated    Boolean     @default(false) @map("is_deprecated")
+  deprecatedAt    DateTime?   @map("deprecated_at")
+  deprecationNote String?     @map("deprecation_note") @db.VarChar(500)
+  sortOrder       Int         @default(0) @map("sort_order")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+  createdBy       String?     @map("created_by") @db.VarChar(128)
+  provider        LlmProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, modelIdentifier], map: "uq_provider_model_identifier")
+  @@index([isEnabled, isDeprecated])
+  @@map("llm_models")
+}
+
+/// Dynamic system and market configuration parameters.
+/// Modifiable at runtime via API/DB without code redeployments.
+model SystemConfig {
+  key         String   @id @db.VarChar(64)
+  value       Json
+  description String?  @db.VarChar(255)
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@map("system_configs")
+}
+
+/// Active simulated paper trading positions marked to market.
+model PaperPosition {
+  id          String   @id @default(cuid())
+  symbol      String   @unique
+  instrument  String
+  side        String   @default("LONG")
+  qty         Int
+  entryPrice  Float    @map("entry_price")
+  stopLoss    Float    @map("stop_loss")
+  targetPrice Float    @map("target_price")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("paper_positions")
+}
+
+/// Simulated trade executions and historical performance ledger.
+model PaperExecution {
+  id         String   @id
+  symbol     String
+  type       String   @default("BUY")
+  qty        Int
+  entryPrice Float    @map("entry_price")
+  exitPrice  Float    @map("exit_price")
+  pnl        Float
+  outcome    String
+  timestamp  DateTime @default(now())
+
+  @@index([symbol, timestamp(sort: Desc)])
+  @@map("paper_executions")
 }

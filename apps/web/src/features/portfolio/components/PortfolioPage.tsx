@@ -19,7 +19,7 @@ export function PortfolioPage({ initialData }: PortfolioPageProps) {
   return (
     <QuantShell>
       <div className="desk-container">
-        <PortfolioHeader />
+        <PortfolioHeader initialCapital={initialData.initialCapital} />
         <PortfolioKpiGrid
           totalEquity={initialData.totalEquity}
           initialCapital={initialData.initialCapital}

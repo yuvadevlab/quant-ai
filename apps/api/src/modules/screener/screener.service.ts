@@ -7,8 +7,15 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Optional } from "@nestjs/common";
 import { Logger } from "@yuva-devlab/logger";
 import { EventTopic, AgentStance } from "@quant-ai/shared-types";
+import {
+  calculateRsiFromSparkline,
+  CurrencyCode,
+  MOMENTUM_BREAKOUT_PERCENT_THRESHOLD,
+  VOLUME_SURGE_THRESHOLD_RATIO,
+} from "@quant-ai/quant-core";
 import { type DomainEventEnvelope } from "@yuva-devlab/events";
 import { EventBusService } from "../infrastructure/event-bus.service";
+import { DatabaseService } from "../infrastructure/database.service";
 import { LiveMarketFeedService } from "../market/feed";
 import { ScreenerItem, ScreenerQueryDto } from "./screener.types";
 
@@ -19,15 +26,6 @@ interface ScreenerTickPayload extends Record<string, unknown> {
   percentChange?: number;
 }
 
-const CurrencyCode = {
-  INR: "INR",
-} as const;
-
-const ScreenerSector = {
-  NSE_EQUITIES: "Equities (NSE)",
-  GLOBAL_TECH: "Global Tech",
-} as const;
-
 /**
  * Service providing quantitative stock filtering, breakout scans, and volume anomaly detection.
  */
@@ -35,27 +33,17 @@ const ScreenerSector = {
 export class ScreenerService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(ScreenerService.name);
   private readonly universe = new Map<string, ScreenerItem>();
-  private readonly activeTickers = [
-    "RELIANCE",
-    "HDFCBANK",
-    "INFY",
-    "TCS",
-    "ICICIBANK",
-    "BHARTIARTL",
-    "SBIN",
-    "AAPL",
-    "AMZN",
-    "NVDA",
-  ];
+  private readonly activeTickers = new Set<string>();
   private unsubscribeFromBus?: () => void;
 
   public constructor(
     private readonly liveMarketFeed: LiveMarketFeedService,
     @Optional() private readonly eventBusService?: EventBusService,
+    @Optional() private readonly databaseService?: DatabaseService,
   ) {}
 
   /**
-   * Initializes screener universe with live data and subscribes to market ticks.
+   * Initializes screener universe from database and subscribes to market ticks.
    */
   public async onModuleInit(): Promise<void> {
     if (this.eventBusService) {
@@ -65,9 +53,12 @@ export class ScreenerService implements OnModuleInit, OnModuleDestroy {
           this.handleIncomingTick(envelope as DomainEventEnvelope<ScreenerTickPayload>);
         },
       );
-      this.logger.info("ScreenerService subscribed to real-time MARKET_TICKS stream");
+      this.logger.info(
+        "[onModuleInit] ScreenerService subscribed to real-time MARKET_TICKS stream",
+      );
     }
 
+    await this.loadUniverseFromDb();
     await this.scanLiveUniverse();
   }
 
@@ -111,10 +102,12 @@ export class ScreenerService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
-   * Retrieves instruments with volume surge greater than or equal to 2.0x average.
+   * Retrieves instruments with volume surge >= threshold ratio.
    */
   public findVolumeSurges(): readonly ScreenerItem[] {
-    return Array.from(this.universe.values()).filter((item) => item.volumeRatio >= 2.0);
+    return Array.from(this.universe.values()).filter(
+      (item) => item.volumeRatio >= VOLUME_SURGE_THRESHOLD_RATIO,
+    );
   }
 
   /**
@@ -149,21 +142,32 @@ export class ScreenerService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
+   * Adds an instrument dynamically to the monitored universe.
+   */
+  public registerSymbol(symbol: string): void {
+    this.activeTickers.add(symbol);
+  }
+
+  /**
    * Scans universe dynamically by pulling live quotes.
    */
   public async scanLiveUniverse(): Promise<void> {
+    const symbols = Array.from(this.activeTickers);
     await Promise.all(
-      this.activeTickers.map(async (symbol) => {
+      symbols.map(async (symbol) => {
         try {
           const live = await this.liveMarketFeed.getLiveQuote(symbol);
-          const rsi = this.computeRsiFromSparkline(live.sparkline);
+          const rsi = calculateRsiFromSparkline(live.sparkline);
           const trend =
             live.percentChange > 0.5
               ? AgentStance.BULLISH
               : live.percentChange < -0.5
                 ? AgentStance.BEARISH
                 : AgentStance.NEUTRAL;
-          const breakoutType = live.percentChange > 1.5 ? "Technical Momentum Breakout" : undefined;
+          const breakoutType =
+            live.percentChange > MOMENTUM_BREAKOUT_PERCENT_THRESHOLD
+              ? "Technical Momentum Breakout"
+              : undefined;
 
           this.universe.set(symbol, {
             symbol,
@@ -174,31 +178,45 @@ export class ScreenerService implements OnModuleInit, OnModuleDestroy {
             rsi,
             trend,
             breakoutType,
-            sector:
-              live.currency === CurrencyCode.INR
-                ? ScreenerSector.NSE_EQUITIES
-                : ScreenerSector.GLOBAL_TECH,
+            sector: live.currency === CurrencyCode.INR ? "Equities (NSE)" : "Global Equities",
           });
         } catch {
-          this.logger.warn(`Could not compute live screener metrics for ${symbol}`);
+          this.logger.warn(
+            `[scanLiveUniverse] Could not compute live screener metrics for ${symbol}`,
+          );
         }
       }),
     );
   }
 
-  private computeRsiFromSparkline(sparkline: readonly number[]): number {
-    if (sparkline.length < 2) {
-      return 50.0;
+  private async loadUniverseFromDb(): Promise<void> {
+    try {
+      if (this.databaseService) {
+        const stocks = await this.databaseService.client.screenerStock.findMany({
+          select: { symbol: true },
+        });
+        for (const s of stocks) {
+          this.activeTickers.add(s.symbol);
+        }
+      }
+    } catch (err) {
+      this.logger.warn(
+        `[loadUniverseFromDb] Failed reading screener universe from DB: ${String(err)}`,
+      );
     }
-    let gains = 0;
-    let losses = 0;
-    for (let i = 1; i < sparkline.length; i++) {
-      const diff = sparkline[i] - sparkline[i - 1];
-      if (diff >= 0) gains += diff;
-      else losses += Math.abs(diff);
+
+    // If activeTickers is empty, query benchmark indices from DB
+    if (this.activeTickers.size === 0 && this.databaseService) {
+      try {
+        const indices = await this.databaseService.client.benchmarkIndex.findMany({
+          select: { symbol: true },
+        });
+        for (const idx of indices) {
+          this.activeTickers.add(idx.symbol);
+        }
+      } catch {
+        // fallback
+      }
     }
-    if (losses === 0) return 80.0;
-    const rs = gains / losses;
-    return Number((100 - 100 / (1 + rs)).toFixed(1));
   }
 }

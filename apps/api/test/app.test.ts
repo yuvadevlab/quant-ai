@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   AiProviderType,
+  AssetClass,
   CachePrefix,
   Candle,
   EventTopic,
@@ -9,9 +10,13 @@ import {
   NetworkPort,
   RealtimeRoom,
   RealtimeSubscriptionStatus,
+  SignalDirection,
   SignalRegime,
+  SignalStatus,
+  TradeHorizon,
+  TradeStrategy,
 } from "@quant-ai/shared-types";
-import { LiveMarketFeedService, StochasticMarketSimulator } from "../src/modules/market/feed";
+import { LiveMarketFeedService } from "../src/modules/market/feed";
 import { MarketService } from "../src/modules/market/market.service";
 import { PredictionsService } from "../src/modules/predictions/predictions.service";
 import { MarketRegimeService } from "../src/modules/quant-analysis/market-regime.service";
@@ -29,8 +34,7 @@ import { RealtimeService } from "../src/modules/realtime/realtime.service";
 import { MarketTickService } from "../src/modules/market/market-tick.service";
 
 describe("NestJS Domain Services", () => {
-  const simulator = new StochasticMarketSimulator();
-  const feed = new LiveMarketFeedService(simulator);
+  const feed = new LiveMarketFeedService();
 
   it("MarketService provides benchmark indices with category filtering", async () => {
     const service = new MarketService(feed);
@@ -48,6 +52,33 @@ describe("NestJS Domain Services", () => {
 
   it("PredictionsService returns active prediction PRED-8942 and trajectory cone", async () => {
     const service = new PredictionsService(feed);
+    service.registerSignal({
+      id: "PRED-8942",
+      ticker: "RELIANCE",
+      name: "Reliance Industries",
+      strategy: TradeStrategy.SWING,
+      assetClass: AssetClass.EQUITY,
+      direction: SignalDirection.LONG,
+      entry: 2420.0,
+      current: 2434.6,
+      target: 2480.0,
+      stopLoss: 2380.0,
+      horizon: TradeHorizon.SWING_WEEKS,
+      confidence: 88,
+      status: SignalStatus.ACTIVE,
+      regime: SignalRegime.BULLISH_EXPANSION,
+      pnlPercent: 0.6,
+      pnlAbsolute: 14.6,
+      publishedAt: new Date().toISOString(),
+      thesis: "Breakout",
+      riskReward: 2.0,
+      catalysts: [],
+      invalidation: "Stop loss",
+      trajectory: [
+        { time: "T0", expected: 2420.0, actual: 2434.6, upper: 2480.0, lower: 2380.0 },
+      ],
+      agents: [],
+    });
     await service.onModuleInit();
     const prediction = service.findById("PRED-8942");
     expect(prediction.ticker).toBe("RELIANCE");
@@ -60,6 +91,11 @@ describe("NestJS Domain Services", () => {
 
   it("ScreenerService filters volume surges and breakout candidates", async () => {
     const service = new ScreenerService(feed);
+    service.registerSymbol("RELIANCE");
+    service.registerSymbol("HDFCBANK");
+    service.registerSymbol("INFY");
+    service.registerSymbol("TCS");
+    service.registerSymbol("ICICIBANK");
     await service.onModuleInit();
     const all = service.findAll();
     expect(all.length).toBeGreaterThanOrEqual(5);

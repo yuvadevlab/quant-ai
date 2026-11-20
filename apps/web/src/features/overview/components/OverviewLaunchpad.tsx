@@ -1,17 +1,21 @@
 /**
  * @file src/features/overview/components/OverviewLaunchpad.tsx
  * @description Quick action workstation launchpad cards.
+ * @author yuva.devlab@gmail.com
  */
 
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Bot, Filter, LineChart } from "lucide-react";
 import { AppRoute } from "@/constants/routes.constants";
+import { OVERVIEW_COPY } from "@/lib/ui-copy/overview.copy";
 
 export function WorkstationLaunchpad() {
+  const copy = OVERVIEW_COPY.LAUNCHPAD;
+
   return (
-    <section className="launchpad-section" aria-label="Workstation Desks Quick Launch">
-      <div className="section-label">WORKSTATION MODULES</div>
-      <h2 className="section-title">Institutional Trading Desks</h2>
+    <section className="launchpad-section" aria-label={copy.ARIA_LABEL}>
+      <div className="section-label">{copy.SECTION_LABEL}</div>
+      <h2 className="section-title">{copy.SECTION_TITLE}</h2>
 
       <div className="launchpad-grid">
         <Link to={AppRoute.SCREENER} className="launchpad-card">
@@ -19,13 +23,11 @@ export function WorkstationLaunchpad() {
             <Filter size={20} />
           </div>
           <div className="launchpad-content">
-            <h3 className="launchpad-title">Quantitative Screener</h3>
-            <p className="launchpad-desc">
-              Scan 2,000+ NSE & BSE stocks for volume surges, RSI extremes, and momentum.
-            </p>
+            <h3 className="launchpad-title">{copy.SCREENER_TITLE}</h3>
+            <p className="launchpad-desc">{copy.SCREENER_DESC}</p>
           </div>
           <span className="launchpad-action">
-            Open Desk <ArrowRight size={14} />
+            {copy.SCREENER_ACTION} <ArrowRight size={14} />
           </span>
         </Link>
 
@@ -34,13 +36,11 @@ export function WorkstationLaunchpad() {
             <LineChart size={20} />
           </div>
           <div className="launchpad-content">
-            <h3 className="launchpad-title">Prediction Lab & Ledger</h3>
-            <p className="launchpad-desc">
-              Audit automated signal generation, win-rates, excursions, and outcome logs.
-            </p>
+            <h3 className="launchpad-title">{copy.PREDICTIONS_TITLE}</h3>
+            <p className="launchpad-desc">{copy.PREDICTIONS_DESC}</p>
           </div>
           <span className="launchpad-action">
-            Audit Ledger <ArrowRight size={14} />
+            {copy.PREDICTIONS_ACTION} <ArrowRight size={14} />
           </span>
         </Link>
 
@@ -49,13 +49,11 @@ export function WorkstationLaunchpad() {
             <Bot size={20} />
           </div>
           <div className="launchpad-content">
-            <h3 className="launchpad-title">AI Financial Copilot</h3>
-            <p className="launchpad-desc">
-              Chat with multi-agent consensus models regarding regimes, setups, and Greeks.
-            </p>
+            <h3 className="launchpad-title">{copy.COPILOT_TITLE}</h3>
+            <p className="launchpad-desc">{copy.COPILOT_DESC}</p>
           </div>
           <span className="launchpad-action">
-            Launch Chat <ArrowRight size={14} />
+            {copy.COPILOT_ACTION} <ArrowRight size={14} />
           </span>
         </Link>
       </div>

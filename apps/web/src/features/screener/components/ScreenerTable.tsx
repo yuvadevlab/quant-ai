@@ -1,49 +1,54 @@
 /**
  * @file src/features/screener/components/ScreenerTable.tsx
- * @description Screener results table with RSI meters, EMA status, options OI tags, and action buttons.
+ * @description Screener results table with RSI meters, EMA status, options OI tags using DevLab UI Table primitives.
+ * @author yuva.devlab@gmail.com
  */
 
 import { Link } from "@tanstack/react-router";
 import { ArrowDownRight, ArrowUpRight, Sparkles } from "lucide-react";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@quant-ai/ui";
 import { OiAction, SignalCandidate, type ScreenerItem } from "@/components/quantai/data";
 import { AppRoute } from "@/constants/routes.constants";
+import { SCREENER_COPY } from "@/lib/ui-copy/screener.copy";
 
 export interface ScreenerTableProps {
   readonly items: readonly ScreenerItem[];
 }
 
 export function ScreenerTable({ items }: ScreenerTableProps) {
+  const copy = SCREENER_COPY.TABLE;
+
   return (
     <div className="desk-table-card">
       <div className="table-responsive">
-        <table className="quant-table" aria-label="Screener Results">
-          <thead>
-            <tr>
-              <th>SYMBOL & NAME</th>
-              <th>SECTOR</th>
-              <th>LTP & CHANGE</th>
-              <th>PATTERN DETECTED</th>
-              <th>RSI (14)</th>
-              <th>EMA STRUCTURE</th>
-              <th>OPTIONS OI ACTION</th>
-              <th>VOLUME SURGE</th>
-              <th>AI CANDIDATE</th>
-              <th>ACTION</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table className="quant-table" aria-label={copy.ARIA_LABEL}>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{copy.COL_SYMBOL}</TableHead>
+              <TableHead>{copy.COL_SECTOR}</TableHead>
+              <TableHead>{copy.COL_PRICE}</TableHead>
+              <TableHead>{copy.COL_PATTERN}</TableHead>
+              <TableHead>{copy.COL_RSI}</TableHead>
+              <TableHead>{copy.COL_EMA}</TableHead>
+              <TableHead>{copy.COL_OI}</TableHead>
+              <TableHead>{copy.COL_VOLUME}</TableHead>
+              <TableHead>{copy.COL_CANDIDATE}</TableHead>
+              <TableHead>{copy.COL_ACTION}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {items.map((item) => (
-              <tr key={item.symbol}>
-                <td>
+              <TableRow key={item.symbol}>
+                <TableCell>
                   <div className="symbol-cell">
                     <strong className="symbol-name">{item.symbol}</strong>
                     <span className="company-sub">{item.name}</span>
                   </div>
-                </td>
-                <td>
+                </TableCell>
+                <TableCell>
                   <span className="sector-badge">{item.sector}</span>
-                </td>
-                <td>
+                </TableCell>
+                <TableCell>
                   <div className="price-cell">
                     <span className="price-mono">{item.price}</span>
                     <span className={`change-pill ${item.positive ? "pill-gain" : "pill-loss"}`}>
@@ -51,11 +56,11 @@ export function ScreenerTable({ items }: ScreenerTableProps) {
                       {item.change}
                     </span>
                   </div>
-                </td>
-                <td>
+                </TableCell>
+                <TableCell>
                   <span className="pattern-tag">{item.pattern}</span>
-                </td>
-                <td>
+                </TableCell>
+                <TableCell>
                   <div className="rsi-cell">
                     <span
                       className={`rsi-val ${item.rsi > 70 ? "rsi-high" : item.rsi < 40 ? "rsi-low" : "rsi-mid"}`}
@@ -69,11 +74,11 @@ export function ScreenerTable({ items }: ScreenerTableProps) {
                       />
                     </div>
                   </div>
-                </td>
-                <td>
+                </TableCell>
+                <TableCell>
                   <span className="ema-tag">{item.emaStatus}</span>
-                </td>
-                <td>
+                </TableCell>
+                <TableCell>
                   <span
                     className={`oi-tag ${
                       item.oiAction === OiAction.LONG_BUILDUP ||
@@ -84,15 +89,15 @@ export function ScreenerTable({ items }: ScreenerTableProps) {
                   >
                     {item.oiAction}
                   </span>
-                </td>
-                <td>
+                </TableCell>
+                <TableCell>
                   <span
                     className={`volume-stat ${item.volumeSurge.startsWith("+") ? "text-gain" : "text-loss"}`}
                   >
                     {item.volumeSurge}
                   </span>
-                </td>
-                <td>
+                </TableCell>
+                <TableCell>
                   <span
                     className={`candidate-badge ${
                       item.signalCandidate.includes("BUY")
@@ -104,28 +109,28 @@ export function ScreenerTable({ items }: ScreenerTableProps) {
                   >
                     {item.signalCandidate}
                   </span>
-                </td>
-                <td>
+                </TableCell>
+                <TableCell>
                   <Link
                     to={AppRoute.CHAT}
                     className="btn-table-action"
-                    title={`Analyze ${item.symbol} with AI Copilot`}
+                    title={`${copy.ANALYZE_TITLE_PREFIX} ${item.symbol} ${copy.ANALYZE_TITLE_SUFFIX}`}
                   >
                     <Sparkles size={14} />
-                    <span>Analyze</span>
+                    <span>{copy.ANALYZE_ACTION}</span>
                   </Link>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
             {items.length === 0 && (
-              <tr>
-                <td colSpan={10} className="empty-table-cell">
-                  No screener candidates matched the selected filters.
-                </td>
-              </tr>
+              <TableRow>
+                <TableCell colSpan={10} className="empty-table-cell">
+                  {copy.EMPTY_STATE}
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

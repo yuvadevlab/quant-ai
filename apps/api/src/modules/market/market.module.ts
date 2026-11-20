@@ -4,7 +4,7 @@
  */
 
 import { Module } from "@nestjs/common";
-import { LiveMarketFeedService, StochasticMarketSimulator } from "./feed";
+import { LiveMarketFeedService, StochasticMarketSimulator, YahooFinanceHttpClient } from "./feed";
 import { MarketController } from "./market.controller";
 import { MarketService } from "./market.service";
 import { MarketTickService } from "./market-tick.service";
@@ -14,7 +14,19 @@ import { MarketTickService } from "./market-tick.service";
  */
 @Module({
   controllers: [MarketController],
-  providers: [MarketService, MarketTickService, LiveMarketFeedService, StochasticMarketSimulator],
-  exports: [MarketService, MarketTickService, LiveMarketFeedService, StochasticMarketSimulator],
+  providers: [
+    MarketService,
+    MarketTickService,
+    LiveMarketFeedService,
+    StochasticMarketSimulator,
+    YahooFinanceHttpClient,
+  ],
+  exports: [
+    MarketService,
+    MarketTickService,
+    LiveMarketFeedService,
+    StochasticMarketSimulator,
+    YahooFinanceHttpClient,
+  ],
 })
 export class MarketModule {}

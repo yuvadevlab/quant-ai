@@ -76,7 +76,7 @@ export function OverviewIndicesGrid({ ticks }: OverviewIndicesGridProps) {
 
   return (
     <div className="indices-section">
-      <nav className="indices-filter-bar" aria-label="Index Category Filters">
+      <nav className="indices-filter-bar" aria-label={OVERVIEW_COPY.INDICES.TITLE}>
         {FILTER_OPTIONS.map((opt) => (
           <button
             key={opt.key}
@@ -89,7 +89,7 @@ export function OverviewIndicesGrid({ ticks }: OverviewIndicesGridProps) {
         ))}
       </nav>
 
-      <section className="indices-grid" aria-label="Indian Market Benchmark Indices">
+      <section className="indices-grid" aria-label={OVERVIEW_COPY.INDICES.SUBTITLE}>
         {filteredTicks.map((index) => (
           <IndexMetricCard
             key={index.name}

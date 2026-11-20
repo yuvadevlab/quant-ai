@@ -9,6 +9,7 @@ import { Logger } from "@yuva-devlab/logger";
 import { AiProviderType, AgentRole, AgentStance } from "@quant-ai/shared-types";
 import { LiveMarketFeedService } from "../market/feed";
 import { AiProviderFactory } from "../quant-analysis/ai-provider.factory";
+import { CHAT_QUERY_SYMBOLS, CHAT_TEMPLATES } from "./chat.constants";
 
 export interface ChatMessageResponse {
   readonly reply: string;
@@ -44,37 +45,37 @@ export class ChatService {
    */
   public async handleUserMessage(
     query: string,
-    _providerOverride?: AiProviderType,
+    providerOverride?: AiProviderType,
   ): Promise<ChatMessageResponse> {
+    this.logger.info(`[handleUserMessage] Processing chat inquiry: "${query.slice(0, 60)}"`);
     const extractedSymbol = this.extractMentionedSymbol(query);
     let liveQuote = undefined;
 
     if (extractedSymbol) {
       try {
         liveQuote = await this.liveMarketFeed.getLiveQuote(extractedSymbol);
+        this.logger.info(
+          `[handleUserMessage] Successfully resolved live quote for ${extractedSymbol} at ₹${liveQuote.price}`,
+        );
       } catch (err) {
-        this.logger.debug(`Could not resolve live quote for ${extractedSymbol}: ${String(err)}`);
+        this.logger.debug(
+          `[handleUserMessage] Could not resolve live quote for ${extractedSymbol}: ${String(err)}`,
+        );
       }
     }
 
-    const adapter = this.aiProviderFactory?.getAdapter(_providerOverride);
+    const adapter = this.aiProviderFactory?.getAdapter(providerOverride);
     if (adapter) {
-      this.logger.debug(`AI Provider selected for query: ${adapter.constructor.name}`);
+      this.logger.debug(
+        `[handleUserMessage] AI Provider adapter selected: ${adapter.constructor.name}`,
+      );
     }
 
     const timestamp = new Date().toISOString();
 
     if (liveQuote) {
-      const sign = liveQuote.change >= 0 ? "+" : "";
-      const summaryText =
-        `${liveQuote.symbol} is currently trading at ${liveQuote.currency} ${liveQuote.price.toLocaleString("en-IN")} ` +
-        `(${sign}${liveQuote.percentChange.toFixed(2)}%). ` +
-        `Day Range: ${liveQuote.dayLow} – ${liveQuote.dayHigh}. Volume: ${liveQuote.volume.toLocaleString()}. ` +
-        `Quantitative consensus indicates ${liveQuote.percentChange >= 0 ? "bullish order flow expansion" : "defensive consolidation"} ` +
-        `with dynamic stop-loss recommended at ${(liveQuote.price * 0.985).toFixed(2)}.`;
-
       return {
-        reply: summaryText,
+        reply: CHAT_TEMPLATES.LIVE_QUOTE_SUMMARY(liveQuote),
         referencedSymbol: liveQuote.symbol,
         livePrice: liveQuote.price,
         liveChange: liveQuote.percentChange,
@@ -89,9 +90,7 @@ export class ChatService {
 
     // Default institutional quantitative response
     return {
-      reply:
-        `Quantitative analysis for "${query}": Multi-agent deliberation models show overall market volatility regime ` +
-        `is stable. Institutional risk parameters require minimum 2.0x Risk:Reward ratio and strict invalidation on daily close below structural VWAP.`,
+      reply: CHAT_TEMPLATES.GENERIC_QUANT_REPLY(query),
       agentPerspective: {
         role: AgentRole.QUANT_RISK_OFFICER,
         stance: AgentStance.NEUTRAL,
@@ -103,26 +102,10 @@ export class ChatService {
 
   private extractMentionedSymbol(query: string): string | undefined {
     const upper = query.toUpperCase();
-    const commonSymbols = [
-      "NIFTY 50",
-      "NIFTY",
-      "BANKNIFTY",
-      "BANK NIFTY",
-      "RELIANCE",
-      "TCS",
-      "HDFCBANK",
-      "INFY",
-      "ICICIBANK",
-      "AMZN",
-      "AAPL",
-      "NVDA",
-      "BTC",
-      "GOLD",
-      "CRUDE",
-    ];
 
-    for (const sym of commonSymbols) {
+    for (const sym of CHAT_QUERY_SYMBOLS) {
       if (upper.includes(sym)) {
+        this.logger.debug(`[extractMentionedSymbol] Query matched target instrument: ${sym}`);
         return sym;
       }
     }

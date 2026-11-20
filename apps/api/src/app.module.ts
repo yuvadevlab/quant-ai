@@ -8,6 +8,7 @@ import { QuantAnalysisModule } from "./modules/quant-analysis/quant-analysis.mod
 import { ScreenerModule } from "./modules/screener/screener.module";
 import { ChatModule } from "./modules/chat/chat.module";
 import { PortfolioModule } from "./modules/portfolio/portfolio.module";
+import { LlmModelsModule } from "./modules/llm-models/llm-models.module";
 
 /**
  * Root application module aggregating core domain and infrastructure modules.
@@ -23,6 +24,7 @@ import { PortfolioModule } from "./modules/portfolio/portfolio.module";
     QuantAnalysisModule,
     ChatModule,
     PortfolioModule,
+    LlmModelsModule,
   ],
 })
 export class AppModule {}

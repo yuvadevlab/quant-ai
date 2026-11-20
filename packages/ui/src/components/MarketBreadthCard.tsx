@@ -5,6 +5,7 @@
 
 import { Layers } from "lucide-react";
 import { cn } from "@yuva-devlab/ui";
+import { UI_COPY_CONSTANTS } from "../constants/ui-copy.constants";
 
 /**
  * Props for the MarketBreadthCard component.
@@ -44,36 +45,42 @@ export function MarketBreadthCard({
   universeLabel = "NSE 2,214 Stocks",
   className = "",
 }: MarketBreadthCardProps) {
+  const copy = UI_COPY_CONSTANTS.MARKET_BREADTH;
+
   return (
     <div className={cn("desk-panel breadth-panel", className)}>
       <div className="panel-heading">
         <div className="panel-title-wrap">
           <Layers size={18} className="panel-icon" />
-          <h2 className="panel-title">Market Breadth & Institutional Flows</h2>
+          <h2 className="panel-title">{copy.TITLE}</h2>
         </div>
-        <span className="panel-status-pill">{universeLabel}</span>
+        <span className="panel-status-pill">{universeLabel || copy.DEFAULT_UNIVERSE}</span>
       </div>
 
       <div className="breadth-metric-row">
         <div className="breadth-stat">
-          <span className="stat-label">ADVANCES</span>
+          <span className="stat-label">{copy.ADVANCES}</span>
           <span className="stat-val text-gain">{advances}</span>
-          <span className="stat-sub">{advanceRatio} of market</span>
+          <span className="stat-sub">
+            {advanceRatio} {copy.OF_MARKET}
+          </span>
         </div>
         <div className="breadth-stat">
-          <span className="stat-label">DECLINES</span>
+          <span className="stat-label">{copy.DECLINES}</span>
           <span className="stat-val text-loss">{declines}</span>
-          <span className="stat-sub">{declineRatio} of market</span>
+          <span className="stat-sub">
+            {declineRatio} {copy.OF_MARKET}
+          </span>
         </div>
         <div className="breadth-stat">
-          <span className="stat-label">FII NET FLOW</span>
+          <span className="stat-label">{copy.FII_NET_FLOW}</span>
           <span className="stat-val text-gain">{fiiNet}</span>
-          <span className="stat-sub">Strong Foreign Inflow</span>
+          <span className="stat-sub">{copy.FII_SUB}</span>
         </div>
         <div className="breadth-stat">
-          <span className="stat-label">DII NET FLOW</span>
+          <span className="stat-label">{copy.DII_NET_FLOW}</span>
           <span className="stat-val text-gain">{diiNet}</span>
-          <span className="stat-sub">Domestic Support</span>
+          <span className="stat-sub">{copy.DII_SUB}</span>
         </div>
       </div>
 

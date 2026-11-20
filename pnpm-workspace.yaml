@@ -9,6 +9,7 @@ allowBuilds:
   prisma: true
 
 minimumReleaseAgeExclude:
+  - "@yuva-devlab/auth-client@1.3.0"
   - "@yuva-devlab/tokens@2.2.0"
   - "@yuva-devlab/ui@4.0.0"
   - "@yuva-devlab/events@0.2.5"

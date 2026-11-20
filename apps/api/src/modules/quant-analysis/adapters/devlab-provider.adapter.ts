@@ -88,7 +88,7 @@ export class DevLabProviderAdapter implements AiModelAdapter {
       }
     } catch (error) {
       this.logger.warn(
-        `[${this.providerName}] Deliberation request failed; falling back to simulated engine`,
+        `[generateAgentVerdict] [${this.providerName}] Deliberation request failed; falling back to simulated engine`,
         { error: error instanceof Error ? error.message : String(error) },
       );
     }

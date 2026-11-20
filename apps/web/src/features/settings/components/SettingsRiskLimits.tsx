@@ -1,9 +1,12 @@
 /**
  * @file src/features/settings/components/SettingsRiskLimits.tsx
- * @description Hardcoded deterministic risk limits panel.
+ * @description Hardcoded deterministic risk limits panel using DevLab UI primitives.
+ * @author yuva.devlab@gmail.com
  */
 
 import { ShieldCheck } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@quant-ai/ui";
+import { SETTINGS_COPY } from "@/lib/ui-copy/settings.copy";
 
 export interface SettingsRiskLimitsProps {
   readonly maxRisk: string;
@@ -22,58 +25,58 @@ export function SettingsRiskLimits({
   autoTrailingSL,
   onAutoTrailingSLChange,
 }: SettingsRiskLimitsProps) {
+  const copy = SETTINGS_COPY.SECTIONS.RISK;
+
   return (
-    <div className="desk-panel">
-      <div className="panel-heading">
+    <Card className="desk-panel">
+      <CardHeader className="panel-heading">
         <div className="panel-title-wrap">
           <ShieldCheck size={18} className="panel-icon" />
           <div>
-            <h2 className="panel-title">Deterministic Risk Limits</h2>
-            <p className="panel-subtext">
-              Hardcoded limits enforced by Risk Guardian. LLM cannot override these rules.
-            </p>
+            <CardTitle className="panel-title">{copy.TITLE}</CardTitle>
+            <CardDescription className="panel-subtext">{copy.SUBTITLE}</CardDescription>
           </div>
         </div>
-      </div>
+      </CardHeader>
 
-      <div className="settings-fields-list">
+      <CardContent className="settings-fields-list">
         <div className="settings-field-row">
           <div>
-            <strong>Max Risk Per Signal</strong>
-            <p>Maximum allowable capital risk per single trade recommendation.</p>
+            <strong>{copy.MAX_RISK_LABEL}</strong>
+            <p>{copy.MAX_RISK_SUBTITLE}</p>
           </div>
           <select
             className="sector-select"
             value={maxRisk}
             onChange={(e) => onMaxRiskChange(e.target.value)}
           >
-            <option value="0.5%">0.5% (Conservative)</option>
-            <option value="1.0%">1.0% (Standard Quantitative)</option>
-            <option value="1.5%">1.5% (Aggressive)</option>
-            <option value="2.0%">2.0% (Max Ceiling)</option>
+            <option value="0.5%">{copy.MAX_RISK_OPTIONS.CONSERVATIVE}</option>
+            <option value="1.0%">{copy.MAX_RISK_OPTIONS.STANDARD}</option>
+            <option value="1.5%">{copy.MAX_RISK_OPTIONS.AGGRESSIVE}</option>
+            <option value="2.0%">{copy.MAX_RISK_OPTIONS.CEILING}</option>
           </select>
         </div>
 
         <div className="settings-field-row">
           <div>
-            <strong>Daily Max Drawdown Circuit Breaker</strong>
-            <p>Auto-pause all signal generation if daily losses hit this threshold.</p>
+            <strong>{copy.DRAWDOWN_LABEL}</strong>
+            <p>{copy.DRAWDOWN_SUBTITLE}</p>
           </div>
           <select
             className="sector-select"
             value={dailyMaxDrawdown}
             onChange={(e) => onDailyMaxDrawdownChange(e.target.value)}
           >
-            <option value="2.0%">2.0% Daily Loss</option>
-            <option value="3.0%">3.0% Daily Loss (Default)</option>
-            <option value="5.0%">5.0% Daily Loss</option>
+            <option value="2.0%">{copy.DRAWDOWN_OPTIONS.LOSS_2}</option>
+            <option value="3.0%">{copy.DRAWDOWN_OPTIONS.LOSS_3}</option>
+            <option value="5.0%">{copy.DRAWDOWN_OPTIONS.LOSS_5}</option>
           </select>
         </div>
 
         <div className="settings-field-row">
           <div>
-            <strong>Automated Trailing Stop Loss</strong>
-            <p>Automatically advance stop loss to entry level once Target 1 is achieved.</p>
+            <strong>{copy.TRAILING_LABEL}</strong>
+            <p>{copy.TRAILING_SUBTITLE}</p>
           </div>
           <label className="switch-wrapper">
             <input
@@ -84,7 +87,7 @@ export function SettingsRiskLimits({
             <span className="switch-slider" />
           </label>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

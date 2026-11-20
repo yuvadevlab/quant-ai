@@ -5,5 +5,7 @@
  */
 
 export * from "./market-feed.types";
+export * from "./market-feed.constants";
+export * from "./yahoo-finance-http.client";
 export * from "./stochastic-market.simulator";
 export * from "./live-market-feed.service";

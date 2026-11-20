@@ -27,12 +27,16 @@
     "db:seed": "node dist/seed.js"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.3",
-    "@quant-ai/shared-types": "workspace:*"
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
+    "@quant-ai/shared-types": "workspace:*",
+    "dotenv": "^17.4.2",
+    "pg": "^8.23.0"
   },
   "devDependencies": {
     "@types/node": "^22.16.5",
-    "prisma": "^6.19.3",
+    "@types/pg": "^8.16.0",
+    "prisma": "^7.10.0",
     "tsup": "^8.5.1",
     "typescript": "^5.8.3",
     "vitest": "^4.1.10"

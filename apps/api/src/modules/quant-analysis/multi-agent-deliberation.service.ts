@@ -162,7 +162,7 @@ export class MultiAgentDeliberationService {
     }
 
     this.logger.info(
-      `Deliberation completed [PRED: ${session.predictionId}] [CONSENSUS: ${consensus.consensusStance}] [CONF: ${consensus.compositeConfidence}%] [VETO: ${consensus.isVetoedBySkeptic}]`,
+      `[conductAdversarialDeliberation] Deliberation completed [PRED: ${session.predictionId}] [CONSENSUS: ${consensus.consensusStance}] [CONF: ${consensus.compositeConfidence}%] [VETO: ${consensus.isVetoedBySkeptic}]`,
     );
 
     return {

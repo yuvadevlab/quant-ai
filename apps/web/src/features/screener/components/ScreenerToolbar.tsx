@@ -5,7 +5,9 @@
  */
 
 import { Search } from "lucide-react";
+import { Button, Input } from "@quant-ai/ui";
 import { SectorFilter, ScreenerTab } from "@/constants/market.constants";
+import { SCREENER_COPY } from "@/lib/ui-copy/screener.copy";
 
 export interface ScreenerToolbarProps {
   readonly activeTab: ScreenerTab;
@@ -28,46 +30,48 @@ export function ScreenerToolbar({
   sectors,
   totalCount,
 }: ScreenerToolbarProps) {
+  const copy = SCREENER_COPY.TOOLBAR;
+
   return (
     <div className="screener-controls-card">
       <div className="screener-tabs-row">
         <div className="tab-pill-group">
-          <button
+          <Button
             type="button"
             className={`tab-pill ${activeTab === ScreenerTab.ALL ? "active" : ""}`}
             onClick={() => onSelectTab(ScreenerTab.ALL)}
           >
-            All Setups ({totalCount})
-          </button>
-          <button
+            {copy.TAB_ALL} ({totalCount})
+          </Button>
+          <Button
             type="button"
             className={`tab-pill ${activeTab === ScreenerTab.BREAKOUTS ? "active" : ""}`}
             onClick={() => onSelectTab(ScreenerTab.BREAKOUTS)}
           >
-            Breakouts
-          </button>
-          <button
+            {copy.TAB_BREAKOUTS}
+          </Button>
+          <Button
             type="button"
             className={`tab-pill ${activeTab === ScreenerTab.OPTIONS ? "active" : ""}`}
             onClick={() => onSelectTab(ScreenerTab.OPTIONS)}
           >
-            Options OI Surges
-          </button>
-          <button
+            {copy.TAB_OPTIONS}
+          </Button>
+          <Button
             type="button"
             className={`tab-pill ${activeTab === ScreenerTab.MOMENTUM ? "active" : ""}`}
             onClick={() => onSelectTab(ScreenerTab.MOMENTUM)}
           >
-            High Momentum (RSI &gt; 60)
-          </button>
+            {copy.TAB_MOMENTUM}
+          </Button>
         </div>
 
         <div className="search-wrap">
           <Search size={14} className="search-icon" />
-          <input
+          <Input
             type="text"
             className="search-input"
-            placeholder="Search symbol, pattern, thesis..."
+            placeholder={copy.SEARCH_PLACEHOLDER}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -75,17 +79,17 @@ export function ScreenerToolbar({
       </div>
 
       <div className="sector-filter-row">
-        <span className="sector-label">SECTOR:</span>
+        <span className="sector-label">{copy.SECTOR_LABEL}</span>
         <div className="sector-pills">
           {sectors.map((sec) => (
-            <button
+            <Button
               key={sec}
               type="button"
               className={`sector-pill ${selectedSector === sec ? "active" : ""}`}
               onClick={() => onSelectSector(sec)}
             >
-              {sec === SectorFilter.ALL ? "All Sectors" : sec}
-            </button>
+              {sec === SectorFilter.ALL ? copy.ALL_SECTORS : sec}
+            </Button>
           ))}
         </div>
       </div>

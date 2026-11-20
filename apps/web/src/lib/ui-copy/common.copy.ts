@@ -1,6 +1,8 @@
 /**
  * @file src/lib/ui-copy/common.copy.ts
- * @description Universal actions, badge labels, navigation copy, and regulatory disclaimer. */
+ * @description Universal actions, badge labels, navigation copy, and regulatory disclaimer.
+ * @author yuva.devlab@gmail.com
+ */
 
 export const COMMON_COPY = {
   APP: {
@@ -25,6 +27,8 @@ export const COMMON_COPY = {
     TRIGGER_PREDICTION: "Run AI Scan",
     SEND_MESSAGE: "Send Prompt",
     VIEW_ALL: "View All Signals",
+    TRIGGER_DELIBERATION: "Trigger AI Deliberation",
+    DELIBERATING: "Deliberating...",
   },
   NAV: {
     OVERVIEW: "Overview Desk",
@@ -41,6 +45,38 @@ export const COMMON_COPY = {
     INVALIDATED: "Signal Invalidation",
     EXPIRED: "Time Expired",
     LIVE_STREAM: "Live NSE Feed",
+    STREAM_ACTIVE: "Live Stream Active",
+    STREAM_CONNECTED: "Stream Connected",
+  },
+  TABLE_COMMON: {
+    EMPTY_SEARCH: "No matching records found.",
+    RESET_CRITERIA: "Try adjusting your filters or search keywords.",
+  },
+  SIDEBAR: {
+    GROUP_ANALYTICS: "ANALYTICS & DESKS",
+    GROUP_INTELLIGENCE: "INTELLIGENCE",
+    EXPAND: "Expand sidebar",
+    COLLAPSE: "Collapse sidebar",
+    LIVE_BADGE_SUFFIX: "Live",
+    FII_SUFFIX: "FII",
+    VIX_PREFIX: "VIX",
+    FEED_CONNECTED: "NSE Live Feed Connected",
+    FEED_DISCONNECTED: "Local Feed (Reconnecting)",
+    NAV_ARIA: "Workstation Navigation",
+    MAIN_NAV_ARIA: "Main Navigation",
+    HOME_ARIA: "QuantAI Home",
+  },
+  TOPBAR: {
+    WIN_RATE_TITLE: "30-day verified signal hit-rate",
+    WIN_RATE_LABEL: "WIN RATE",
+    SIGNALS_SUFFIX: "signals",
+    MODEL_TITLE: "Active Multi-Agent Reasoning Engine",
+    USER_TITLE: "Authenticated via DevLab Portal SSO",
+  },
+  TICKER_STRIP: {
+    ARIA_LABEL: "Real-time Indian Benchmark Ticker",
+    CONNECTED_BADGE: "LIVE WS",
+    DESK_BADGE: "LIVE DESK",
   },
   REGULATORY_DISCLAIMER: {
     HEADING: "REGULATORY & EDUCATIONAL NOTICE",

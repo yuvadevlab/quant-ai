@@ -8,6 +8,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, Sparkles } from "lucide-react";
 import type { Signal } from "@/components/quantai/data";
 import { ChatMessageType } from "@/constants/market.constants";
+import { CHAT_COPY } from "@/lib/ui-copy/chat.copy";
 
 export interface ConversationItem {
   readonly type: ChatMessageType;
@@ -19,10 +20,12 @@ export interface ConversationItem {
 
 export interface ChatThreadProps {
   readonly messages: readonly ConversationItem[];
-  readonly featuredSignal?: Signal;
+  readonly featuredSignal?: Signal | undefined;
 }
 
 export function ChatThread({ messages, featuredSignal }: ChatThreadProps) {
+  const copy = CHAT_COPY.THREAD;
+
   return (
     <div className="chat-messages-scroll">
       {messages.map((msg) => {
@@ -45,7 +48,7 @@ export function ChatThread({ messages, featuredSignal }: ChatThreadProps) {
 
             <div className="msg-body-col">
               <div className="msg-meta-header">
-                <strong>{isAssistant ? "QuantAI Copilot" : "You (Trader)"}</strong>
+                <strong>{isAssistant ? copy.ASSISTANT_NAME : copy.USER_NAME}</strong>
                 <time>{msg.time}</time>
               </div>
 
@@ -55,7 +58,7 @@ export function ChatThread({ messages, featuredSignal }: ChatThreadProps) {
                 {msg.hasSignal && featuredSignal && (
                   <div className="chat-signal-embed">
                     <div className="embed-header">
-                      <span className="embed-badge">EMBEDDED PREDICTION SETUP</span>
+                      <span className="embed-badge">{copy.EMBEDDED_SETUP}</span>
                       <span className="embed-id">{featuredSignal.id}</span>
                     </div>
 
@@ -66,8 +69,12 @@ export function ChatThread({ messages, featuredSignal }: ChatThreadProps) {
                       </div>
                       <div className="embed-details">
                         <span className="embed-dir badge-buy">{featuredSignal.direction}</span>
-                        <span className="embed-entry">Entry: {featuredSignal.entry}</span>
-                        <span className="embed-target">T1: {featuredSignal.target1}</span>
+                        <span className="embed-entry">
+                          {copy.ENTRY_PREFIX} {featuredSignal.entry}
+                        </span>
+                        <span className="embed-target">
+                          {copy.TARGET_PREFIX} {featuredSignal.target1}
+                        </span>
                       </div>
                     </div>
 
@@ -76,7 +83,7 @@ export function ChatThread({ messages, featuredSignal }: ChatThreadProps) {
                       params={{ id: featuredSignal.id }}
                       className="embed-action-btn"
                     >
-                      <span>View Trajectory in Monitor</span>
+                      <span>{copy.VIEW_TRAJECTORY}</span>
                       <ArrowRight size={14} />
                     </Link>
                   </div>

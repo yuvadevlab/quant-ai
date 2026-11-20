@@ -29,5 +29,16 @@ export default defineConfig({
   server: {
     host: "::",
     port: 3005,
+    proxy: {
+      "/api": {
+        target: "http://localhost:4005",
+        changeOrigin: true,
+      },
+      "/socket.io": {
+        target: "http://localhost:4006",
+        ws: true,
+        changeOrigin: true,
+      },
+    },
   },
 });

@@ -63,9 +63,13 @@ export function PredictionsPage({ initialData }: PredictionsPageProps) {
         <PredictionsKpiGrid
           totalGenerated={initialData.totalGenerated}
           activeCount={initialData.activeCount}
+          targetHitCount={counts.targetHit}
+          stopHitCount={counts.stopHit}
           winRate={initialData.winRate}
           profitFactor={initialData.profitFactor}
           riskReward={initialData.riskReward}
+          avgGainText={initialData.avgGainText}
+          avgLossText={initialData.avgLossText}
         />
         <PredictionsToolbar
           activeFilter={activeFilter}

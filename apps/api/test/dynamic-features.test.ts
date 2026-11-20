@@ -5,11 +5,14 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { StochasticMarketSimulator, LiveMarketFeedService } from "../src/modules/market/feed";
+import { LiveMarketFeedService } from "../src/modules/market/feed";
+import { MarketService } from "../src/modules/market/market.service";
+import { MarketController } from "../src/modules/market/market.controller";
 import { ChatService } from "../src/modules/chat/chat.service";
 import { ChatController } from "../src/modules/chat/chat.controller";
 import { PortfolioService } from "../src/modules/portfolio/portfolio.service";
 import { PortfolioController } from "../src/modules/portfolio/portfolio.controller";
+import { ExecutionType, PositionSide } from "../src/modules/portfolio/portfolio.types";
 import { DeliberationController } from "../src/modules/quant-analysis/deliberation.controller";
 import { MultiAgentDeliberationService } from "../src/modules/quant-analysis/multi-agent-deliberation.service";
 import { RealtimeGateway } from "../src/modules/realtime/realtime.gateway";
@@ -19,8 +22,7 @@ import { ConfigService } from "../src/modules/infrastructure/config.service";
 import { EventBusService } from "../src/modules/infrastructure/event-bus.service";
 
 describe("Dynamic Workstation Features", () => {
-  const simulator = new StochasticMarketSimulator();
-  const feed = new LiveMarketFeedService(simulator);
+  const feed = new LiveMarketFeedService();
   const config = new ConfigService();
   const bus = new EventBusService(config);
   const gateway = new RealtimeGateway();
@@ -59,6 +61,30 @@ describe("Dynamic Workstation Features", () => {
     const portfolioController = new PortfolioController(portfolioService);
 
     it("returns dynamic paper portfolio summary with active positions", async () => {
+      portfolioService.addPosition({
+        symbol: "RELIANCE",
+        instrument: "NSE · Cash Equity",
+        side: PositionSide.LONG,
+        qty: 100,
+        entryPrice: 2400.0,
+        currentPrice: 2434.6,
+        pnl: 3460.0,
+        returnPercent: 1.44,
+        stopLoss: 2380.0,
+        targetPrice: 2480.0,
+      });
+      portfolioService.recordExecution({
+        id: "ORD-TEST-1",
+        symbol: "TCS",
+        type: ExecutionType.BUY,
+        qty: 50,
+        entryPrice: 4180.0,
+        exitPrice: 4260.0,
+        pnl: 4000.0,
+        outcome: "Target Hit",
+        timestamp: new Date().toISOString(),
+      });
+
       await portfolioService.onModuleInit();
       const summary = portfolioController.getPortfolio();
 
@@ -76,7 +102,6 @@ describe("Dynamic Workstation Features", () => {
     });
 
     it("correctly computes available and used margins", async () => {
-      await portfolioService.onModuleInit();
       const summary = portfolioController.getPortfolio();
 
       expect(summary.marginUsed).toBeGreaterThan(0);
@@ -115,6 +140,49 @@ describe("Dynamic Workstation Features", () => {
       expect(result.riskRewardRatio).toBe(2);
       expect(result.mathematicalExpectancy).toBeGreaterThan(0);
       expect(result.isApproved).toBe(true);
+    });
+  });
+
+  describe("Market Breadth & Runtime Configuration Engine", () => {
+    const marketService = new MarketService(feed, bus);
+    const marketController = new MarketController(marketService);
+
+    it("dynamically returns breadth and sector momentum", async () => {
+      await marketService.onModuleInit();
+      const breadth = marketController.getBreadth();
+      expect(breadth).toBeDefined();
+      expect(typeof breadth.advances).toBe("number");
+      expect(typeof breadth.declines).toBe("number");
+      expect(breadth.advanceRatio).toContain("%");
+      expect(breadth.fiiNet).toBeDefined();
+      expect(breadth.diiNet).toBeDefined();
+
+      const sectors = marketController.getSectors();
+      expect(sectors).toBeDefined();
+      expect(sectors.length).toBeGreaterThan(0);
+      for (const sec of sectors) {
+        expect(sec.name).toBeDefined();
+        expect(sec.change).toBeDefined();
+        expect(["Strong", "Moderate", "Neutral", "Weak"]).toContain(sec.momentum);
+      }
+    });
+
+    it("allows runtime configuration updates without redeployments", async () => {
+      const configBefore = marketController.getConfig();
+      expect(configBefore.breadth.vixLowThreshold).toBe(15.0);
+
+      const updated = await marketController.updateConfig({
+        breadth: { vixLowThreshold: 18.0, fiiNetCr: 3500.5 },
+        sector: { strongThreshold: 2.0 },
+      });
+
+      expect(updated.breadth.vixLowThreshold).toBe(18.0);
+      expect(updated.breadth.fiiNetCr).toBe(3500.5);
+      expect(updated.sector.strongThreshold).toBe(2.0);
+
+      // Verify that market breadth reflects new configuration
+      const breadthAfter = marketController.getBreadth();
+      expect(breadthAfter.fiiNet).toContain("3,500.5");
     });
   });
 });

@@ -25,7 +25,7 @@ export class ConfigService {
   public constructor() {
     this.envConfig = parseApiEnv(process.env);
     this.logger.info(
-      `Config loaded [ENV: ${this.envConfig.NODE_ENV}] [PORT: ${this.envConfig.PORT}] [BROKER: ${this.envConfig.EVENT_BROKER}] [AI: ${this.envConfig.AI_PROVIDER}]`,
+      `[constructor] Config loaded [ENV: ${this.envConfig.NODE_ENV}] [PORT: ${this.envConfig.PORT}] [BROKER: ${this.envConfig.EVENT_BROKER}] [AI: ${this.envConfig.AI_PROVIDER}]`,
     );
   }
 

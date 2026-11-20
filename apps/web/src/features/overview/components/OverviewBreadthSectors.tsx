@@ -1,12 +1,14 @@
 /**
  * @file src/features/overview/components/OverviewBreadthSectors.tsx
  * @description 2-column market breadth and sector momentum matrix section.
+ * @author yuva.devlab@gmail.com
  */
 
 import { Link } from "@tanstack/react-router";
 import { MarketBreadthCard } from "@quant-ai/ui";
 import { BarChart3, ChevronRight } from "lucide-react";
 import { AppRoute } from "@/constants/routes.constants";
+import { OVERVIEW_COPY } from "@/lib/ui-copy/overview.copy";
 import type { MarketBreadth, SectorPerformance } from "@/services/market-feed.service";
 
 export interface OverviewBreadthSectorsProps {
@@ -15,6 +17,8 @@ export interface OverviewBreadthSectorsProps {
 }
 
 export function OverviewBreadthSectors({ breadth, sectors }: OverviewBreadthSectorsProps) {
+  const copy = OVERVIEW_COPY.SECTOR_MATRIX;
+
   return (
     <section className="breadth-sector-section">
       <MarketBreadthCard
@@ -29,10 +33,10 @@ export function OverviewBreadthSectors({ breadth, sectors }: OverviewBreadthSect
         <div className="panel-heading">
           <div className="panel-title-wrap">
             <BarChart3 size={18} className="panel-icon" />
-            <h2 className="panel-title">Sector Momentum Matrix</h2>
+            <h2 className="panel-title">{copy.TITLE}</h2>
           </div>
           <Link to={AppRoute.SCREENER} className="panel-link">
-            Screen Sectors <ChevronRight size={14} />
+            {copy.SCREEN_SECTORS} <ChevronRight size={14} />
           </Link>
         </div>
 

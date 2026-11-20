@@ -7,15 +7,22 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Optional } from "@nestjs/common";
 import { Logger } from "@yuva-devlab/logger";
 import { EventTopic } from "@quant-ai/shared-types";
+import {
+  calculatePortfolioValuations,
+  calculateReturnPercent,
+  calculateUnrealizedPnl,
+  calculateWinRate,
+  TradePositionSide,
+} from "@quant-ai/quant-core";
 import { type DomainEventEnvelope } from "@yuva-devlab/events";
 import { EventBusService } from "../infrastructure/event-bus.service";
+import { DatabaseService } from "../infrastructure/database.service";
 import { LiveMarketFeedService } from "../market/feed";
 import {
   type PaperExecution,
   type PaperPosition,
   type PortfolioSummary,
   PositionSide,
-  ExecutionType,
 } from "./portfolio.types";
 
 interface TickEventPayload extends Record<string, unknown> {
@@ -29,39 +36,17 @@ interface TickEventPayload extends Record<string, unknown> {
 @Injectable()
 export class PortfolioService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PortfolioService.name);
-  private readonly initialCapital = 1000000;
-  private readonly realizedPnl = 42500;
+  private initialCapital = 1000000;
+  private realizedPnl = 0;
   private unsubTick?: () => void;
 
   private readonly positions = new Map<string, PaperPosition>();
-  private readonly executions: PaperExecution[] = [
-    {
-      id: "ORD-9401",
-      symbol: "TCS",
-      type: ExecutionType.BUY,
-      qty: 50,
-      entryPrice: 4180.0,
-      exitPrice: 4260.0,
-      pnl: 4000.0,
-      outcome: "Target Hit",
-      timestamp: new Date(Date.now() - 86400000).toISOString(),
-    },
-    {
-      id: "ORD-9402",
-      symbol: "INFY",
-      type: ExecutionType.SELL,
-      qty: 100,
-      entryPrice: 1910.0,
-      exitPrice: 1885.0,
-      pnl: 2500.0,
-      outcome: "Target Hit",
-      timestamp: new Date(Date.now() - 43200000).toISOString(),
-    },
-  ];
+  private readonly executions: PaperExecution[] = [];
 
   public constructor(
     private readonly liveMarketFeed: LiveMarketFeedService,
     @Optional() private readonly eventBusService?: EventBusService,
+    @Optional() private readonly databaseService?: DatabaseService,
   ) {}
 
   /**
@@ -75,10 +60,10 @@ export class PortfolioService implements OnModuleInit, OnModuleDestroy {
           this.handleIncomingTick(envelope as DomainEventEnvelope<TickEventPayload>);
         },
       );
-      this.logger.info("PortfolioService subscribed to real-time MARKET_TICKS");
+      this.logger.info("[onModuleInit] PortfolioService subscribed to real-time MARKET_TICKS");
     }
 
-    await this.hydratePositions();
+    await this.loadPortfolioFromDb();
   }
 
   /**
@@ -93,24 +78,47 @@ export class PortfolioService implements OnModuleInit, OnModuleDestroy {
    */
   public getPortfolioSummary(): PortfolioSummary {
     const activePositions = Array.from(this.positions.values());
-    const unrealizedPnl = Number(activePositions.reduce((acc, pos) => acc + pos.pnl, 0).toFixed(2));
-    const marginUsed = Number(
-      activePositions.reduce((acc, pos) => acc + pos.entryPrice * pos.qty, 0).toFixed(2),
+    const valuationPositions = activePositions.map((pos) => ({
+      entryPrice: pos.entryPrice,
+      qty: pos.qty,
+      pnl: pos.pnl,
+    }));
+
+    const metrics = calculatePortfolioValuations(
+      this.initialCapital,
+      this.realizedPnl,
+      valuationPositions,
     );
-    const totalEquity = Number((this.initialCapital + this.realizedPnl + unrealizedPnl).toFixed(2));
-    const availableMargin = Math.max(0, Number((totalEquity - marginUsed).toFixed(2)));
+
+    const winningTrades = this.executions.filter((e) => e.pnl > 0).length;
+    const winRate = calculateWinRate(winningTrades, this.executions.length);
 
     return {
-      totalEquity,
+      totalEquity: metrics.totalEquity,
       initialCapital: this.initialCapital,
       realizedPnl: this.realizedPnl,
-      unrealizedPnl,
-      availableMargin,
-      marginUsed,
-      winRate: "78.4%",
+      unrealizedPnl: metrics.unrealizedPnl,
+      availableMargin: metrics.availableMargin,
+      marginUsed: metrics.marginUsed,
+      winRate,
       positions: activePositions,
       recentExecutions: this.executions,
     };
+  }
+
+  /**
+   * Adds an execution record dynamically and updates realized PnL.
+   */
+  public recordExecution(execution: PaperExecution): void {
+    this.executions.unshift(execution);
+    this.realizedPnl = Number((this.realizedPnl + execution.pnl).toFixed(2));
+  }
+
+  /**
+   * Adds or updates a paper trading position.
+   */
+  public addPosition(position: PaperPosition): void {
+    this.positions.set(position.symbol, position);
   }
 
   /**
@@ -124,12 +132,10 @@ export class PortfolioService implements OnModuleInit, OnModuleDestroy {
     if (!existing) return;
 
     const currentPrice = tick.price;
-    const diff =
-      existing.side === PositionSide.LONG
-        ? currentPrice - existing.entryPrice
-        : existing.entryPrice - currentPrice;
-    const pnl = Number((diff * existing.qty).toFixed(2));
-    const returnPercent = Number(((diff / existing.entryPrice) * 100).toFixed(2));
+    const side =
+      existing.side === PositionSide.LONG ? TradePositionSide.LONG : TradePositionSide.SHORT;
+    const pnl = calculateUnrealizedPnl(existing.entryPrice, currentPrice, existing.qty, side);
+    const returnPercent = calculateReturnPercent(existing.entryPrice, currentPrice, side);
 
     this.positions.set(tick.symbol, {
       ...existing,
@@ -139,50 +145,62 @@ export class PortfolioService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  private async hydratePositions(): Promise<void> {
-    const initialSpecs = [
-      {
-        symbol: "RELIANCE",
-        instrument: "NSE · Cash Equity",
-        side: PositionSide.LONG,
-        qty: 100,
-        stopLoss: 2940,
-        targetPrice: 3120,
-      },
-      {
-        symbol: "BANKNIFTY 52000 CE",
-        instrument: "NFO · Weekly Call Option",
-        side: PositionSide.LONG,
-        qty: 150,
-        stopLoss: 210,
-        targetPrice: 380,
-      },
-    ];
+  private async loadPortfolioFromDb(): Promise<void> {
+    if (!this.databaseService) return;
 
-    for (const spec of initialSpecs) {
-      try {
-        const live = await this.liveMarketFeed.getLiveQuote(spec.symbol);
-        const currentPrice = live.price;
-        const entryPrice = Number((currentPrice * 0.992).toFixed(2));
-        const diff = currentPrice - entryPrice;
-        const pnl = Number((diff * spec.qty).toFixed(2));
-        const returnPercent = Number(((diff / entryPrice) * 100).toFixed(2));
+    try {
+      const dbPositions = await this.databaseService.client.paperPosition.findMany();
+      for (const pos of dbPositions) {
+        let currentPrice = pos.entryPrice;
+        try {
+          const live = await this.liveMarketFeed.getLiveQuote(pos.symbol);
+          currentPrice = live.price;
+        } catch {
+          // Keep entry price if exchange feed fails
+        }
 
-        this.positions.set(spec.symbol, {
-          symbol: spec.symbol,
-          instrument: spec.instrument,
-          side: spec.side,
-          qty: spec.qty,
-          entryPrice,
+        const side = pos.side === "LONG" ? TradePositionSide.LONG : TradePositionSide.SHORT;
+        const pnl = calculateUnrealizedPnl(pos.entryPrice, currentPrice, pos.qty, side);
+        const returnPercent = calculateReturnPercent(pos.entryPrice, currentPrice, side);
+
+        this.positions.set(pos.symbol, {
+          symbol: pos.symbol,
+          instrument: pos.instrument,
+          side: pos.side === "SHORT" ? PositionSide.SHORT : PositionSide.LONG,
+          qty: pos.qty,
+          entryPrice: pos.entryPrice,
           currentPrice,
           pnl,
           returnPercent,
-          stopLoss: spec.stopLoss,
-          targetPrice: spec.targetPrice,
+          stopLoss: pos.stopLoss,
+          targetPrice: pos.targetPrice,
         });
-      } catch (err) {
-        this.logger.warn(`Could not hydrate portfolio position for ${spec.symbol}: ${String(err)}`);
       }
+
+      const dbExecutions = await this.databaseService.client.paperExecution.findMany({
+        orderBy: { timestamp: "desc" },
+        take: 20,
+      });
+
+      for (const exec of dbExecutions) {
+        this.executions.push({
+          id: exec.id,
+          symbol: exec.symbol,
+          type: exec.type as never,
+          qty: exec.qty,
+          entryPrice: exec.entryPrice,
+          exitPrice: exec.exitPrice,
+          pnl: exec.pnl,
+          outcome: exec.outcome,
+          timestamp: exec.timestamp.toISOString(),
+        });
+      }
+
+      this.realizedPnl = Number(this.executions.reduce((acc, e) => acc + e.pnl, 0).toFixed(2));
+    } catch (err) {
+      this.logger.warn(
+        `[loadPortfolioFromDb] Could not load portfolio records from DB: ${String(err)}`,
+      );
     }
   }
 }

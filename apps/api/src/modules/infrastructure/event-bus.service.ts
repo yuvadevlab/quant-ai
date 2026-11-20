@@ -3,7 +3,8 @@
  * @author yuva.devlab@gmail.com
  */
 
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
+import { Logger } from "@yuva-devlab/logger";
 import { ConfigService } from "./config.service";
 import { EventBrokerType } from "@quant-ai/shared-types";
 
@@ -18,8 +19,8 @@ export class EventBusService {
   private readonly listeners = new Map<string, Set<EventHandler<unknown>>>();
 
   public constructor(private readonly configService: ConfigService) {
-    this.logger.log(
-      `Event bus initialized [Backend: ${this.configService.eventBroker}] [Brokers: ${this.configService.kafkaBrokers}]`,
+    this.logger.info(
+      `[constructor] Event bus initialized [Backend: ${this.configService.eventBroker}] [Brokers: ${this.configService.kafkaBrokers}]`,
     );
   }
 
@@ -31,7 +32,7 @@ export class EventBusService {
    */
   public async publish<T>(topic: string, payload: T): Promise<void> {
     if (this.configService.eventBroker === EventBrokerType.REDPANDA) {
-      this.logger.debug(`[Redpanda Dispatched] Topic: ${topic}`);
+      this.logger.debug(`[publish] Redpanda Dispatched Topic: ${topic}`);
     }
 
     const topicListeners = this.listeners.get(topic);
@@ -42,7 +43,7 @@ export class EventBusService {
         await handler(payload);
       } catch (error) {
         this.logger.error(
-          `Error in event subscriber on topic ${topic}: ${(error as Error).message}`,
+          `[publish] Error in event subscriber on topic ${topic}: ${(error as Error).message}`,
         );
       }
     }

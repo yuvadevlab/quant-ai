@@ -5,6 +5,7 @@
 
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "@yuva-devlab/ui";
+import { UI_COPY_CONSTANTS } from "../constants/ui-copy.constants";
 import { KpiMetricCard } from "./KpiMetricCard";
 
 /**
@@ -56,17 +57,19 @@ export function MonitorKpiGrid({
 }: MonitorKpiGridProps) {
   const isBuy = direction.toUpperCase() === "BUY";
 
+  const copy = UI_COPY_CONSTANTS.MONITOR_KPI_GRID;
+
   return (
     <div className={cn("monitor-kpi-grid", className)}>
       <KpiMetricCard
-        title="ENTRY ZONE"
+        title={copy.ENTRY_ZONE}
         value={entry}
-        footer={`Filled: ${entryPrice}`}
+        footer={`${copy.FILLED_PREFIX} ${entryPrice}`}
         footerClass="text-muted"
       />
 
       <KpiMetricCard
-        title="CURRENT LTP"
+        title={copy.CURRENT_LTP}
         value={last}
         valueClass="highlight"
         footer={
@@ -79,34 +82,34 @@ export function MonitorKpiGrid({
       />
 
       <KpiMetricCard
-        title="TARGET 1 LEVEL"
+        title={copy.TARGET_1_LEVEL}
         value={target1}
         valueClass="text-gain"
-        footer="+1.34% target upside"
+        footer={copy.TARGET_1_FOOTER}
         footerClass="text-gain"
       />
 
       <KpiMetricCard
-        title="TARGET 2 LEVEL"
+        title={copy.TARGET_2_LEVEL}
         value={target2}
         valueClass="text-gain"
-        footer="+2.38% extended target"
+        footer={copy.TARGET_2_FOOTER}
         footerClass="text-muted"
       />
 
       <KpiMetricCard
-        title="STOP LOSS"
+        title={copy.STOP_LOSS}
         value={stop}
         valueClass="text-loss"
-        footer="−0.84% max risk"
+        footer={copy.STOP_LOSS_FOOTER}
         footerClass="text-loss"
       />
 
       <KpiMetricCard
-        title="AGENT CONVICTION"
+        title={copy.AGENT_CONVICTION}
         value={confidence}
         valueClass="text-brand"
-        footer={`Risk/Reward ${riskReward}`}
+        footer={`${copy.RISK_REWARD_PREFIX} ${riskReward}`}
         footerClass="text-muted"
       />
     </div>

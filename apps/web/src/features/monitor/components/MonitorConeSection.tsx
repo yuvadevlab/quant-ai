@@ -1,13 +1,15 @@
 /**
  * @file src/features/monitor/components/MonitorConeSection.tsx
  * @description Interactive real-time trajectory cone panel with timeframe controls and telemetry.
+ * @author yuva.devlab@gmail.com
  */
 
 import { useState } from "react";
-import { TelemetryBar, TrajectoryConeChart } from "@quant-ai/ui";
+import { Button, TelemetryBar, TrajectoryConeChart } from "@quant-ai/ui";
 import { Activity } from "lucide-react";
 import { chartSamples } from "@/components/quantai/chart-samples";
 import type { Signal } from "@/components/quantai/data";
+import { MONITOR_COPY } from "@/lib/ui-copy/monitor.copy";
 
 export interface MonitorConeSectionProps {
   readonly signal: Signal;
@@ -16,6 +18,7 @@ export interface MonitorConeSectionProps {
 
 export function MonitorConeSection({ signal, isActive }: MonitorConeSectionProps) {
   const [timeframe, setTimeframe] = useState("1m");
+  const copy = MONITOR_COPY.CONE;
 
   return (
     <section className="desk-panel trajectory-panel">
@@ -23,23 +26,21 @@ export function MonitorConeSection({ signal, isActive }: MonitorConeSectionProps
         <div className="panel-title-wrap">
           <Activity size={18} className="panel-icon" />
           <div>
-            <h2 className="panel-title">Real-time Predictive Trajectory Cone</h2>
-            <p className="panel-subtext">
-              Actual price path vs. predicted confidence bounds and expected path to Target 1.
-            </p>
+            <h2 className="panel-title">{copy.TITLE}</h2>
+            <p className="panel-subtext">{copy.SUBTITLE}</p>
           </div>
         </div>
         <div className="chart-tools">
           <div className="tab-pill-group">
             {["1m", "5m", "15m"].map((period) => (
-              <button
+              <Button
                 key={period}
                 type="button"
                 className={`tab-pill ${timeframe === period ? "active" : ""}`}
                 onClick={() => setTimeframe(period)}
               >
                 {period}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -47,19 +48,19 @@ export function MonitorConeSection({ signal, isActive }: MonitorConeSectionProps
 
       <div className="chart-legend-row">
         <span className="legend-item">
-          <span className="legend-dot dot-actual" /> Actual Price
+          <span className="legend-dot dot-actual" /> {copy.LEGEND_ACTUAL}
         </span>
         <span className="legend-item">
-          <span className="legend-dot dot-expected" /> Expected Path
+          <span className="legend-dot dot-expected" /> {copy.LEGEND_EXPECTED}
         </span>
         <span className="legend-item">
-          <span className="legend-box box-cone" /> Predictive Cone
+          <span className="legend-box box-cone" /> {copy.LEGEND_CONE}
         </span>
         <span className="legend-item">
-          <span className="legend-line line-target" /> Target 1 ({signal.target1})
+          <span className="legend-line line-target" /> {copy.LEGEND_TARGET} ({signal.target1})
         </span>
         <span className="legend-item">
-          <span className="legend-line line-stop" /> Stop Loss ({signal.stop})
+          <span className="legend-line line-stop" /> {copy.LEGEND_STOP} ({signal.stop})
         </span>
       </div>
 
@@ -76,27 +77,27 @@ export function MonitorConeSection({ signal, isActive }: MonitorConeSectionProps
       <TelemetryBar
         stats={[
           {
-            label: "MAX FAVORABLE EXCURSION (MFE)",
+            label: copy.MFE_LABEL,
             value: signal.mfe,
-            subtext: "Peak ₹2,449.60",
+            subtext: copy.MFE_SUBTEXT,
             valueClass: "text-gain",
           },
           {
-            label: "MAX ADVERSE EXCURSION (MAE)",
+            label: copy.MAE_LABEL,
             value: signal.mae,
-            subtext: "Trough ₹2,417.10",
+            subtext: copy.MAE_SUBTEXT,
             valueClass: "text-loss",
           },
           {
-            label: "TRAJECTORY ALIGNMENT",
+            label: copy.ALIGNMENT_LABEL,
             value: "94.2%",
-            subtext: "Within Upper Cone",
+            subtext: copy.ALIGNMENT_SUBTEXT,
             valueClass: "text-gain",
           },
           {
-            label: "PROGRESS TO TARGET 1",
+            label: copy.PROGRESS_LABEL,
             progressBarPercent: 68,
-            subtext: "68% completed",
+            subtext: copy.PROGRESS_SUBTEXT,
           },
         ]}
       />

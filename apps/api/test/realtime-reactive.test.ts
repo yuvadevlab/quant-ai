@@ -5,12 +5,20 @@
  */
 
 import { describe, expect, it } from "vitest";
+import {
+  AssetClass,
+  SignalDirection,
+  SignalRegime,
+  SignalStatus,
+  TradeHorizon,
+  TradeStrategy,
+} from "@quant-ai/shared-types";
 import { ConfigService } from "../src/modules/infrastructure/config.service";
 import { EventBusService } from "../src/modules/infrastructure/event-bus.service";
 import { RedisService } from "../src/modules/infrastructure/redis.service";
 import { RealtimeGateway } from "../src/modules/realtime/realtime.gateway";
 import { RealtimeService } from "../src/modules/realtime/realtime.service";
-import { LiveMarketFeedService, StochasticMarketSimulator } from "../src/modules/market/feed";
+import { LiveMarketFeedService, YahooFinanceHttpClient } from "../src/modules/market/feed";
 import { MarketTickService } from "../src/modules/market/market-tick.service";
 import { MarketService } from "../src/modules/market/market.service";
 import { ScreenerService } from "../src/modules/screener/screener.service";
@@ -23,13 +31,39 @@ describe("Real-time Reactive Market Hub", () => {
     const bus = new EventBusService(config);
     const gateway = new RealtimeGateway();
     const realtime = new RealtimeService(gateway);
-    const simulator = new StochasticMarketSimulator();
-    const feed = new LiveMarketFeedService(simulator, redis);
+    const feed = new LiveMarketFeedService(new YahooFinanceHttpClient(), redis);
 
     const tickService = new MarketTickService(config, redis, bus, realtime, feed);
     const marketService = new MarketService(feed, bus, redis);
     const screenerService = new ScreenerService(feed, bus);
     const predictionsService = new PredictionsService(feed, bus, realtime);
+
+    screenerService.registerSymbol("RELIANCE");
+    predictionsService.registerSignal({
+      id: "PRED-8942",
+      ticker: "RELIANCE",
+      name: "Reliance Industries",
+      strategy: TradeStrategy.SWING,
+      assetClass: AssetClass.EQUITY,
+      direction: SignalDirection.LONG,
+      entry: 2400.0,
+      current: 2420.0,
+      target: 2480.0,
+      stopLoss: 2360.0,
+      horizon: TradeHorizon.SWING_WEEKS,
+      confidence: 88,
+      status: SignalStatus.ACTIVE,
+      regime: SignalRegime.BULLISH_EXPANSION,
+      pnlPercent: 0.83,
+      pnlAbsolute: 20.0,
+      publishedAt: new Date().toISOString(),
+      thesis: "Breakout",
+      riskReward: 2.0,
+      catalysts: [],
+      invalidation: "Stop loss",
+      trajectory: [],
+      agents: [],
+    });
 
     await marketService.onModuleInit();
     await screenerService.onModuleInit();

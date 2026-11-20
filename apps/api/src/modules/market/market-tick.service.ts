@@ -3,11 +3,12 @@
  * @author yuva.devlab@gmail.com
  */
 
-import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
+import { Injectable, OnModuleDestroy, OnModuleInit, Optional } from "@nestjs/common";
 import { Logger } from "@yuva-devlab/logger";
 import { CachePrefix, EventTopic, NodeEnvironment } from "@quant-ai/shared-types";
 import { createMarketTickEnvelope } from "@quant-ai/events";
 import { ConfigService } from "../infrastructure/config.service";
+import { DatabaseService } from "../infrastructure/database.service";
 import { EventBusService } from "../infrastructure/event-bus.service";
 import { RedisService } from "../infrastructure/redis.service";
 import { RealtimeService } from "../realtime/realtime.service";
@@ -22,14 +23,7 @@ export class MarketTickService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(MarketTickService.name);
   private timer: NodeJS.Timeout | null = null;
   private readonly livePrices = new Map<string, number>();
-  private readonly trackedSymbols = new Set<string>([
-    "NIFTY 50",
-    "BANKNIFTY",
-    "NIFTY IT",
-    "INDIA VIX",
-    "RELIANCE",
-    "HDFCBANK",
-  ]);
+  private readonly trackedSymbols = new Set<string>();
 
   public constructor(
     private readonly configService: ConfigService,
@@ -37,20 +31,38 @@ export class MarketTickService implements OnModuleInit, OnModuleDestroy {
     private readonly eventBusService: EventBusService,
     private readonly realtimeService: RealtimeService,
     private readonly liveMarketFeed: LiveMarketFeedService,
+    @Optional() private readonly databaseService?: DatabaseService,
   ) {}
 
   /**
    * Starts background tick loop.
    */
-  public onModuleInit(): void {
+  public async onModuleInit(): Promise<void> {
+    await this.loadTrackedSymbolsFromDb();
+
     if (this.configService.nodeEnv === NodeEnvironment.TEST) {
       return;
     }
 
-    this.logger.log("Market tick streamer started (cadence: 1000ms)");
+    this.logger.info("[onModuleInit] Market tick streamer started (cadence: 1000ms)");
     this.timer = setInterval(() => {
       void this.broadcastNextTickBatch();
     }, 1000);
+  }
+
+  private async loadTrackedSymbolsFromDb(): Promise<void> {
+    if (!this.databaseService) return;
+    try {
+      const indices = await this.databaseService.client.benchmarkIndex.findMany({
+        select: { symbol: true },
+        take: 10,
+      });
+      for (const idx of indices) {
+        this.trackedSymbols.add(idx.symbol);
+      }
+    } catch {
+      // Fallback if db table empty
+    }
   }
 
   /**
@@ -104,7 +116,7 @@ export class MarketTickService implements OnModuleInit, OnModuleDestroy {
       volume: live.volume,
       timestamp: payload.timestamp,
     });
-    this.eventBusService.publish(EventTopic.MARKET_TICKS, envelope);
+    await this.eventBusService.publish(EventTopic.MARKET_TICKS, envelope);
 
     // Broadcast over WebSocket
     this.realtimeService.emitTick(payload);
@@ -121,7 +133,7 @@ export class MarketTickService implements OnModuleInit, OnModuleDestroy {
       try {
         await this.generateAndPublishTick(symbol);
       } catch (error) {
-        this.logger.error(`Tick emission failed for ${symbol}`, error);
+        this.logger.error(`[broadcastNextTickBatch] Tick emission failed for ${symbol}`, error);
       }
     }
   }

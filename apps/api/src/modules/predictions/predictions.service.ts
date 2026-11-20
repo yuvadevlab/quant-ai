@@ -21,11 +21,17 @@ import {
   SignalStatus,
   TrajectoryPoint,
 } from "@quant-ai/shared-types";
+import {
+  calculateReturnPercent,
+  calculateUnrealizedPnl,
+  TradePositionSide,
+} from "@quant-ai/quant-core";
 import { type DomainEventEnvelope } from "@yuva-devlab/events";
 import { EventBusService } from "../infrastructure/event-bus.service";
+import { DatabaseService } from "../infrastructure/database.service";
 import { LiveMarketFeedService } from "../market/feed";
 import { RealtimeService } from "../realtime/realtime.service";
-import { hydratePredictionsFromLiveFeed } from "./predictions-hydrator";
+import { hydratePredictionsFromDatabase } from "./predictions-hydrator";
 
 interface PredictionTickPayload extends Record<string, unknown> {
   symbol?: string;
@@ -58,6 +64,7 @@ export class PredictionsService implements OnModuleInit, OnModuleDestroy {
     private readonly liveMarketFeed: LiveMarketFeedService,
     @Optional() private readonly eventBusService?: EventBusService,
     @Optional() private readonly realtimeService?: RealtimeService,
+    @Optional() private readonly databaseService?: DatabaseService,
   ) {}
 
   /**
@@ -79,10 +86,16 @@ export class PredictionsService implements OnModuleInit, OnModuleDestroy {
           );
         },
       );
-      this.logger.info("PredictionsService subscribed to real-time MARKET_TICKS and DELIBERATION");
+      this.logger.info(
+        "[onModuleInit] PredictionsService subscribed to real-time MARKET_TICKS and DELIBERATION",
+      );
     }
 
-    const hydrated = await hydratePredictionsFromLiveFeed(this.liveMarketFeed, this.logger);
+    const hydrated = await hydratePredictionsFromDatabase(
+      this.databaseService,
+      this.liveMarketFeed,
+      this.logger,
+    );
     for (const [id, signal] of hydrated.entries()) {
       this.predictions.set(id, signal);
     }
@@ -148,8 +161,12 @@ export class PredictionsService implements OnModuleInit, OnModuleDestroy {
     for (const [id, signal] of this.predictions.entries()) {
       if (signal.ticker === tick.symbol && signal.status === SignalStatus.ACTIVE) {
         const current = tick.price;
-        const pnlAbsolute = Number((current - signal.entry).toFixed(2));
-        const pnlPercent = Number((((current - signal.entry) / signal.entry) * 100).toFixed(2));
+        const side =
+          signal.direction === SignalDirection.LONG
+            ? TradePositionSide.LONG
+            : TradePositionSide.SHORT;
+        const pnlAbsolute = calculateUnrealizedPnl(signal.entry, current, 1, side);
+        const pnlPercent = calculateReturnPercent(signal.entry, current, side);
         const maxExcursion = Math.max(signal.maxExcursion ?? 0, pnlPercent);
 
         let status: SignalStatus = signal.status;

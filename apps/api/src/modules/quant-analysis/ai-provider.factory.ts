@@ -30,54 +30,55 @@ export class AiProviderFactory {
   public constructor(private readonly configService: ConfigService) {}
 
   /**
-   * Resolves the active AI model adapter based on configuration or explicit request override.
+   * Resolves the active AI model adapter based on configuration, database registry, or explicit request override.
    *
    * @param override - Optional per-request provider override.
+   * @param modelOverride - Optional per-request model identifier override.
    * @returns Active AiModelAdapter instance.
    */
-  public getAdapter(override?: AiProviderType): AiModelAdapter {
+  public getAdapter(override?: AiProviderType, modelOverride?: string): AiModelAdapter {
     const targetProvider = override ?? this.configService.aiProvider;
 
     switch (targetProvider) {
       case AiProviderType.GEMINI: {
+        const model = modelOverride || AI_DEFAULT_MODELS.GOOGLE;
         const client = new GoogleAdapter({
           apiKey: this.configService.geminiApiKey,
-          defaultModel: AI_DEFAULT_MODELS.GOOGLE,
+          defaultModel: model,
         });
-        return new DevLabProviderAdapter(AiProviderType.GEMINI, AI_DEFAULT_MODELS.GOOGLE, client);
+        return new DevLabProviderAdapter(AiProviderType.GEMINI, model, client);
       }
 
       case AiProviderType.ANTHROPIC: {
+        const model = modelOverride || AI_DEFAULT_MODELS.ANTHROPIC;
         const client = new AnthropicAdapter({
           apiKey: this.configService.anthropicApiKey,
-          defaultModel: AI_DEFAULT_MODELS.ANTHROPIC,
+          defaultModel: model,
         });
-        return new DevLabProviderAdapter(
-          AiProviderType.ANTHROPIC,
-          AI_DEFAULT_MODELS.ANTHROPIC,
-          client,
-        );
+        return new DevLabProviderAdapter(AiProviderType.ANTHROPIC, model, client);
       }
 
       case AiProviderType.GROQ: {
+        const model = modelOverride || AI_DEFAULT_MODELS.GROQ;
         const client = new GroqAdapter({
           apiKey: this.configService.groqApiKey,
-          defaultModel: AI_DEFAULT_MODELS.GROQ,
+          defaultModel: model,
         });
-        return new DevLabProviderAdapter(AiProviderType.GROQ, AI_DEFAULT_MODELS.GROQ, client);
+        return new DevLabProviderAdapter(AiProviderType.GROQ, model, client);
       }
 
       case AiProviderType.OLLAMA: {
+        const model = modelOverride || AI_DEFAULT_MODELS.OLLAMA;
         const client = new OllamaAdapter({
           baseUrl: this.configService.ollamaBaseUrl,
-          defaultModel: AI_DEFAULT_MODELS.OLLAMA,
+          defaultModel: model,
         });
-        return new DevLabProviderAdapter(AiProviderType.OLLAMA, AI_DEFAULT_MODELS.OLLAMA, client);
+        return new DevLabProviderAdapter(AiProviderType.OLLAMA, model, client);
       }
 
       case AiProviderType.SIMULATED:
       default:
-        this.logger.debug(`Using ${targetProvider} model adapter`);
+        this.logger.debug(`[getAdapter] Using ${targetProvider} model adapter`);
         return this.simulatedAdapter;
     }
   }

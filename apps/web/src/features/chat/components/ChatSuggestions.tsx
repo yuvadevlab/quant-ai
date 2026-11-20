@@ -1,28 +1,33 @@
 /**
  * @file src/features/chat/components/ChatSuggestions.tsx
  * @description Quick prompt starters bar for trader inquiries.
+ * @author yuva.devlab@gmail.com
  */
 
 import { ArrowUpRight, ShieldCheck, Target, Zap } from "lucide-react";
+import { Button } from "@quant-ai/ui";
+import { CHAT_COPY } from "@/lib/ui-copy/chat.copy";
 
 export interface ChatSuggestionsProps {
   readonly onSelectPrompt: (promptText: string) => void;
 }
 
-const quickPrompts = [
-  { icon: Zap, label: "Scan Nifty 50 expiry momentum" },
-  { icon: Target, label: "BankNifty 51,200 CE options structure" },
-  { icon: ArrowUpRight, label: "Analyze Reliance 15m breakout" },
-  { icon: ShieldCheck, label: "Explain automated invalidation rules" },
-];
-
 export function ChatSuggestions({ onSelectPrompt }: ChatSuggestionsProps) {
+  const copy = CHAT_COPY.SUGGESTIONS;
+
+  const quickPrompts = [
+    { icon: Zap, label: copy.PROMPT_NIFTY },
+    { icon: Target, label: copy.PROMPT_BANKNIFTY },
+    { icon: ArrowUpRight, label: copy.PROMPT_RELIANCE },
+    { icon: ShieldCheck, label: copy.PROMPT_RULES },
+  ];
+
   return (
     <div className="quick-prompts-bar">
-      <span className="prompts-label">QUICK PROMPTS:</span>
+      <span className="prompts-label">{copy.LABEL}</span>
       <div className="prompts-scroll">
         {quickPrompts.map(({ icon: Icon, label }) => (
-          <button
+          <Button
             key={label}
             type="button"
             className="quick-prompt-btn"
@@ -30,7 +35,7 @@ export function ChatSuggestions({ onSelectPrompt }: ChatSuggestionsProps) {
           >
             <Icon size={13} />
             <span>{label}</span>
-          </button>
+          </Button>
         ))}
       </div>
     </div>

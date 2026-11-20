@@ -10,16 +10,14 @@ import { SettingsHeader } from "./SettingsHeader";
 import { SettingsAiEngine } from "./SettingsAiEngine";
 import { SettingsRiskLimits } from "./SettingsRiskLimits";
 import { SettingsSsoSection } from "./SettingsSsoSection";
-import type { SettingsData, ModelProviderKey } from "../api/getSettingsData";
+import type { SettingsData } from "../api/getSettingsData";
 
 export interface SettingsPageProps {
   readonly initialData: SettingsData;
 }
 
 export function SettingsPage({ initialData }: SettingsPageProps) {
-  const [selectedProvider, setSelectedProvider] = useState<ModelProviderKey>(
-    initialData.selectedProvider,
-  );
+  const [selectedProvider, setSelectedProvider] = useState<string>(initialData.selectedProvider);
   const [maxRisk, setMaxRisk] = useState(initialData.maxRisk);
   const [dailyMaxDrawdown, setDailyMaxDrawdown] = useState(initialData.dailyMaxDrawdown);
   const [autoTrailingSL, setAutoTrailingSL] = useState(initialData.autoTrailingSL);
@@ -51,7 +49,7 @@ export function SettingsPage({ initialData }: SettingsPageProps) {
             onAutoTrailingSLChange={setAutoTrailingSL}
           />
 
-          <SettingsSsoSection userEmail={initialData.userEmail} role={initialData.role} />
+          <SettingsSsoSection />
         </div>
       </div>
     </QuantShell>

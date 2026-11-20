@@ -5,6 +5,7 @@
 
 import type { ReactNode } from "react";
 import { cn } from "@yuva-devlab/ui";
+import { UI_COPY_CONSTANTS } from "../constants/ui-copy.constants";
 
 /**
  * Props for the SignalHeader component.
@@ -54,6 +55,8 @@ export function SignalHeader({
       ? "pill-target"
       : "pill-stop";
 
+  const copy = UI_COPY_CONSTANTS.SIGNAL_HEADER;
+
   return (
     <div className={cn("desk-header", className)}>
       <div>
@@ -63,13 +66,14 @@ export function SignalHeader({
             {symbol} · <span className="title-instrument">{instrument}</span>
           </h1>
           <span className={cn("direction-badge", isBuy ? "badge-buy" : "badge-sell")}>
-            {isBuy ? "BUY · BULLISH" : "SELL · BEARISH"}
+            {isBuy ? copy.BUY_LABEL : copy.SELL_LABEL}
           </span>
-          <span className="horizon-tag">{horizon} Horizon</span>
+          <span className="horizon-tag">
+            {horizon} {copy.HORIZON_SUFFIX}
+          </span>
         </div>
         <p className="desk-subtitle">
-          {companyName} — Automated multi-agent trajectory tracking, cone projections, and real-time
-          excursion monitoring.
+          {companyName} {copy.SUBTITLE_SUFFIX}
         </p>
       </div>
       <div className="desk-actions">
