@@ -158,4 +158,44 @@ export class ConfigService {
   public get ollamaBaseUrl(): string {
     return this.envConfig.OLLAMA_BASE_URL ?? "http://localhost:11434";
   }
+
+  /** Primary Yahoo Finance chart endpoint */
+  public get yahooFinanceBaseUrl(): string {
+    return this.envConfig.YAHOO_FINANCE_BASE_URL;
+  }
+
+  /** Secondary Yahoo Finance fallback endpoint */
+  public get yahooFinanceFallbackUrl(): string {
+    return this.envConfig.YAHOO_FINANCE_FALLBACK_URL;
+  }
+
+  /** NSE India allIndices endpoint */
+  public get nseIndiaApiUrl(): string {
+    return this.envConfig.NSE_INDIA_API_URL;
+  }
+
+  /** Finvasia Shoonya WebSocket streaming gateway */
+  public get shoonyaWsUrl(): string {
+    return this.envConfig.SHOONYA_WS_URL;
+  }
+
+  /** Finvasia Shoonya REST trade portal base URL */
+  public get shoonyaBaseUrl(): string {
+    return this.envConfig.SHOONYA_BASE_URL;
+  }
+
+  /** Zerodha Kite Connect WebSocket streaming gateway */
+  public get kiteWsUrl(): string {
+    return this.envConfig.KITE_WS_URL;
+  }
+
+  /** Zerodha Kite Connect REST API gateway */
+  public get kiteBaseUrl(): string {
+    return this.envConfig.KITE_BASE_URL;
+  }
+
+  /** Browser User-Agent string for upstream market feed requests */
+  public get marketFeedUserAgent(): string {
+    return this.envConfig.MARKET_FEED_USER_AGENT;
+  }
 }

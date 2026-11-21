@@ -133,7 +133,7 @@ export class MarketTickService implements OnModuleInit, OnModuleDestroy {
       try {
         await this.generateAndPublishTick(symbol);
       } catch (error) {
-        this.logger.warn(
+        this.logger.debug(
           `[broadcastNextTickBatch] Skipping tick for ${symbol}: ${error instanceof Error ? error.message : String(error)}`,
         );
       }

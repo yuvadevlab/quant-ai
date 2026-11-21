@@ -1,7 +1,13 @@
+/**
+ * @file src/routes/chat/index.tsx
+ * @description Root fresh session route for AI Financial Copilot.
+ * @author yuva.devlab@gmail.com
+ */
+
 import { createFileRoute } from "@tanstack/react-router";
 import { ChatPage, getChatData } from "@/features/chat";
 
-export const Route = createFileRoute("/chat")({
+export const Route = createFileRoute("/chat/")({
   head: () => ({
     meta: [
       { title: "AI Financial Copilot — QuantAI" },
@@ -15,7 +21,7 @@ export const Route = createFileRoute("/chat")({
     ],
   }),
   loader: async () => await getChatData(),
-  component: function ChatRoute() {
+  component: function ChatIndexRoute() {
     const data = Route.useLoaderData();
     return <ChatPage initialData={data} />;
   },

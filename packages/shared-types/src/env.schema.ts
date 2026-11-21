@@ -11,6 +11,7 @@ import {
   DefaultConnectionUrl,
   DefaultSecret,
   DefaultAiModel,
+  DefaultHttpHeader,
 } from "./env.constants";
 
 /**
@@ -42,6 +43,17 @@ export const ApiEnvironmentSchema = z.object({
   ANTHROPIC_API_KEY: z.string().optional().default(""),
   GROQ_API_KEY: z.string().optional().default(""),
   OLLAMA_BASE_URL: z.string().optional().default("http://localhost:11434"),
+  YAHOO_FINANCE_BASE_URL: z.string().url().default(DefaultConnectionUrl.YAHOO_FINANCE_BASE_URL),
+  YAHOO_FINANCE_FALLBACK_URL: z
+    .string()
+    .url()
+    .default(DefaultConnectionUrl.YAHOO_FINANCE_FALLBACK_URL),
+  NSE_INDIA_API_URL: z.string().url().default(DefaultConnectionUrl.NSE_INDIA_API_URL),
+  SHOONYA_WS_URL: z.string().default(DefaultConnectionUrl.SHOONYA_WS_URL),
+  SHOONYA_BASE_URL: z.string().url().default(DefaultConnectionUrl.SHOONYA_BASE_URL),
+  KITE_WS_URL: z.string().default(DefaultConnectionUrl.KITE_WS_URL),
+  KITE_BASE_URL: z.string().url().default(DefaultConnectionUrl.KITE_BASE_URL),
+  MARKET_FEED_USER_AGENT: z.string().default(DefaultHttpHeader.MARKET_FEED_USER_AGENT),
 });
 
 /**

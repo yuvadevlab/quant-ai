@@ -53,6 +53,20 @@ describe("Dynamic Workstation Features", () => {
       expect(response).toBeDefined();
       expect(response.reply).toBeDefined();
       expect(response.reply.length).toBeGreaterThan(50);
+      expect(response.sessionId).toBeDefined();
+    });
+
+    it("lists sessions, retrieves thread detail, and deletes conversation", async () => {
+      const sessions = await chatController.getSessions();
+      expect(sessions.length).toBeGreaterThan(0);
+      const targetSessionId = sessions[0]!.id;
+
+      const detail = await chatController.getSession(targetSessionId);
+      expect(detail).toBeDefined();
+      expect(detail?.messages.length).toBeGreaterThanOrEqual(2);
+
+      const del = await chatController.deleteSession(targetSessionId);
+      expect(del.success).toBe(true);
     });
   });
 

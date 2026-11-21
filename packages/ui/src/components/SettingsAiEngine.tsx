@@ -59,8 +59,12 @@ export function SettingsAiEngine({
         </div>
       </CardHeader>
 
-      <CardContent className="settings-options-list">
-        <RadioGroup value={selectedProvider} onValueChange={onSelectProvider}>
+      <CardContent className="settings-engine-content">
+        <RadioGroup
+          value={selectedProvider}
+          onValueChange={onSelectProvider}
+          className="settings-options-list"
+        >
           {providers.map((model) => {
             const isSelected = selectedProvider === model.id;
             const isDeprecated = Boolean(model.isDeprecated);
@@ -69,17 +73,12 @@ export function SettingsAiEngine({
               <Label
                 key={model.id}
                 htmlFor={model.id}
-                className={`provider-radio-card cursor-pointer ${isSelected ? "selected" : ""} ${isDeprecated ? "opacity-60" : ""}`}
+                className={`provider-radio-card ${isSelected ? "selected" : ""} ${isDeprecated ? "is-deprecated" : ""}`}
               >
-                <RadioGroupItem
-                  value={model.id}
-                  id={model.id}
-                  disabled={isDeprecated}
-                  className="mr-3"
-                />
-                <div className="provider-info flex-1">
+                <RadioGroupItem value={model.id} id={model.id} disabled={isDeprecated} />
+                <div className="provider-info">
                   <div className="provider-name-row">
-                    <div className="flex items-center gap-2">
+                    <div className="provider-name-title">
                       {isDeprecated && <History size={14} className="text-muted" />}
                       <strong>{model.name}</strong>
                     </div>
@@ -87,7 +86,7 @@ export function SettingsAiEngine({
                   </div>
                   <p className="provider-desc">{model.desc}</p>
                   {model.contextWindow && (
-                    <span className="text-xs text-muted">
+                    <span className="provider-meta">
                       {(model.contextWindow / 1024).toFixed(0)}k context window · DB Model ID:{" "}
                       {model.id}
                     </span>

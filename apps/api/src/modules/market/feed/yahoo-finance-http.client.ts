@@ -5,8 +5,10 @@
  * @author yuva.devlab@gmail.com
  */
 
-import { Injectable } from "@nestjs/common";
+import { Injectable, Optional } from "@nestjs/common";
 import { Logger } from "@yuva-devlab/logger";
+import { DefaultConnectionUrl, DefaultHttpHeader } from "@quant-ai/shared-types";
+import { ConfigService } from "../../infrastructure/config.service";
 
 export interface YahooChartMeta {
   readonly regularMarketPrice?: number;
@@ -45,13 +47,23 @@ export interface YahooChartResponse {
 @Injectable()
 export class YahooFinanceHttpClient {
   private readonly logger = new Logger(YahooFinanceHttpClient.name);
-  private readonly baseUrl = "https://query2.finance.yahoo.com/v8/finance/chart";
-  private readonly userAgent =
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36";
+  private readonly hosts: readonly string[];
+  private currentHostIndex = 0;
+  private readonly userAgent: string;
   private readonly defaultTimeoutMs = 4500;
-  private readonly minIntervalMs = 150;
+  private readonly minIntervalMs = 250;
   private lastRequestTime = 0;
   private rateLimitedUntil = 0;
+
+  public constructor(@Optional() private readonly configService?: ConfigService) {
+    this.hosts = [
+      this.configService?.yahooFinanceBaseUrl ?? DefaultConnectionUrl.YAHOO_FINANCE_BASE_URL,
+      this.configService?.yahooFinanceFallbackUrl ??
+        DefaultConnectionUrl.YAHOO_FINANCE_FALLBACK_URL,
+    ];
+    this.userAgent =
+      this.configService?.marketFeedUserAgent ?? DefaultHttpHeader.MARKET_FEED_USER_AGENT;
+  }
 
   /**
    * Fetches real-time price and 1-day candle data for a given feed ticker.
@@ -79,7 +91,8 @@ export class YahooFinanceHttpClient {
     this.lastRequestTime = Date.now();
 
     const encodedTicker = encodeURIComponent(feedTicker);
-    const targetUrl = `${this.baseUrl}/${encodedTicker}?interval=1d&range=1d`;
+    const host = this.hosts[this.currentHostIndex % this.hosts.length];
+    const targetUrl = `${host}/${encodedTicker}?interval=1d&range=1d`;
 
     this.logger.debug(`[fetchChart] Requesting real-time quote for: ${feedTicker}`);
 
@@ -94,13 +107,14 @@ export class YahooFinanceHttpClient {
       });
 
       if (response.status === 429) {
-        this.rateLimitedUntil = Date.now() + 30_000;
-        this.logger.warn(`[fetchChart] Upstream 429 Rate Limit hit. Backing off for 30 seconds.`);
+        this.rateLimitedUntil = Date.now() + 15_000;
+        this.currentHostIndex = (this.currentHostIndex + 1) % this.hosts.length;
+        this.logger.debug(`[fetchChart] Upstream 429 Rate Limit hit. Backing off for 15s.`);
         throw new Error("Market feed HTTP 429: Rate Limit Exceeded");
       }
 
       if (!response.ok) {
-        this.logger.warn(
+        this.logger.debug(
           `[fetchChart] Feed HTTP ${response.status} returned for ticker ${feedTicker}`,
         );
         throw new Error(`Market feed HTTP ${response.status}: ${response.statusText}`);
@@ -111,7 +125,7 @@ export class YahooFinanceHttpClient {
 
       if (!result || !result.meta || typeof result.meta.regularMarketPrice !== "number") {
         const errorDetail = payload.chart?.error?.description ?? "Missing price in feed response";
-        this.logger.warn(
+        this.logger.debug(
           `[fetchChart] Incomplete market payload for ${feedTicker}: ${errorDetail}`,
         );
         throw new Error(errorDetail);
@@ -120,7 +134,7 @@ export class YahooFinanceHttpClient {
       return result;
     } catch (err) {
       if ((err as Error)?.name === "TimeoutError") {
-        this.logger.warn(`[fetchChart] Request timed out for ticker ${feedTicker}`);
+        this.logger.debug(`[fetchChart] Request timed out for ticker ${feedTicker}`);
       }
       throw err;
     }

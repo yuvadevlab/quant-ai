@@ -54,6 +54,8 @@ export * from "./ChatHeader";
 export * from "./ChatThread";
 export * from "./ChatComposer";
 export * from "./ChatSuggestions";
+export * from "./ChatEmptyState";
+export * from "./ChatHistoryDrawer";
 
 // Settings Desk presentation blocks
 export * from "./SettingsHeader";

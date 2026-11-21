@@ -21,6 +21,8 @@ export interface ChatThreadProps {
   readonly renderTrajectoryLink?: (signal: TableSignalItem) => ReactNode;
   /** Optional view trajectory callback */
   readonly onViewTrajectory?: (signalId: string) => void;
+  /** Optional custom landing state when messages list is empty */
+  readonly emptyState?: ReactNode;
   /** Assistant name label */
   readonly assistantName?: string;
   /** Trader name label */
@@ -38,9 +40,14 @@ export function ChatThread({
   featuredSignal,
   renderTrajectoryLink,
   onViewTrajectory,
+  emptyState,
   assistantName = "QUANT-AI COPILOT",
   userName = "TRADER",
 }: ChatThreadProps) {
+  if (messages.length === 0 && emptyState) {
+    return <div className="chat-messages-scroll chat-empty-scroll">{emptyState}</div>;
+  }
+
   return (
     <div className="chat-messages-scroll">
       {messages.map((msg) => {

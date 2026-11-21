@@ -15,6 +15,7 @@ export const AppRoute = {
   SCREENER: "/screener",
   PORTFOLIO: "/portfolio",
   CHAT: "/chat",
+  CHAT_THREAD: "/chat/$id",
   SETTINGS: "/settings",
 } as const;
 
@@ -40,4 +41,14 @@ export enum QueryParamKey {
  */
 export function getMonitorRoute(predictionId: string): string {
   return `/predictions/${encodeURIComponent(predictionId)}`;
+}
+
+/**
+ * Canonical helper to construct chat conversation thread paths.
+ *
+ * @param conversationId - Unique conversation session identifier
+ * @returns Fully qualified route path
+ */
+export function getChatThreadRoute(conversationId: string): string {
+  return `/chat/${encodeURIComponent(conversationId)}`;
 }

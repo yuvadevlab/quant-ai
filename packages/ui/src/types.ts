@@ -120,7 +120,7 @@ export interface SectorItem {
  * Conversation message contract for Copilot chat thread.
  */
 export interface ChatThreadMessage {
-  readonly id: number;
+  readonly id: string | number;
   readonly type: "user" | "assistant" | string;
   readonly text: string;
   readonly time: string;

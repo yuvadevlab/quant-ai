@@ -37,6 +37,14 @@ export enum EnvKey {
   GROQ_API_KEY = "GROQ_API_KEY",
   OLLAMA_BASE_URL = "OLLAMA_BASE_URL",
   AI_GATEWAY_URL = "AI_GATEWAY_URL",
+  YAHOO_FINANCE_BASE_URL = "YAHOO_FINANCE_BASE_URL",
+  YAHOO_FINANCE_FALLBACK_URL = "YAHOO_FINANCE_FALLBACK_URL",
+  NSE_INDIA_API_URL = "NSE_INDIA_API_URL",
+  SHOONYA_WS_URL = "SHOONYA_WS_URL",
+  SHOONYA_BASE_URL = "SHOONYA_BASE_URL",
+  KITE_WS_URL = "KITE_WS_URL",
+  KITE_BASE_URL = "KITE_BASE_URL",
+  MARKET_FEED_USER_AGENT = "MARKET_FEED_USER_AGENT",
   VITE_API_URL = "VITE_API_URL",
   VITE_WS_URL = "VITE_WS_URL",
   VITE_PORT = "VITE_PORT",
@@ -82,6 +90,13 @@ export const DefaultConnectionUrl = {
   CORS_DEV_WEB_IP: "http://127.0.0.1:3005",
   CLINE_BASE_URL: "https://api.cline.bot/api/v1",
   CLINE_API_PATH: "/chat/completions",
+  YAHOO_FINANCE_BASE_URL: "https://query1.finance.yahoo.com/v8/finance/chart",
+  YAHOO_FINANCE_FALLBACK_URL: "https://query2.finance.yahoo.com/v8/finance/chart",
+  NSE_INDIA_API_URL: "https://www.nseindia.com/api/allIndices",
+  SHOONYA_WS_URL: "wss://api.shoonya.com/NorenWSAPI/",
+  SHOONYA_BASE_URL: "https://api.shoonya.com/NorenWSTP/",
+  KITE_WS_URL: "wss://ws.kite.trade",
+  KITE_BASE_URL: "https://api.kite.trade",
 } as const;
 
 /**
@@ -92,6 +107,14 @@ export const DefaultAiModel = {
   CLINE_AGENT: "nvidia/nemotron-3.5-super-vl:free",
   CLINE_CHAT: "upstage/solar-mini4",
   CLINE_ANALYSIS: "meta-llama/llama-3.3-70b-instruct:free",
+} as const;
+
+/**
+ * Canonical HTTP headers and User-Agent signatures for upstream data feeds.
+ */
+export const DefaultHttpHeader = {
+  MARKET_FEED_USER_AGENT:
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
 } as const;
 
 /**
