@@ -28,5 +28,5 @@ jobs:
     name: ⚡ CI Pipeline
     uses: yuvadevlab/.github/.github/workflows/reusable-ci.yml@main
     with:
-      node-version: "22"
+      node-version: "24"
       run-tests: true

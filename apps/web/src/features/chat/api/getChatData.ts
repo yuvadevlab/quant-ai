@@ -3,10 +3,13 @@
  * @description Data provider for the AI Financial Copilot desk.
  */
 
-import { signals, type Signal } from "@/components/quantai/data";
+import type { Signal as BackendSignal } from "@quant-ai/shared-types";
+import { apiFetch } from "@/lib/api-fetcher";
+import { mapBackendSignalToUi } from "@/features/predictions/api/getPredictionsData";
+import type { Signal } from "@/components/quantai/data";
 
 export interface ChatInitialData {
-  readonly featuredSignal: Signal;
+  readonly featuredSignal?: Signal | undefined;
   readonly suggestions: readonly string[];
 }
 
@@ -16,13 +19,17 @@ export interface ChatInitialData {
  * @returns ChatInitialData payload
  */
 export async function getChatData(): Promise<ChatInitialData> {
+  const rawSignals = await apiFetch<BackendSignal[]>("/api/predictions");
+  const featuredSignal =
+    rawSignals && rawSignals.length > 0 ? mapBackendSignalToUi(rawSignals[0]!) : undefined;
+
   return {
-    featuredSignal: signals[0]!,
+    featuredSignal,
     suggestions: [
-      "Scan Nifty 50 expiry momentum",
-      "BankNifty 51,200 CE options structure",
-      "Analyze Reliance 15m breakout",
-      "Explain automated invalidation rules",
+      "Scan benchmark expiry momentum and gamma levels",
+      "Explain multi-agent risk guardian consensus",
+      "Audit active prediction conviction ratings",
+      "Analyze automated invalidation and trailing stop triggers",
     ],
   };
 }

@@ -4,7 +4,10 @@
  */
 
 import { queryOptions } from "@tanstack/react-query";
-import { signals, type Signal } from "@/components/quantai/data";
+import type { Signal as BackendSignal } from "@quant-ai/shared-types";
+import { apiFetch } from "@/lib/api-fetcher";
+import { mapBackendSignalToUi } from "@/features/predictions/api/getPredictionsData";
+import { UiSignalStatus, type Signal } from "@/components/quantai/data";
 
 export interface MonitorData {
   readonly signal: Signal;
@@ -18,12 +21,21 @@ export interface MonitorData {
  * @returns MonitorData payload
  */
 export async function getMonitorData(signalId: string): Promise<MonitorData> {
-  const fallbackSignal = signals[0]!;
-  const signal = signals.find((entry) => entry.id === signalId) ?? fallbackSignal;
+  let backendSignal = await apiFetch<BackendSignal>(`/api/predictions/${signalId}`);
+  if (!backendSignal) {
+    const all = await apiFetch<BackendSignal[]>("/api/predictions");
+    backendSignal = all?.find((s) => s.id === signalId) ?? all?.[0] ?? null;
+  }
+
+  if (!backendSignal) {
+    throw new Error(`Signal ${signalId} not found in prediction ledger`);
+  }
+
+  const signal = mapBackendSignalToUi(backendSignal);
 
   return {
     signal,
-    isActive: signal.status === "Active",
+    isActive: signal.status === UiSignalStatus.ACTIVE || (signal.status as string) === "ACTIVE",
   };
 }
 

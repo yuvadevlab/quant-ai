@@ -10,10 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ChatRouteImport } from './routes/chat'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as ScreenerRouteImport } from './routes/screener'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ChatIndexRouteImport } from './routes/chat/index'
+import { Route as ChatIdRouteImport } from './routes/chat/$id'
 import { Route as PredictionsIndexRouteImport } from './routes/predictions/index'
 import { Route as PredictionsIdRouteImport } from './routes/predictions/$id'
 
@@ -22,9 +24,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ChatRoute = ChatRouteImport.update({
-  id: '/chat',
-  path: '/chat',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PortfolioRoute = PortfolioRouteImport.update({
@@ -42,6 +44,16 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChatIndexRoute = ChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatIdRoute = ChatIdRouteImport.update({
+  id: '/chat/$id',
+  path: '/chat/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PredictionsIndexRoute = PredictionsIndexRouteImport.update({
   id: '/predictions/',
   path: '/predictions/',
@@ -55,69 +67,83 @@ const PredictionsIdRoute = PredictionsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/chat': typeof ChatRoute
+  '/login': typeof LoginRoute
   '/portfolio': typeof PortfolioRoute
   '/screener': typeof ScreenerRoute
   '/settings': typeof SettingsRoute
+  '/chat/$id': typeof ChatIdRoute
   '/predictions/$id': typeof PredictionsIdRoute
+  '/chat/': typeof ChatIndexRoute
   '/predictions/': typeof PredictionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/chat': typeof ChatRoute
+  '/login': typeof LoginRoute
   '/portfolio': typeof PortfolioRoute
   '/screener': typeof ScreenerRoute
   '/settings': typeof SettingsRoute
+  '/chat/$id': typeof ChatIdRoute
   '/predictions/$id': typeof PredictionsIdRoute
+  '/chat': typeof ChatIndexRoute
   '/predictions': typeof PredictionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/chat': typeof ChatRoute
+  '/login': typeof LoginRoute
   '/portfolio': typeof PortfolioRoute
   '/screener': typeof ScreenerRoute
   '/settings': typeof SettingsRoute
+  '/chat/$id': typeof ChatIdRoute
   '/predictions/$id': typeof PredictionsIdRoute
+  '/chat/': typeof ChatIndexRoute
   '/predictions/': typeof PredictionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/chat'
+    | '/login'
     | '/portfolio'
     | '/screener'
     | '/settings'
+    | '/chat/$id'
     | '/predictions/$id'
+    | '/chat/'
     | '/predictions/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/chat'
+    | '/login'
     | '/portfolio'
     | '/screener'
     | '/settings'
+    | '/chat/$id'
     | '/predictions/$id'
+    | '/chat'
     | '/predictions'
   id:
     | '__root__'
     | '/'
-    | '/chat'
+    | '/login'
     | '/portfolio'
     | '/screener'
     | '/settings'
+    | '/chat/$id'
     | '/predictions/$id'
+    | '/chat/'
     | '/predictions/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ChatRoute: typeof ChatRoute
+  LoginRoute: typeof LoginRoute
   PortfolioRoute: typeof PortfolioRoute
   ScreenerRoute: typeof ScreenerRoute
   SettingsRoute: typeof SettingsRoute
+  ChatIdRoute: typeof ChatIdRoute
   PredictionsIdRoute: typeof PredictionsIdRoute
+  ChatIndexRoute: typeof ChatIndexRoute
   PredictionsIndexRoute: typeof PredictionsIndexRoute
 }
 
@@ -130,11 +156,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/chat': {
-      id: '/chat'
-      path: '/chat'
-      fullPath: '/chat'
-      preLoaderRoute: typeof ChatRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/portfolio': {
@@ -158,6 +184,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chat/': {
+      id: '/chat/'
+      path: '/chat'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof ChatIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat/$id': {
+      id: '/chat/$id'
+      path: '/chat/$id'
+      fullPath: '/chat/$id'
+      preLoaderRoute: typeof ChatIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/predictions/': {
       id: '/predictions/'
       path: '/predictions'
@@ -177,11 +217,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ChatRoute: ChatRoute,
+  LoginRoute: LoginRoute,
   PortfolioRoute: PortfolioRoute,
   ScreenerRoute: ScreenerRoute,
   SettingsRoute: SettingsRoute,
+  ChatIdRoute: ChatIdRoute,
   PredictionsIdRoute: PredictionsIdRoute,
+  ChatIndexRoute: ChatIndexRoute,
   PredictionsIndexRoute: PredictionsIndexRoute,
 }
 export const routeTree = rootRouteImport

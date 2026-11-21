@@ -54,13 +54,13 @@ async function bootstrap(): Promise<void> {
 
   await app.listen(configService.port);
   logger.info(
-    `[${ServiceIdentity.TITLE}] REST Gateway: http://localhost:${configService.port}/${ApiSegment.API}`,
+    `[bootstrap] [${ServiceIdentity.TITLE}] REST Gateway: http://localhost:${configService.port}/${ApiSegment.API}`,
   );
   logger.info(
-    `[${ServiceIdentity.TITLE}] Realtime WebSocket: ws://localhost:${configService.port}${WsNamespace.REALTIME}`,
+    `[bootstrap] [${ServiceIdentity.TITLE}] Realtime WebSocket: ws://localhost:${configService.port}${WsNamespace.REALTIME}`,
   );
   logger.info(
-    `[${ServiceIdentity.TITLE}] Swagger API Docs: http://localhost:${configService.port}/${ApiSegment.DOCS}`,
+    `[bootstrap] [${ServiceIdentity.TITLE}] Swagger API Docs: http://localhost:${configService.port}/${ApiSegment.DOCS}`,
   );
 }
 

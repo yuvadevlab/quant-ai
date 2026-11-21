@@ -16,7 +16,10 @@ export const Route = createFileRoute("/screener")({
     ],
   }),
   loader: async ({ context: { queryClient } }) => {
-    return await queryClient.ensureQueryData(screenerQueryOptions());
+    return await queryClient.query({
+      ...screenerQueryOptions(),
+      staleTime: "static",
+    });
   },
   component: function ScreenerRoute() {
     const { data } = useSuspenseQuery(screenerQueryOptions());

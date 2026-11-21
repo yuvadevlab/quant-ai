@@ -5,4 +5,5 @@
  */
 
 export * from "./client.js";
+export * from "./seed-llm.js";
 export * from "@prisma/client";

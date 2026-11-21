@@ -5,9 +5,12 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
+const rootDir = import.meta.dirname;
+
 export default tseslint.config(
   {
     ignores: [
+      "**/node_modules/**",
       "**/dist/**",
       "**/dist-ssr/**",
       "**/.output/**",
@@ -15,14 +18,27 @@ export default tseslint.config(
       "**/.turbo/**",
       "**/.tanstack/**",
       "**/routeTree.gen.ts",
+      "**/tsup.config.*",
+      "**/vite.config.*",
+      "**/vitest.config.*",
+      "**/commitlint.config.*",
+      "**/prisma.config.*",
+      "services/**",
     ],
   },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
+      ecmaVersion: 2022,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: rootDir,
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
     },
     plugins: {
       "react-hooks": reactHooks,
@@ -30,6 +46,7 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      "@typescript-eslint/no-deprecated": "warn",
       "no-restricted-imports": [
         "error",
         {

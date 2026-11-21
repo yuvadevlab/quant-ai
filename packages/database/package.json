@@ -6,31 +6,38 @@
   "license": "MIT",
   "private": true,
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
   "scripts": {
-    "build": "prisma generate && tsc",
+    "build": "prisma generate && tsup src/index.ts --format esm,cjs --dts --external @prisma/client",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/",
     "test": "prisma generate && vitest run src/",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
-    "db:seed": "node dist/seed.js"
+    "db:seed": "tsup src/seed.ts --format esm --no-dts --out-dir dist && node dist/seed.js"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.3",
-    "@quant-ai/shared-types": "workspace:*"
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
+    "@quant-ai/shared-types": "workspace:*",
+    "dotenv": "^17.4.2",
+    "pg": "^8.23.0"
   },
   "devDependencies": {
     "@types/node": "^22.16.5",
-    "prisma": "^6.19.3",
+    "@types/pg": "^8.16.0",
+    "prisma": "^7.10.0",
+    "tsup": "^8.5.1",
     "typescript": "^5.8.3",
     "vitest": "^4.1.10"
   }

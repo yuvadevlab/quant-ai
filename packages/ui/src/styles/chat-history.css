@@ -1,0 +1,195 @@
+/**
+ * @file packages/ui/src/styles/chat-history.css
+ * @description Stylesheet for AI Copilot conversation history slide-over drawer and controls.
+ * Architecture: W3C Cascade Layer @layer dl-components
+ * @author yuva.devlab@gmail.com
+ */
+
+@layer dl-components {
+  .chat-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    color: var(--foreground);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .chat-action-btn:hover {
+    background-color: var(--bg-card-subtle);
+    border-color: var(--border-bold);
+  }
+
+  .chat-history-count-badge {
+    background-color: color-mix(in srgb, var(--primary) 15%, transparent);
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: var(--radius-full);
+  }
+
+  .chat-history-sheet {
+    background-color: var(--bg-card);
+    border-left: 1px solid var(--border-subtle);
+    width: 380px !important;
+    max-width: 90vw;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    z-index: 100;
+  }
+
+  .history-sheet-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .history-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .history-new-chat-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+  }
+
+  .chat-history-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-top: 16px;
+  }
+
+  .history-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 16px;
+    color: var(--text-dim);
+    gap: 8px;
+  }
+
+  .history-empty-state .empty-icon {
+    opacity: 0.4;
+    margin-bottom: 8px;
+  }
+
+  .history-empty-state p {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--foreground);
+    margin: 0;
+  }
+
+  .history-empty-state span {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    background-color: var(--bg-card-subtle);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .history-item:hover {
+    background-color: color-mix(in srgb, var(--primary) 8%, transparent);
+    border-color: color-mix(in srgb, var(--primary) 25%, transparent);
+  }
+
+  .history-item.active {
+    background-color: color-mix(in srgb, var(--primary) 12%, transparent);
+    border-color: var(--primary);
+  }
+
+  .item-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .item-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .thread-icon {
+    flex-shrink: 0;
+    color: var(--primary);
+  }
+
+  .item-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--foreground);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .item-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .msg-count {
+    background-color: color-mix(in srgb, var(--text-dim) 15%, transparent);
+    padding: 1px 6px;
+    border-radius: var(--radius-sm);
+    font-size: 10px;
+  }
+
+  .history-delete-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity var(--transition-fast), color var(--transition-fast);
+  }
+
+  .history-delete-btn:hover {
+    opacity: 1;
+    color: var(--destructive);
+  }
+}

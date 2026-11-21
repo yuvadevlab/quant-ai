@@ -13,6 +13,7 @@
 @import "@yuva-devlab/tokens/typography.css";
 @import "@yuva-devlab/tokens/themes/quantai.css";
 @import "@yuva-devlab/tokens/utilities.css";
+@import "@yuva-devlab/ui/components.css";
 
 /* ── 2. Structural Layout Tokens, Keyframes, Components & Platform Utilities ─────────── */
 @import "./styles/reset.css";
@@ -36,6 +37,8 @@
 @import "./styles/monitor-agents.css";
 @import "./styles/chat-thread.css";
 @import "./styles/chat-composer.css";
+@import "./styles/chat-empty.css";
+@import "./styles/chat-history.css";
 @import "./styles/settings.css";
 @import "./styles/badges.css";
 @import "./styles/error.css";

@@ -1,16 +1,23 @@
 /**
  * @file src/features/predictions/components/PredictionsPage.tsx
  * @description Master Prediction Lab & Signal Audit Ledger page wrapper.
- * Composes workstation shell, KPI summary cards, filter toolbar, and tabular signal audit ledger.
+ * Composes workstation shell, and pure @quant-ai/ui presentation blocks with filter state.
+ * @author yuva.devlab@gmail.com
  */
 
 import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { QuantShell } from "@/components/layout";
-import { LedgerFilterTab } from "@/constants";
-import { PredictionsHeader } from "./PredictionsHeader";
-import { PredictionsKpiGrid } from "./PredictionsKpiGrid";
-import { PredictionsToolbar } from "./PredictionsToolbar";
-import { PredictionsTable } from "./PredictionsTable";
+import { HorizonFilter, LedgerFilterTab } from "@/constants";
+import { UiSignalStatus } from "@/components/quantai/data";
+import {
+  PredictionsHeader,
+  PredictionsKpiGrid,
+  PredictionsToolbar,
+  PredictionsTable,
+} from "@quant-ai/ui";
+import { PREDICTIONS_COPY } from "@/lib/ui-copy/predictions.copy";
 import type { PredictionsData } from "../api/getPredictionsData";
 
 export interface PredictionsPageProps {
@@ -19,19 +26,20 @@ export interface PredictionsPageProps {
 
 export function PredictionsPage({ initialData }: PredictionsPageProps) {
   const [activeFilter, setActiveFilter] = useState<LedgerFilterTab>(LedgerFilterTab.ALL);
-  const [horizonFilter, setHorizonFilter] = useState("All styles");
+  const [horizonFilter, setHorizonFilter] = useState<string>(HorizonFilter.ALL);
   const [search, setSearch] = useState("");
 
   const filteredSignals = useMemo(() => {
     return initialData.signals.filter((signal) => {
       const matchesTab =
         activeFilter === LedgerFilterTab.ALL ||
-        (activeFilter === LedgerFilterTab.ACTIVE && signal.status === "Active") ||
-        (activeFilter === LedgerFilterTab.TARGET_HIT && signal.status === "Target hit") ||
-        (activeFilter === LedgerFilterTab.STOP_HIT && signal.status === "Stop loss hit");
+        (activeFilter === LedgerFilterTab.ACTIVE && signal.status === UiSignalStatus.ACTIVE) ||
+        (activeFilter === LedgerFilterTab.TARGET_HIT &&
+          signal.status === UiSignalStatus.TARGET_HIT) ||
+        (activeFilter === LedgerFilterTab.STOP_HIT && signal.status === UiSignalStatus.STOP_HIT);
 
       const matchesHorizon =
-        horizonFilter === "All styles" ||
+        horizonFilter === HorizonFilter.ALL ||
         signal.horizon.toLowerCase() === horizonFilter.toLowerCase();
 
       const matchesSearch =
@@ -47,9 +55,9 @@ export function PredictionsPage({ initialData }: PredictionsPageProps) {
   const counts = useMemo(
     () => ({
       all: initialData.signals.length,
-      active: initialData.signals.filter((s) => s.status === "Active").length,
-      targetHit: initialData.signals.filter((s) => s.status === "Target hit").length,
-      stopHit: initialData.signals.filter((s) => s.status === "Stop loss hit").length,
+      active: initialData.signals.filter((s) => s.status === UiSignalStatus.ACTIVE).length,
+      targetHit: initialData.signals.filter((s) => s.status === UiSignalStatus.TARGET_HIT).length,
+      stopHit: initialData.signals.filter((s) => s.status === UiSignalStatus.STOP_HIT).length,
     }),
     [initialData.signals],
   );
@@ -61,20 +69,34 @@ export function PredictionsPage({ initialData }: PredictionsPageProps) {
         <PredictionsKpiGrid
           totalGenerated={initialData.totalGenerated}
           activeCount={initialData.activeCount}
+          targetHitCount={counts.targetHit}
+          stopHitCount={counts.stopHit}
           winRate={initialData.winRate}
+          winRateBadge={initialData.winRateBadge}
           profitFactor={initialData.profitFactor}
           riskReward={initialData.riskReward}
+          avgGainText={initialData.avgGainText}
+          avgLossText={initialData.avgLossText}
+          holdingHint={initialData.holdingHint}
         />
         <PredictionsToolbar
           activeFilter={activeFilter}
-          onSelectFilter={setActiveFilter}
+          onSelectFilter={(tab) => setActiveFilter(tab as LedgerFilterTab)}
           horizonFilter={horizonFilter}
           onSelectHorizon={setHorizonFilter}
           search={search}
           onSearchChange={setSearch}
           counts={counts}
         />
-        <PredictionsTable signals={filteredSignals} />
+        <PredictionsTable
+          signals={filteredSignals}
+          renderInspectLink={(signal) => (
+            <Link to="/predictions/$id" params={{ id: signal.id }} className="btn-table-action">
+              <span>{PREDICTIONS_COPY.TABLE.INSPECT_ACTION}</span>
+              <ArrowRight size={13} />
+            </Link>
+          )}
+        />
       </div>
     </QuantShell>
   );

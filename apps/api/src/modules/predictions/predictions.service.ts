@@ -1,142 +1,225 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+/**
+ * @file apps/api/src/modules/predictions/predictions.service.ts
+ * @description Dynamic reactive predictions service tracking multi-strategy live setups, PnL, and agent consensus.
+ * @author yuva.devlab@gmail.com
+ */
+
+import {
+  Injectable,
+  NotFoundException,
+  OnModuleInit,
+  OnModuleDestroy,
+  Optional,
+} from "@nestjs/common";
+import { Logger } from "@yuva-devlab/logger";
 import {
   AgentRole,
   AgentStance,
+  EventTopic,
   Signal,
   SignalDirection,
-  SignalRegime,
   SignalStatus,
   TrajectoryPoint,
 } from "@quant-ai/shared-types";
+import {
+  calculateReturnPercent,
+  calculateUnrealizedPnl,
+  TradePositionSide,
+} from "@quant-ai/quant-core";
+import { type DomainEventEnvelope } from "@yuva-devlab/events";
+import { EventBusService } from "../infrastructure/event-bus.service";
+import { DatabaseService } from "../infrastructure/database.service";
+import { LiveMarketFeedService } from "../market/feed";
+import { RealtimeService } from "../realtime/realtime.service";
+import { hydratePredictionsFromDatabase } from "./predictions-hydrator";
+
+interface PredictionTickPayload extends Record<string, unknown> {
+  symbol?: string;
+  price?: number;
+}
+
+interface DeliberationCompletedPayload extends Record<string, unknown> {
+  predictionId?: string;
+  consensusVeto?: boolean;
+  netScore?: number;
+  verdicts?: Array<{
+    agentRole: string;
+    stance: string;
+    score: number;
+    rationale: string;
+  }>;
+}
 
 /**
- * Service managing immutable prediction ledgers and outcome tracking.
+ * Service managing dynamic multi-strategy prediction ledgers, live PnL, and trajectories.
  */
 @Injectable()
-export class PredictionsService {
-  private readonly predictions: readonly Signal[] = [
-    {
-      id: "PRED-8942",
-      ticker: "RELIANCE",
-      name: "Reliance Industries Ltd.",
-      direction: SignalDirection.LONG,
-      entry: 2985.0,
-      current: 3042.5,
-      target: 3120.0,
-      stopLoss: 2940.0,
-      horizon: "2-3 Weeks",
-      confidence: 88,
-      status: SignalStatus.ACTIVE,
-      regime: SignalRegime.BULLISH_EXPANSION,
-      pnlPercent: 1.93,
-      pnlAbsolute: 57.5,
-      maxExcursion: 2.15,
-      maxAdverse: 0.35,
-      publishedAt: "2026-11-14T09:30:00Z",
-      thesis:
-        "High-volume breakout above 2,980 consolidation band supported by institutional delivery accumulation.",
-      riskReward: 3.0,
-      catalysts: ["Upstream refining margin expansion", "Retail segment quarterly EBITDA surge"],
-      invalidation: "Daily close below 2,935 invalidates structural momentum.",
-      trajectory: [
-        { time: "Day 1", expected: 2985, actual: 2985, upper: 3010, lower: 2960 },
-        { time: "Day 3", expected: 3020, actual: 3015, upper: 3050, lower: 2980 },
-        { time: "Day 5", expected: 3050, actual: 3042, upper: 3090, lower: 3000 },
-        { time: "Day 10", expected: 3120, upper: 3160, lower: 3060 },
-      ],
-      agents: [
-        {
-          role: AgentRole.MOMENTUM_ANALYST,
-          stance: AgentStance.BULLISH,
-          confidence: 89,
-          summary: "Z-score of 2.1 relative to 20-day standard deviation bands.",
-        },
-        {
-          role: AgentRole.RED_TEAM_SKEPTIC,
-          stance: AgentStance.BULLISH,
-          confidence: 86,
-          summary: "Bullish cup & handle pattern confirmed with MACD divergence.",
-        },
-        {
-          role: AgentRole.QUANT_RISK_OFFICER,
-          stance: AgentStance.NEUTRAL,
-          confidence: 90,
-          summary: "Reward to risk of 3.0 exceeds 2.0 institutional threshold.",
-        },
-      ],
-    },
-    {
-      id: "PRED-8943",
-      ticker: "TCS",
-      name: "Tata Consultancy Services",
-      direction: SignalDirection.LONG,
-      entry: 4120.0,
-      current: 4185.0,
-      target: 4280.0,
-      stopLoss: 4060.0,
-      horizon: "1-2 Weeks",
-      confidence: 82,
-      status: SignalStatus.ACTIVE,
-      regime: SignalRegime.BULLISH_EXPANSION,
-      pnlPercent: 1.58,
-      pnlAbsolute: 65.0,
-      maxExcursion: 1.82,
-      maxAdverse: 0.22,
-      publishedAt: "2026-11-15T10:15:00Z",
-      thesis: "IT index mean-reversion following oversold daily RSI levels.",
-      riskReward: 2.67,
-      catalysts: ["Large enterprise BFSI deal wins"],
-      invalidation: "Breakdown below 4,050 support.",
-      trajectory: [],
-      agents: [],
-    },
-  ];
+export class PredictionsService implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(PredictionsService.name);
+  private readonly predictions = new Map<string, Signal>();
+  private unsubTick?: () => void;
+  private unsubDeliberation?: () => void;
+
+  public constructor(
+    private readonly liveMarketFeed: LiveMarketFeedService,
+    @Optional() private readonly eventBusService?: EventBusService,
+    @Optional() private readonly realtimeService?: RealtimeService,
+    @Optional() private readonly databaseService?: DatabaseService,
+  ) {}
 
   /**
-   * Retrieves all predictions.
-   *
-   * @returns Array of active and historical predictions.
+   * Subscribes to real-time events and hydrates multi-strategy opportunities dynamically.
    */
-  findAll(): readonly Signal[] {
-    return this.predictions;
+  public async onModuleInit(): Promise<void> {
+    if (this.eventBusService) {
+      this.unsubTick = this.eventBusService.subscribe(
+        EventTopic.MARKET_TICKS,
+        (envelope: unknown) => {
+          this.handleIncomingTick(envelope as DomainEventEnvelope<PredictionTickPayload>);
+        },
+      );
+      this.unsubDeliberation = this.eventBusService.subscribe(
+        EventTopic.DELIBERATION_COMPLETED,
+        (envelope: unknown) => {
+          this.handleDeliberationOutcome(
+            envelope as DomainEventEnvelope<DeliberationCompletedPayload>,
+          );
+        },
+      );
+      this.logger.info(
+        "[onModuleInit] PredictionsService subscribed to real-time MARKET_TICKS and DELIBERATION",
+      );
+    }
+
+    const hydrated = await hydratePredictionsFromDatabase(
+      this.databaseService,
+      this.liveMarketFeed,
+      this.logger,
+    );
+    for (const [id, signal] of hydrated.entries()) {
+      this.predictions.set(id, signal);
+    }
+  }
+
+  /**
+   * Cleans up event subscriptions on shutdown.
+   */
+  public onModuleDestroy(): void {
+    this.unsubTick?.();
+    this.unsubDeliberation?.();
+  }
+
+  /**
+   * Retrieves all predictions from the dynamic ledger.
+   */
+  public findAll(): readonly Signal[] {
+    return Array.from(this.predictions.values());
+  }
+
+  /**
+   * Retrieves active signals pending outcome.
+   */
+  public findActive(): readonly Signal[] {
+    return Array.from(this.predictions.values()).filter((s) => s.status === SignalStatus.ACTIVE);
   }
 
   /**
    * Retrieves a single prediction by ID.
-   *
-   * @param id The prediction unique identifier (e.g. PRED-8942).
-   * @returns The Signal object if found.
    */
-  findById(id: string): Signal {
-    const signal = this.predictions.find((p) => p.id === id);
+  public findById(id: string): Signal {
+    const signal = this.predictions.get(id);
     if (!signal) {
-      throw new NotFoundException(`Prediction with ID ${id} not found`);
+      throw new NotFoundException(`Prediction with ID "${id}" not found.`);
     }
     return signal;
   }
 
   /**
-   * Retrieves or computes trajectory cone points for a prediction.
-   *
-   * @param id The prediction unique identifier.
-   * @returns Array of trajectory points with expected, upper, and lower quantile bounds.
+   * Retrieves the Monte Carlo trajectory cone for an active prediction.
    */
-  getTrajectory(id: string): readonly TrajectoryPoint[] {
+  public getTrajectory(id: string): readonly TrajectoryPoint[] {
     const signal = this.findById(id);
-    if (signal.trajectory.length > 0) {
-      return signal.trajectory;
+    return signal.trajectory ?? [];
+  }
+
+  /**
+   * Dynamically adds or updates a signal in the ledger.
+   */
+  public registerSignal(signal: Signal): void {
+    this.predictions.set(signal.id, signal);
+  }
+
+  /**
+   * Dynamically updates PnL and status on incoming market ticks.
+   */
+  public handleIncomingTick(envelope: DomainEventEnvelope<PredictionTickPayload>): void {
+    const tick = envelope?.payload;
+    if (!tick?.symbol || typeof tick.price !== "number") {
+      return;
     }
 
-    // Dynamic projection when explicit historical points are not precomputed
-    const steps = 10;
-    const priceDelta = (signal.target - signal.entry) / steps;
-    const bandSpread = Math.abs(signal.entry - signal.stopLoss) * 0.5;
+    for (const [id, signal] of this.predictions.entries()) {
+      if (signal.ticker === tick.symbol && signal.status === SignalStatus.ACTIVE) {
+        const current = tick.price;
+        const side =
+          signal.direction === SignalDirection.LONG
+            ? TradePositionSide.LONG
+            : TradePositionSide.SHORT;
+        const pnlAbsolute = calculateUnrealizedPnl(signal.entry, current, 1, side);
+        const pnlPercent = calculateReturnPercent(signal.entry, current, side);
+        const maxExcursion = Math.max(signal.maxExcursion ?? 0, pnlPercent);
 
-    return Array.from({ length: steps + 1 }, (_, index) => ({
-      time: `Day ${index}`,
-      expected: Math.round(signal.entry + priceDelta * index),
-      upper: Math.round(signal.entry + priceDelta * index + bandSpread * (1 + index * 0.1)),
-      lower: Math.round(signal.entry + priceDelta * index - bandSpread * (1 + index * 0.1)),
+        let status: SignalStatus = signal.status;
+        if (signal.direction === SignalDirection.LONG && current >= signal.target) {
+          status = SignalStatus.TARGET_HIT;
+        } else if (signal.direction === SignalDirection.LONG && current <= signal.stopLoss) {
+          status = SignalStatus.INVALIDATED;
+        }
+
+        const updated: Signal = {
+          ...signal,
+          current,
+          pnlAbsolute,
+          pnlPercent,
+          maxExcursion,
+          status,
+        };
+
+        this.predictions.set(id, updated);
+        this.realtimeService?.emitSignalUpdate({
+          id,
+          ticker: signal.ticker,
+          currentPrice: current,
+          pnlPercent,
+          status,
+        });
+      }
+    }
+  }
+
+  /**
+   * Attaches multi-agent deliberation verdicts when a debate completes.
+   */
+  public handleDeliberationOutcome(
+    envelope: DomainEventEnvelope<DeliberationCompletedPayload>,
+  ): void {
+    const payload = envelope?.payload;
+    if (!payload?.predictionId) return;
+
+    const signal = this.predictions.get(payload.predictionId);
+    if (!signal || !payload.verdicts) return;
+
+    const updatedAgents = payload.verdicts.map((v) => ({
+      role: v.agentRole as AgentRole,
+      stance: v.stance as AgentStance,
+      confidence: v.score,
+      summary: v.rationale,
     }));
+
+    this.predictions.set(payload.predictionId, {
+      ...signal,
+      confidence: payload.netScore ?? signal.confidence,
+      agents: updatedAgents,
+    });
   }
 }

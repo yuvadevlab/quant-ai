@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
     ],
   }),
   loader: async ({ context: { queryClient } }) => {
-    return await queryClient.ensureQueryData(overviewQueryOptions());
+    return await queryClient.query({ ...overviewQueryOptions(), staleTime: "static" });
   },
   component: function HomePage() {
     const { data } = useSuspenseQuery(overviewQueryOptions());

@@ -25,7 +25,7 @@ export class ConfigService {
   public constructor() {
     this.envConfig = parseApiEnv(process.env);
     this.logger.info(
-      `Config loaded [ENV: ${this.envConfig.NODE_ENV}] [PORT: ${this.envConfig.PORT}] [BROKER: ${this.envConfig.EVENT_BROKER}] [AI: ${this.envConfig.AI_PROVIDER}]`,
+      `[constructor] Config loaded [ENV: ${this.envConfig.NODE_ENV}] [PORT: ${this.envConfig.PORT}] [BROKER: ${this.envConfig.EVENT_BROKER}] [AI: ${this.envConfig.AI_PROVIDER}]`,
     );
   }
 
@@ -94,6 +94,51 @@ export class ConfigService {
     return this.envConfig.AI_PROVIDER;
   }
 
+  /** Agent role specific provider override (e.g. for heavy reasoning) */
+  public get aiProviderAgent(): AiProviderType | undefined {
+    return this.envConfig.AI_PROVIDER_AGENT;
+  }
+
+  /** Chat role specific provider override (e.g. for fast conversational responses) */
+  public get aiProviderChat(): AiProviderType | undefined {
+    return this.envConfig.AI_PROVIDER_CHAT;
+  }
+
+  /** Cline API Gateway base URL */
+  public get clineBaseUrl(): string {
+    return this.envConfig.CLINE_BASE_URL;
+  }
+
+  /** Cline API path */
+  public get clineApiPath(): string {
+    return this.envConfig.CLINE_API_PATH;
+  }
+
+  /** Cline API authentication key */
+  public get clineApiKey(): string {
+    return this.envConfig.CLINE_API_KEY ?? "";
+  }
+
+  /** Default Cline model */
+  public get clineModel(): string {
+    return this.envConfig.CLINE_MODEL;
+  }
+
+  /** Specialized Cline model for deliberation & agent reasoning */
+  public get clineAgentModel(): string {
+    return this.envConfig.CLINE_AGENT_MODEL;
+  }
+
+  /** Specialized Cline model for fast chat & copilot interactions */
+  public get clineChatModel(): string {
+    return this.envConfig.CLINE_CHAT_MODEL;
+  }
+
+  /** Specialized Cline model for statistical and technical pattern recognition */
+  public get clineAnalysisModel(): string {
+    return this.envConfig.CLINE_ANALYSIS_MODEL;
+  }
+
   /** Google Gemini API Key */
   public get geminiApiKey(): string {
     return this.envConfig.GEMINI_API_KEY ?? "";
@@ -112,5 +157,45 @@ export class ConfigService {
   /** Local Ollama endpoint base URL */
   public get ollamaBaseUrl(): string {
     return this.envConfig.OLLAMA_BASE_URL ?? "http://localhost:11434";
+  }
+
+  /** Primary Yahoo Finance chart endpoint */
+  public get yahooFinanceBaseUrl(): string {
+    return this.envConfig.YAHOO_FINANCE_BASE_URL;
+  }
+
+  /** Secondary Yahoo Finance fallback endpoint */
+  public get yahooFinanceFallbackUrl(): string {
+    return this.envConfig.YAHOO_FINANCE_FALLBACK_URL;
+  }
+
+  /** NSE India allIndices endpoint */
+  public get nseIndiaApiUrl(): string {
+    return this.envConfig.NSE_INDIA_API_URL;
+  }
+
+  /** Finvasia Shoonya WebSocket streaming gateway */
+  public get shoonyaWsUrl(): string {
+    return this.envConfig.SHOONYA_WS_URL;
+  }
+
+  /** Finvasia Shoonya REST trade portal base URL */
+  public get shoonyaBaseUrl(): string {
+    return this.envConfig.SHOONYA_BASE_URL;
+  }
+
+  /** Zerodha Kite Connect WebSocket streaming gateway */
+  public get kiteWsUrl(): string {
+    return this.envConfig.KITE_WS_URL;
+  }
+
+  /** Zerodha Kite Connect REST API gateway */
+  public get kiteBaseUrl(): string {
+    return this.envConfig.KITE_BASE_URL;
+  }
+
+  /** Browser User-Agent string for upstream market feed requests */
+  public get marketFeedUserAgent(): string {
+    return this.envConfig.MARKET_FEED_USER_AGENT;
   }
 }

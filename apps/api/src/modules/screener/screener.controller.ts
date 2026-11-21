@@ -5,6 +5,7 @@
 
 import { Body, Controller, Get, HttpCode, Post } from "@nestjs/common";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Logger } from "@yuva-devlab/logger";
 import { ApiSegment, SwaggerSummary, SwaggerTag } from "@quant-ai/shared-types";
 import { ScreenerService } from "./screener.service";
 import { ScreenerItem, ScreenerQueryDto } from "./screener.types";
@@ -15,6 +16,8 @@ import { ScreenerItem, ScreenerQueryDto } from "./screener.types";
 @ApiTags(SwaggerTag.SCREENER)
 @Controller(ApiSegment.SCREENER)
 export class ScreenerController {
+  private readonly logger = new Logger(ScreenerController.name);
+
   public constructor(private readonly screenerService: ScreenerService) {}
 
   /**
@@ -25,6 +28,7 @@ export class ScreenerController {
   @Get()
   @ApiOperation({ summary: "Get all screened market instruments" })
   public findAll(): readonly ScreenerItem[] {
+    this.logger.info("[findAll] Fetching all screened market instruments");
     return this.screenerService.findAll();
   }
 
@@ -36,6 +40,7 @@ export class ScreenerController {
   @Get(ApiSegment.SURGES)
   @ApiOperation({ summary: SwaggerSummary.SCREENER_SURGES })
   public findVolumeSurges(): readonly ScreenerItem[] {
+    this.logger.info("[findVolumeSurges] Fetching volume surge anomalies");
     return this.screenerService.findVolumeSurges();
   }
 
@@ -47,6 +52,7 @@ export class ScreenerController {
   @Get(ApiSegment.BREAKOUTS)
   @ApiOperation({ summary: SwaggerSummary.SCREENER_BREAKOUTS })
   public findBreakouts(): readonly ScreenerItem[] {
+    this.logger.info("[findBreakouts] Fetching technical breakout candidates");
     return this.screenerService.findBreakouts();
   }
 
@@ -62,6 +68,7 @@ export class ScreenerController {
     summary: "Filter instrument universe by quantitative parameters",
   })
   public filter(@Body() query: ScreenerQueryDto): readonly ScreenerItem[] {
+    this.logger.info("[filter] Filtering universe by quantitative parameters");
     return this.screenerService.filter(query);
   }
 }

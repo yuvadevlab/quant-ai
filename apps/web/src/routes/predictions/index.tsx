@@ -17,7 +17,10 @@ export const Route = createFileRoute("/predictions/")({
     ],
   }),
   loader: async ({ context: { queryClient } }) => {
-    return await queryClient.ensureQueryData(predictionsQueryOptions());
+    return await queryClient.query({
+      ...predictionsQueryOptions(),
+      staleTime: "static",
+    });
   },
   component: function PredictionsRoute() {
     const { data } = useSuspenseQuery(predictionsQueryOptions());

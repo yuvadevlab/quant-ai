@@ -5,7 +5,13 @@
 
 import { describe, it, expect } from "vitest";
 import { NodeEnvironment, DatabaseDriver, EventBrokerType, AiProviderType } from "./env.enums";
-import { NetworkPort, DefaultConnectionUrl, DefaultNetworkHost } from "./env.constants";
+import {
+  NetworkPort,
+  DefaultConnectionUrl,
+  DefaultNetworkHost,
+  DefaultAiModel,
+  DefaultHttpHeader,
+} from "./env.constants";
 import { parseApiEnv, parseWebEnv, parseQuantEngineEnv } from "./env.schema";
 
 describe("Environment Configuration Contracts", () => {
@@ -20,7 +26,16 @@ describe("Environment Configuration Contracts", () => {
     expect(config.KAFKA_BROKERS).toBe(DefaultConnectionUrl.KAFKA_BROKERS);
     expect(config.CORS_ORIGIN).toBe(DefaultNetworkHost.WILDCARD);
     expect(config.EVENT_BROKER).toBe(EventBrokerType.MEMORY);
-    expect(config.AI_PROVIDER).toBe(AiProviderType.GEMINI);
+    expect(config.AI_PROVIDER).toBe(AiProviderType.CLINE);
+    expect(config.CLINE_BASE_URL).toBe(DefaultConnectionUrl.CLINE_BASE_URL);
+    expect(config.CLINE_MODEL).toBe(DefaultAiModel.CLINE_DEFAULT);
+    expect(config.CLINE_CHAT_MODEL).toBe(DefaultAiModel.CLINE_CHAT);
+    expect(config.YAHOO_FINANCE_BASE_URL).toBe(DefaultConnectionUrl.YAHOO_FINANCE_BASE_URL);
+    expect(config.YAHOO_FINANCE_FALLBACK_URL).toBe(DefaultConnectionUrl.YAHOO_FINANCE_FALLBACK_URL);
+    expect(config.NSE_INDIA_API_URL).toBe(DefaultConnectionUrl.NSE_INDIA_API_URL);
+    expect(config.SHOONYA_WS_URL).toBe(DefaultConnectionUrl.SHOONYA_WS_URL);
+    expect(config.KITE_WS_URL).toBe(DefaultConnectionUrl.KITE_WS_URL);
+    expect(config.MARKET_FEED_USER_AGENT).toBe(DefaultHttpHeader.MARKET_FEED_USER_AGENT);
   });
 
   it("correctly overrides API environment properties when provided", () => {

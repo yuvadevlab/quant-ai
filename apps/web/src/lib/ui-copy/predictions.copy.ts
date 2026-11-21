@@ -1,33 +1,63 @@
 /**
  * @file src/lib/ui-copy/predictions.copy.ts
- * @description Centralized copy for the Predictions Lab and Signal Ledger. */
+ * @description Centralized copy for the Predictions Lab, performance metrics, and signal ledger.
+ * @author yuva.devlab@gmail.com
+ */
 
 export const PREDICTIONS_COPY = {
   HEADER: {
+    BREADCRUMB_INTELLIGENCE: "INTELLIGENCE",
     TITLE: "Predictions Lab & Accuracy Ledger",
     SUBTITLE:
       "Transparent algorithmic signal ledger with live trajectory comparison, hit-rate validation, and multi-agent confidence tracking.",
+    IN_FLIGHT_SUFFIX: "IN-FLIGHT SIGNALS",
+    EXPORT_AUDIT: "Export Audit",
   },
-  FILTERS: {
-    ALL_HORIZONS: "All Horizons",
-    INTRADAY: "Intraday (1D)",
-    SWING: "Swing (1-2W)",
-    POSITIONAL: "Positional (1M)",
-    ACTIVE_ONLY: "Active Signals Only",
+  KPIS: {
+    TOTAL_GENERATED: "TOTAL GENERATED",
+    ALL_TIME_BADGE: "ALL TIME",
+    ACTIVE_SUFFIX: "active",
+    SETTLED_SUFFIX: "settled",
+    WIN_RATE: "CALIBRATED WIN RATE",
+    DEFAULT_WIN_RATE_BADGE: "+0.0% THIS MONTH",
+    TARGETS_HIT_SUFFIX: "targets hit",
+    STOPS_SUFFIX: "stops",
+    PROFIT_FACTOR: "PROFIT FACTOR",
+    PROFIT_FACTOR_BADGE: "RISK ADJUSTED",
+    DEFAULT_AVG_GAIN: "+0.0% avg gain",
+    DEFAULT_AVG_LOSS: "−0.0% avg loss",
+    AVG_RR: "AVG RISK-REWARD",
+    POSITIVE_EXPECTANCY: "POSITIVE EXPECTANCY",
+    DEFAULT_HOLDING_HINT: "Horizon: Intraday · Swing",
+  },
+  TOOLBAR: {
+    TAB_ALL: "All calls",
+    TAB_ACTIVE: "Active",
+    TAB_TARGET_HIT: "Target hit",
+    TAB_STOP_HIT: "Stop loss hit",
+    SEARCH_PLACEHOLDER: "Filter by symbol, instrument, or ID...",
+    STYLE_ALL: "All Styles",
+    STYLE_INTRADAY: "Intraday",
+    STYLE_SWING: "Swing",
+    STYLE_OPTIONS: "Options",
   },
   TABLE: {
-    COL_SYMBOL: "Symbol & Horizon",
-    COL_DIRECTION: "Bias",
-    COL_ENTRY: "Entry Reference",
-    COL_TARGET: "Targets (T1 / T2)",
-    COL_STOP: "Invalidation Stop",
-    COL_CONFIDENCE: "Consensus Confidence",
-    COL_STATUS: "Signal Status",
-    COL_ACTIONS: "Monitor",
+    ARIA_LABEL: "Signal Audit Table",
+    COL_SIGNAL: "SIGNAL & TIMESTAMP",
+    COL_INSTRUMENT: "INSTRUMENT",
+    COL_STANCE: "STANCE",
+    COL_ENTRY: "ENTRY RANGE",
+    COL_TARGETS: "TARGET LEVELS",
+    COL_STOP: "STOP LOSS",
+    COL_LTP: "CURRENT LTP",
+    COL_STATUS: "STATUS",
+    COL_EXCURSION: "MFE / MAE",
+    COL_ACTION: "ACTION",
+    INSPECT_ACTION: "Inspect",
   },
   EMPTY: {
     TITLE: "No Matching Signals Found",
     DESCRIPTION:
-      "Adjust horizon filter or search criteria to inspect tracked algorithmic positions.",
+      "Adjust your horizon filter or search criteria to inspect tracked algorithmic positions.",
   },
 } as const;

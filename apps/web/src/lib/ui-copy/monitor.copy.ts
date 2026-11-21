@@ -1,34 +1,46 @@
 /**
  * @file src/lib/ui-copy/monitor.copy.ts
- * @description Centralized copy for the Live Trajectory Monitor Desk. */
+ * @description Centralized copy for the Live Trajectory Monitor Desk.
+ * @author yuva.devlab@gmail.com
+ */
 
 export const MONITOR_COPY = {
   HEADER: {
-    BACK_LINK: "← Back to Predictions Lab",
-    LIVE_INDICATOR: "LIVE ACCURACY SURVEILLANCE",
-  },
-  METRICS: {
-    ENTRY_PRICE: "Entry Reference Price",
-    CURRENT_PRICE: "Current Market Price",
-    TARGET_1: "Primary Target (T1)",
-    TARGET_2: "Extended Target (T2)",
-    STOP_LOSS: "Hard Invalidation Stop",
-    RISK_REWARD: "Risk to Reward Ratio",
-    PROGRESS_PCT: "Target Path Completion",
-  },
-  CHART: {
-    TITLE: "Live Actual vs Predicted Monte Carlo Cone",
-    SUBTITLE: "Real-time tick overlay against machine learning forecasted volatility band.",
-    LEGEND_ACTUAL: "Actual Market Price",
-    LEGEND_EXPECTED: "Expected Mean Trajectory",
-    LEGEND_CONE: "90% Confidence Interval",
+    BREADCRUMB_BACK: "Prediction Ledger",
+    SPECIALISTS_COUNT: "3 Specialized Agents",
+    LIVE_STREAM_ACTIVE: "Live Stream Active",
+    STREAM_CONNECTED: "Stream Connected",
+    TRIGGER_DELIBERATION: "Trigger AI Deliberation",
+    DELIBERATING: "Deliberating...",
+    TRIGGER_TOOLTIP: "Trigger on-demand multi-agent adversarial debate",
   },
   DELIBERATION: {
-    TITLE: "Multi-Agent Consensus Deliberation",
-    SUBTITLE: "Individual agent probability weightings and architectural rationale.",
-    AGENT_MACRO: "Macro & Rates Agent",
-    AGENT_MOMENTUM: "Technical & Order-Flow Agent",
-    AGENT_VOLATILITY: "Volatility Surface & Greeks Agent",
-    AGENT_SYNTHESIS: "Chief Strategy Synthesis",
+    TITLE: "Multi-Agent Deliberation Breakdown",
+    SUBTITLE:
+      "Real-time adversarial debate committee. Institutional LLM specialists evaluate momentum, tail risks, and Kelly expectancy.",
+  },
+  CONE: {
+    TITLE: "Real-time Predictive Trajectory Cone",
+    SUBTITLE: "Actual price path vs. predicted confidence bounds and expected path to Target 1.",
+    LEGEND_ACTUAL: "Actual Price",
+    LEGEND_EXPECTED: "Expected Path",
+    LEGEND_CONE: "Predictive Cone",
+    LEGEND_TARGET: "Target 1",
+    LEGEND_STOP: "Stop Loss",
+    MFE_LABEL: "MAX FAVORABLE EXCURSION (MFE)",
+    MFE_SUBTEXT: "Peak ₹2,449.60",
+    MAE_LABEL: "MAX ADVERSE EXCURSION (MAE)",
+    MAE_SUBTEXT: "Trough ₹2,417.10",
+    ALIGNMENT_LABEL: "TRAJECTORY ALIGNMENT",
+    ALIGNMENT_SUBTEXT: "Within Upper Cone",
+    PROGRESS_LABEL: "PROGRESS TO TARGET 1",
+    PROGRESS_SUBTEXT: "68% completed",
+  },
+  INVALIDATION: {
+    TITLE: "Automated Invalidation Rule",
+    DESCRIPTION_PREFIX: "If a 15-minute candle closes below",
+    DESCRIPTION_SUFFIX:
+      "or if Call Open Interest surges by > 35% on the immediate strike, the trade hypothesis is invalidated immediately.",
+    ACTION_PREFIX: "Ask Copilot about",
   },
 } as const;

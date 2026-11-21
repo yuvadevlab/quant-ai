@@ -1,34 +1,74 @@
 /**
  * @file src/lib/ui-copy/settings.copy.ts
- * @description Centralized copy for the Settings Desk. */
+ * @description Centralized copy for the System Settings & Algorithm Tuning Desk.
+ * @author yuva.devlab@gmail.com
+ */
 
 export const SETTINGS_COPY = {
   HEADER: {
-    TITLE: "System Preferences & Model Configuration",
+    BREADCRUMB_WORKSTATION: "WORKSTATION",
+    TITLE: "System Settings & Algorithmic Parameters",
     SUBTITLE:
-      "Fine-tune multi-agent reasoning models, quantitative risk thresholds, market feed rates, and alert channels.",
+      "Configure quantitative models, API endpoints, risk thresholds, and deliberation committee parameters.",
+    SAVE_BTN: "Save Configuration",
+    SAVED_BTN: "Preferences Saved",
   },
   SECTIONS: {
-    MODELS: {
-      TITLE: "Autonomous Multi-Agent AI Engine",
-      DESCRIPTION: "Configure which frontier model powers each individual analytical persona.",
-      MACRO_AGENT: "Macro & Monetary Policy Agent",
-      MOMENTUM_AGENT: "Technical & Order-Flow Agent",
-      VOLATILITY_AGENT: "Volatility & Greeks Agent",
-      SYNTHESIS_LEAD: "Chief Synthesis Engine",
+    ENGINE: {
+      TITLE: "AI Engine & Model Provider",
+      SUBTITLE: "Switch between multi-provider backends. Dynamic runtime abstraction layer.",
+      PROVIDER_LABEL: "Default AI Provider",
+      TEMPERATURE_LABEL: "Temperature (Sampling Diversity)",
     },
     RISK: {
-      TITLE: "Institutional Risk Limits",
-      DESCRIPTION: "Enforce safety boundaries on suggested signals.",
-      MAX_SL_PCT: "Maximum Invalidation Stop-Loss Distance (%)",
-      MIN_RR: "Minimum Risk-to-Reward Ratio (e.g. 1:2)",
-      MIN_CONFIDENCE: "Minimum Signal Confidence Threshold (%)",
+      TITLE: "Deterministic Risk Limits",
+      SUBTITLE: "Hardcoded limits enforced by Risk Guardian. LLM cannot override these rules.",
+      MAX_RISK_LABEL: "Max Risk Per Signal",
+      MAX_RISK_SUBTITLE: "Maximum allowable capital risk per single trade recommendation.",
+      MAX_RISK_OPTIONS: {
+        CONSERVATIVE: "0.5% (Conservative)",
+        STANDARD: "1.0% (Standard Quantitative)",
+        AGGRESSIVE: "1.5% (Aggressive)",
+        CEILING: "2.0% (Max Ceiling)",
+      },
+      DRAWDOWN_LABEL: "Daily Max Drawdown Circuit Breaker",
+      DRAWDOWN_SUBTITLE: "Auto-pause all signal generation if daily losses hit this threshold.",
+      DRAWDOWN_OPTIONS: {
+        LOSS_2: "2.0% Daily Loss",
+        LOSS_3: "3.0% Daily Loss (Default)",
+        LOSS_5: "5.0% Daily Loss",
+      },
+      TRAILING_LABEL: "Automated Trailing Stop Loss",
+      TRAILING_SUBTITLE:
+        "Automatically advance stop loss to entry level once Target 1 is achieved.",
+      MIN_RR_LABEL: "Minimum Risk:Reward Ratio",
+      MAX_ALLOCATION_LABEL: "Max Capital Allocation per Signal (%)",
     },
-    FEEDS: {
-      TITLE: "NSE & BSE Live Data Feed",
-      DESCRIPTION: "Manage market depth polling frequencies and order-flow socket connectivity.",
-      REFRESH_INTERVAL: "Tick Polling Interval",
-      PAPER_MODE: "Simulated Paper-Tracking Engine Active",
+    SSO: {
+      TITLE: "DevLab Portal SSO & Identity",
+      SUBTITLE: "Centralized authentication across Yuva DevLab ecosystem.",
+      LABEL_STATUS: "AUTHENTICATION STATUS",
+      STATUS_TEXT: "Authenticated via DevLab Portal SSO",
+      UNAUTH_STATUS_TEXT: "Unauthenticated (SSO Guest Session)",
+      LABEL_ACCOUNT: "LINKED ACCOUNT",
+      LABEL_USER_ID: "PORTAL USER ID (SUB)",
+      LABEL_ROLE: "ROLE & ACCESS",
+      LABEL_THEME: "ECOSYSTEM APP THEME",
+      THEME_DARK: "QuantAI Dark (Institutional Cyan)",
+      THEME_LIGHT: "QuantAI Light (Executive Desk)",
+      BTN_LOGOUT: "Sign Out from DevLab Ecosystem",
+      BTN_LOGIN: "Sign In via DevLab Portal SSO",
     },
+    DATA: {
+      TITLE: "Live Market Feed & WebSocket",
+      SUBTITLE: "Telemetry cadence and historical candle lookback settings.",
+      TICK_CADENCE_LABEL: "Tick Streaming Cadence (ms)",
+      CANDLE_LOOKBACK_LABEL: "Historical Candle Lookback (Days)",
+    },
+  },
+  ACTIONS: {
+    SAVE: "Save Configuration",
+    SAVING: "Saving Parameters...",
+    RESET: "Reset to Institutional Defaults",
   },
 } as const;

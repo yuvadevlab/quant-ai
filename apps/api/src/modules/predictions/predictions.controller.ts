@@ -5,6 +5,7 @@
 
 import { Controller, Get, Param } from "@nestjs/common";
 import { ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
+import { Logger } from "@yuva-devlab/logger";
 import {
   ApiSegment,
   Signal,
@@ -20,6 +21,8 @@ import { PredictionsService } from "./predictions.service";
 @ApiTags(SwaggerTag.PREDICTIONS)
 @Controller(ApiSegment.PREDICTIONS)
 export class PredictionsController {
+  private readonly logger = new Logger(PredictionsController.name);
+
   public constructor(private readonly predictionsService: PredictionsService) {}
 
   /**
@@ -30,6 +33,7 @@ export class PredictionsController {
   @Get()
   @ApiOperation({ summary: SwaggerSummary.ACTIVE_PREDICTIONS })
   public findAll(): readonly Signal[] {
+    this.logger.info("[findAll] Fetching all predictions from ledger");
     return this.predictionsService.findAll();
   }
 
@@ -43,6 +47,7 @@ export class PredictionsController {
   @ApiOperation({ summary: SwaggerSummary.PREDICTION_BY_ID })
   @ApiParam({ name: "id", example: "PRED-8942" })
   public findById(@Param("id") id: string): Signal {
+    this.logger.info(`[findById] Fetching prediction details for ${id}`);
     return this.predictionsService.findById(id);
   }
 
@@ -56,6 +61,7 @@ export class PredictionsController {
   @ApiOperation({ summary: SwaggerSummary.PREDICTION_TRAJECTORY })
   @ApiParam({ name: "id", example: "PRED-8942" })
   public getTrajectory(@Param("id") id: string): readonly TrajectoryPoint[] {
+    this.logger.info(`[getTrajectory] Fetching trajectory points for ${id}`);
     return this.predictionsService.getTrajectory(id);
   }
 }
