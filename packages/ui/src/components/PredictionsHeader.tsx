@@ -6,7 +6,6 @@
 
 import type { ReactNode } from "react";
 import { ChevronRight, Download } from "lucide-react";
-import { Badge } from "@yuva-devlab/ui";
 import { Button } from "@yuva-devlab/ui";
 
 /**
@@ -59,12 +58,12 @@ export function PredictionsHeader({
         <p className="desk-subtitle">{subtitle}</p>
       </div>
       <div className="desk-actions">
-        <Badge className="paper-trading-tag">
+        <span className="paper-trading-tag">
           <span className="pulse-ping" />
           <span>
             {activeCount} {inFlightSuffix}
           </span>
-        </Badge>
+        </span>
         {actionSlot ?? (
           <Button
             type="button"

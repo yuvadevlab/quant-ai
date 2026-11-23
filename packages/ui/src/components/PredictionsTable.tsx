@@ -15,7 +15,6 @@ import {
   TableCell,
   Card,
   CardContent,
-  Badge,
 } from "@yuva-devlab/ui";
 import type { TableSignalItem } from "../types";
 
@@ -33,6 +32,10 @@ export interface PredictionsTableProps {
   readonly inspectLabel?: string;
   /** Table accessible label */
   readonly ariaLabel?: string;
+  /** Empty state heading */
+  readonly emptyTitle?: string;
+  /** Empty state message description */
+  readonly emptyDescription?: string;
 }
 
 /**
@@ -47,6 +50,8 @@ export function PredictionsTable({
   onInspect,
   inspectLabel = "INSPECT",
   ariaLabel = "Prediction Signals Audit Ledger",
+  emptyTitle = "No Algorithmic Predictions Tracked",
+  emptyDescription = "No real analyzed signals currently active. Run a live market analysis scan to evaluate genuine setups.",
 }: PredictionsTableProps) {
   return (
     <Card className="desk-table-card">
@@ -67,74 +72,85 @@ export function PredictionsTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {signals.map((signal) => {
-              const isBuy = signal.direction.toUpperCase() === "BUY";
-              const statusLower = signal.status.toLowerCase();
-              const statusClass = statusLower.includes("active")
-                ? "pill-active"
-                : statusLower.includes("target")
-                  ? "pill-target"
-                  : statusLower.includes("stop")
-                    ? "pill-stop"
-                    : "pill-expired";
+            {signals.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={10} className="table-empty-cell">
+                  <div className="table-empty-state">
+                    <p className="table-empty-title">{emptyTitle}</p>
+                    <p className="table-empty-desc">{emptyDescription}</p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
+              signals.map((signal) => {
+                const isBuy = signal.direction.toUpperCase() === "BUY";
+                const statusLower = signal.status.toLowerCase();
+                const statusClass = statusLower.includes("active")
+                  ? "pill-active"
+                  : statusLower.includes("target")
+                    ? "pill-target"
+                    : statusLower.includes("stop")
+                      ? "pill-stop"
+                      : "pill-expired";
 
-              return (
-                <TableRow key={signal.id}>
-                  <TableCell>
-                    <div className="symbol-cell">
-                      <span className="mono text-muted">{signal.id}</span>
-                      <span className="time-sub">{signal.time}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="instrument-cell">
-                      <span className="symbol-strong">{signal.symbol}</span>
-                      <span className="instrument-sub">{signal.instrument}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={`direction-badge ${isBuy ? "badge-buy" : "badge-sell"}`}>
-                      {signal.direction}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="mono">{signal.entry}</TableCell>
-                  <TableCell>
-                    <div className="targets-cell mono">
-                      <span className="text-gain">T1: {signal.target1}</span>
-                      <span className="text-muted">T2: {signal.target2}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="mono text-loss">{signal.stop}</TableCell>
-                  <TableCell className="mono font-semibold">{signal.last}</TableCell>
-                  <TableCell>
-                    <Badge className={`outcome-pill ${statusClass}`}>
-                      {statusLower.includes("active") && <span className="pulse-ping" />}
-                      {signal.status.toUpperCase()}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="excursion-cell mono">
-                      <span className="text-gain">MFE {signal.mfe}</span>
-                      <span className="text-loss">MAE {signal.mae}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {renderInspectLink ? (
-                      renderInspectLink(signal)
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => onInspect?.(signal.id)}
-                        className="btn-table-action"
-                      >
-                        <span>{inspectLabel}</span>
-                        <ArrowRight size={13} />
-                      </button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+                return (
+                  <TableRow key={signal.id}>
+                    <TableCell>
+                      <div className="symbol-cell">
+                        <span className="mono text-muted">{signal.id}</span>
+                        <span className="time-sub">{signal.time}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="instrument-cell">
+                        <span className="symbol-strong">{signal.symbol}</span>
+                        <span className="instrument-sub">{signal.instrument}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className={`direction-badge ${isBuy ? "badge-buy" : "badge-sell"}`}>
+                        {signal.direction}
+                      </span>
+                    </TableCell>
+                    <TableCell className="mono">{signal.entry}</TableCell>
+                    <TableCell>
+                      <div className="targets-cell mono">
+                        <span className="text-gain">T1: {signal.target1}</span>
+                        <span className="text-muted">T2: {signal.target2}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="mono text-loss">{signal.stop}</TableCell>
+                    <TableCell className="mono font-semibold">{signal.last}</TableCell>
+                    <TableCell>
+                      <span className={`outcome-pill ${statusClass}`}>
+                        {statusLower.includes("active") && <span className="pulse-ping" />}
+                        {signal.status.toUpperCase()}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="excursion-cell mono">
+                        <span className="text-gain">MFE {signal.mfe}</span>
+                        <span className="text-loss">MAE {signal.mae}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {renderInspectLink ? (
+                        renderInspectLink(signal)
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => onInspect?.(signal.id)}
+                          className="btn-table-action"
+                        >
+                          <span>{inspectLabel}</span>
+                          <ArrowRight size={13} />
+                        </button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
           </TableBody>
         </Table>
       </CardContent>

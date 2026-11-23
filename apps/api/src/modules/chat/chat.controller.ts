@@ -54,7 +54,7 @@ export class ChatController {
   @Post("message")
   @HttpCode(HttpStatus.OK)
   public async sendMessage(@Body() dto: SendChatMessageDto): Promise<ChatMessageResponse> {
-    const text = dto.message?.trim() ?? "";
+    const text = (dto.message ?? dto.query)?.trim() ?? "";
     this.logger.info(`[sendMessage] Received chat query payload (length: ${text.length})`);
     return this.chatService.handleUserMessage(text, dto.sessionId, dto.providerOverride);
   }

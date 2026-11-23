@@ -12,6 +12,8 @@ export const PREDICTIONS_COPY = {
       "Transparent algorithmic signal ledger with live trajectory comparison, hit-rate validation, and multi-agent confidence tracking.",
     IN_FLIGHT_SUFFIX: "IN-FLIGHT SIGNALS",
     EXPORT_AUDIT: "Export Audit",
+    RUN_ANALYSIS: "Run Quant Analysis",
+    ANALYZING: "Analyzing Market...",
   },
   KPIS: {
     TOTAL_GENERATED: "TOTAL GENERATED",
@@ -56,8 +58,8 @@ export const PREDICTIONS_COPY = {
     INSPECT_ACTION: "Inspect",
   },
   EMPTY: {
-    TITLE: "No Matching Signals Found",
+    TITLE: "No Algorithmic Predictions Tracked",
     DESCRIPTION:
-      "Adjust your horizon filter or search criteria to inspect tracked algorithmic positions.",
+      "Zero dummy seed data is injected into QuantAI. Trigger a live market analysis scan to evaluate genuine technical setups across active market symbols.",
   },
 } as const;

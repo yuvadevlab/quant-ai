@@ -25,6 +25,26 @@ export interface ChatSessionDetail extends ChatSessionSummary {
   readonly messages: ChatSessionMessageItem[];
 }
 
+export interface EmbeddedSignalSetup {
+  readonly id: string;
+  readonly symbol: string;
+  readonly instrument: string;
+  readonly companyName?: string;
+  readonly direction: "BUY" | "SELL" | string;
+  readonly horizon: string;
+  readonly entry: string;
+  readonly target1: string;
+  readonly target2: string;
+  readonly stop: string;
+  readonly last: string;
+  readonly status: "Active" | "Target hit" | "Stop loss hit" | "Expired" | string;
+  readonly mfe: string;
+  readonly mae: string;
+  readonly time: string;
+  readonly confidence?: string;
+  readonly catalysts?: readonly string[];
+}
+
 export interface ChatMessageResponse {
   readonly reply: string;
   readonly sessionId?: string;
@@ -36,11 +56,14 @@ export interface ChatMessageResponse {
     readonly stance: AgentStance;
     readonly conviction: number;
   };
+  readonly signalData?: EmbeddedSignalSetup;
+  readonly predictionId?: string;
   readonly timestamp: string;
 }
 
 export interface SendChatMessageDto {
-  readonly message: string;
+  readonly message?: string;
+  readonly query?: string;
   readonly sessionId?: string;
   readonly providerOverride?: AiProviderType;
 }

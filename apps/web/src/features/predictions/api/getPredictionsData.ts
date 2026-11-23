@@ -8,7 +8,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { SignalDirection, type Signal as BackendSignal } from "@quant-ai/shared-types";
 import { apiFetch } from "@/lib/api-fetcher";
-import type { Signal } from "@/components/quantai/data";
+import { UiSignalStatus, type Signal } from "@/components/quantai/data";
 import { calculateSignalsTelemetry } from "@/hooks/use-workstation-session";
 
 export interface PredictionsData {
@@ -31,6 +31,16 @@ export function mapBackendSignalToUi(s: BackendSignal): Signal {
   const entry = s.entry;
   const pnlPercent = s.pnlPercent ?? Number((((current - entry) / (entry || 1)) * 100).toFixed(2));
 
+  let normalizedStatus: UiSignalStatus = UiSignalStatus.ACTIVE;
+  const statusStr = String(s.status).toLowerCase();
+  if (statusStr.includes("target")) {
+    normalizedStatus = UiSignalStatus.TARGET_HIT;
+  } else if (statusStr.includes("stop") || statusStr.includes("invalid")) {
+    normalizedStatus = UiSignalStatus.STOP_HIT;
+  } else if (statusStr.includes("expire")) {
+    normalizedStatus = UiSignalStatus.EXPIRED;
+  }
+
   return {
     id: s.id,
     symbol: s.ticker,
@@ -47,7 +57,7 @@ export function mapBackendSignalToUi(s: BackendSignal): Signal {
     change: `${pnlPercent >= 0 ? "+" : ""}${pnlPercent}%`,
     mfe: `+${s.maxExcursion ?? 1.5}%`,
     mae: `−${s.maxAdverse ?? 0.3}%`,
-    status: s.status as Signal["status"],
+    status: normalizedStatus,
     time: "Live Feed",
     confidence: `${s.confidence}%`,
     riskReward: `1:${s.riskReward ?? 2.5}`,
@@ -60,6 +70,13 @@ export function mapBackendSignalToUi(s: BackendSignal): Signal {
       optionsFlow: { score: 80, verdict: "Institutional flow confirmation" },
       riskGuardian: { score: 84, verdict: "Risk defined" },
     },
+    trajectoryPoints: s.trajectory?.map((t) => ({
+      time: t.time,
+      actualPrice: t.actual ?? t.expected,
+      expectedPath: t.expected,
+      upperCone: t.upper,
+      lowerCone: t.lower,
+    })),
   };
 }
 

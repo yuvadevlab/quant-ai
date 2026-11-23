@@ -14,7 +14,6 @@ import {
   RadioGroup,
   RadioGroupItem,
   Label,
-  Badge,
 } from "@yuva-devlab/ui";
 import type { SettingsProviderItem } from "../types";
 
@@ -82,7 +81,7 @@ export function SettingsAiEngine({
                       {isDeprecated && <History size={14} className="text-muted" />}
                       <strong>{model.name}</strong>
                     </div>
-                    <Badge className={`provider-tag ${model.tagClass ?? ""}`}>{model.tag}</Badge>
+                    <span className={`provider-tag ${model.tagClass ?? ""}`}>{model.tag}</span>
                   </div>
                   <p className="provider-desc">{model.desc}</p>
                   {model.contextWindow && (

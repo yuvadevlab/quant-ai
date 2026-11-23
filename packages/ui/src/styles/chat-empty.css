@@ -36,7 +36,11 @@
     width: 56px;
     height: 56px;
     border-radius: var(--radius-xl);
-    background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 20%, transparent), color-mix(in srgb, var(--chart-actual) 25%, transparent));
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--primary) 20%, transparent),
+      color-mix(in srgb, var(--chart-actual) 25%, transparent)
+    );
     border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
     color: var(--primary);
     display: flex;
@@ -84,7 +88,10 @@
     gap: 8px;
     text-align: left;
     cursor: pointer;
-    transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+    transition:
+      transform var(--transition-fast),
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
   }
 
   .chat-starter-card:hover {

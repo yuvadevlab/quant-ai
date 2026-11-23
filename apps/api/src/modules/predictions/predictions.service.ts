@@ -12,43 +12,20 @@ import {
   Optional,
 } from "@nestjs/common";
 import { Logger } from "@yuva-devlab/logger";
-import {
-  AgentRole,
-  AgentStance,
-  EventTopic,
-  Signal,
-  SignalDirection,
-  SignalStatus,
-  TrajectoryPoint,
-} from "@quant-ai/shared-types";
-import {
-  calculateReturnPercent,
-  calculateUnrealizedPnl,
-  TradePositionSide,
-} from "@quant-ai/quant-core";
+import { EventTopic, Signal, SignalStatus, TrajectoryPoint } from "@quant-ai/shared-types";
 import { type DomainEventEnvelope } from "@yuva-devlab/events";
 import { EventBusService } from "../infrastructure/event-bus.service";
 import { DatabaseService } from "../infrastructure/database.service";
 import { LiveMarketFeedService } from "../market/feed";
 import { RealtimeService } from "../realtime/realtime.service";
 import { hydratePredictionsFromDatabase } from "./predictions-hydrator";
-
-interface PredictionTickPayload extends Record<string, unknown> {
-  symbol?: string;
-  price?: number;
-}
-
-interface DeliberationCompletedPayload extends Record<string, unknown> {
-  predictionId?: string;
-  consensusVeto?: boolean;
-  netScore?: number;
-  verdicts?: Array<{
-    agentRole: string;
-    stance: string;
-    score: number;
-    rationale: string;
-  }>;
-}
+import { executeRealMarketAnalysis, type AnalysisFilterOptions } from "./predictions-analyzer";
+import {
+  handlePredictionTick,
+  handleDeliberationOutcome,
+  type PredictionTickPayload,
+  type DeliberationCompletedPayload,
+} from "./predictions-events";
 
 /**
  * Service managing dynamic multi-strategy prediction ledgers, live PnL, and trajectories.
@@ -67,21 +44,23 @@ export class PredictionsService implements OnModuleInit, OnModuleDestroy {
     @Optional() private readonly databaseService?: DatabaseService,
   ) {}
 
-  /**
-   * Subscribes to real-time events and hydrates multi-strategy opportunities dynamically.
-   */
   public async onModuleInit(): Promise<void> {
     if (this.eventBusService) {
       this.unsubTick = this.eventBusService.subscribe(
         EventTopic.MARKET_TICKS,
         (envelope: unknown) => {
-          this.handleIncomingTick(envelope as DomainEventEnvelope<PredictionTickPayload>);
+          handlePredictionTick(
+            this.predictions,
+            envelope as DomainEventEnvelope<PredictionTickPayload>,
+            this.realtimeService,
+          );
         },
       );
       this.unsubDeliberation = this.eventBusService.subscribe(
         EventTopic.DELIBERATION_COMPLETED,
         (envelope: unknown) => {
-          this.handleDeliberationOutcome(
+          handleDeliberationOutcome(
+            this.predictions,
             envelope as DomainEventEnvelope<DeliberationCompletedPayload>,
           );
         },
@@ -101,9 +80,6 @@ export class PredictionsService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  /**
-   * Cleans up event subscriptions on shutdown.
-   */
   public onModuleDestroy(): void {
     this.unsubTick?.();
     this.unsubDeliberation?.();
@@ -123,9 +99,13 @@ export class PredictionsService implements OnModuleInit, OnModuleDestroy {
     return Array.from(this.predictions.values()).filter((s) => s.status === SignalStatus.ACTIVE);
   }
 
-  /**
-   * Retrieves a single prediction by ID.
-   */
+  public findActiveBySymbol(symbol: string): Signal | undefined {
+    const sym = symbol.toUpperCase().trim();
+    return Array.from(this.predictions.values()).find(
+      (s) => s.ticker.toUpperCase() === sym && s.status === SignalStatus.ACTIVE,
+    );
+  }
+
   public findById(id: string): Signal {
     const signal = this.predictions.get(id);
     if (!signal) {
@@ -150,76 +130,77 @@ export class PredictionsService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
-   * Dynamically updates PnL and status on incoming market ticks.
+   * Invalidates a previous prediction and records audit status in database and live stream.
    */
-  public handleIncomingTick(envelope: DomainEventEnvelope<PredictionTickPayload>): void {
-    const tick = envelope?.payload;
-    if (!tick?.symbol || typeof tick.price !== "number") {
-      return;
-    }
+  public async invalidateSignal(id: string, reason?: string): Promise<boolean> {
+    const signal = this.predictions.get(id);
+    if (!signal) return false;
 
-    for (const [id, signal] of this.predictions.entries()) {
-      if (signal.ticker === tick.symbol && signal.status === SignalStatus.ACTIVE) {
-        const current = tick.price;
-        const side =
-          signal.direction === SignalDirection.LONG
-            ? TradePositionSide.LONG
-            : TradePositionSide.SHORT;
-        const pnlAbsolute = calculateUnrealizedPnl(signal.entry, current, 1, side);
-        const pnlPercent = calculateReturnPercent(signal.entry, current, side);
-        const maxExcursion = Math.max(signal.maxExcursion ?? 0, pnlPercent);
+    const updated: Signal = {
+      ...signal,
+      status: SignalStatus.INVALIDATED,
+      thesis: reason ? `${signal.thesis} [Invalidated: ${reason}]` : signal.thesis,
+    };
+    this.predictions.set(id, updated);
 
-        let status: SignalStatus = signal.status;
-        if (signal.direction === SignalDirection.LONG && current >= signal.target) {
-          status = SignalStatus.TARGET_HIT;
-        } else if (signal.direction === SignalDirection.LONG && current <= signal.stopLoss) {
-          status = SignalStatus.INVALIDATED;
-        }
-
-        const updated: Signal = {
-          ...signal,
-          current,
-          pnlAbsolute,
-          pnlPercent,
-          maxExcursion,
-          status,
-        };
-
-        this.predictions.set(id, updated);
-        this.realtimeService?.emitSignalUpdate({
-          id,
-          ticker: signal.ticker,
-          currentPrice: current,
-          pnlPercent,
-          status,
+    if (this.databaseService) {
+      try {
+        await this.databaseService.client.prediction.update({
+          where: { id },
+          data: { status: SignalStatus.INVALIDATED },
         });
+      } catch (err) {
+        this.logger.warn(`[invalidateSignal] DB update failed for ${id}: ${String(err)}`);
       }
     }
+
+    this.realtimeService?.emitSignalUpdate({
+      id,
+      ticker: signal.ticker,
+      currentPrice: signal.current,
+      pnlPercent: signal.pnlPercent ?? 0,
+      status: SignalStatus.INVALIDATED,
+    });
+
+    this.logger.info(
+      `[invalidateSignal] Marked prediction ${id} as INVALIDATED (${reason ?? "thesis break"})`,
+    );
+    return true;
   }
 
   /**
-   * Attaches multi-agent deliberation verdicts when a debate completes.
+   * Re-evaluates or generates a new prediction for a symbol, safely invalidating any conflicting prior thesis.
    */
-  public handleDeliberationOutcome(
-    envelope: DomainEventEnvelope<DeliberationCompletedPayload>,
-  ): void {
-    const payload = envelope?.payload;
-    if (!payload?.predictionId) return;
+  public async registerOrUpdateSignalForSymbol(
+    symbol: string,
+    reason?: string,
+  ): Promise<Signal | null> {
+    const active = this.findActiveBySymbol(symbol);
+    if (active && reason) {
+      await this.invalidateSignal(active.id, reason);
+    }
 
-    const signal = this.predictions.get(payload.predictionId);
-    if (!signal || !payload.verdicts) return;
+    const signals = await this.runLiveMarketAnalysis({ symbols: [symbol] });
+    return signals[0] ?? null;
+  }
 
-    const updatedAgents = payload.verdicts.map((v) => ({
-      role: v.agentRole as AgentRole,
-      stance: v.stance as AgentStance,
-      confidence: v.score,
-      summary: v.rationale,
-    }));
-
-    this.predictions.set(payload.predictionId, {
-      ...signal,
-      confidence: payload.netScore ?? signal.confidence,
-      agents: updatedAgents,
-    });
+  public async runLiveMarketAnalysis(options?: AnalysisFilterOptions): Promise<readonly Signal[]> {
+    const signals = await executeRealMarketAnalysis(
+      this.databaseService,
+      this.liveMarketFeed,
+      this.logger,
+      options,
+    );
+    for (const signal of signals) {
+      this.predictions.set(signal.id, signal);
+      this.realtimeService?.emitSignalUpdate({
+        id: signal.id,
+        ticker: signal.ticker,
+        currentPrice: signal.current,
+        pnlPercent: signal.pnlPercent ?? 0,
+        status: signal.status,
+      });
+    }
+    return signals;
   }
 }

@@ -74,9 +74,7 @@ describe("NestJS Domain Services", () => {
       riskReward: 2.0,
       catalysts: [],
       invalidation: "Stop loss",
-      trajectory: [
-        { time: "T0", expected: 2420.0, actual: 2434.6, upper: 2480.0, lower: 2380.0 },
-      ],
+      trajectory: [{ time: "T0", expected: 2420.0, actual: 2434.6, upper: 2480.0, lower: 2380.0 }],
       agents: [],
     });
     await service.onModuleInit();

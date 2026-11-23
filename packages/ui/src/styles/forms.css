@@ -46,7 +46,10 @@
     border: none !important;
     border-radius: var(--radius-sm);
     box-shadow: none !important;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition:
+      color 0.15s ease-in-out,
+      background-color 0.15s ease-in-out,
+      box-shadow 0.15s ease-in-out;
     cursor: pointer;
     white-space: nowrap;
     display: inline-flex;

@@ -6,7 +6,7 @@
 
 import type { ReactNode } from "react";
 import { ArrowRight, Sparkles, Zap } from "lucide-react";
-import { Badge, Button } from "@yuva-devlab/ui";
+import { Button } from "@yuva-devlab/ui";
 
 /**
  * Props for the OverviewHero presentation component.
@@ -46,10 +46,10 @@ export function OverviewHero({
   return (
     <section className="overview-hero">
       <div className="hero-text-col">
-        <Badge className="hero-badge">
+        <span className="hero-badge">
           <Zap size={14} className="hero-zap" />
           <span>{badgeText}</span>
-        </Badge>
+        </span>
         <h1 className="hero-title">{title}</h1>
         <p className="hero-subtitle">{subtitle}</p>
       </div>

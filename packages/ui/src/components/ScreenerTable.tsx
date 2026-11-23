@@ -15,7 +15,6 @@ import {
   TableCell,
   Card,
   CardContent,
-  Badge,
 } from "@yuva-devlab/ui";
 import type { ScreenerTableItem } from "../types";
 
@@ -89,19 +88,19 @@ export function ScreenerTable({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge className="sector-badge">{item.sector}</Badge>
+                    <span className="sector-badge">{item.sector}</span>
                   </TableCell>
                   <TableCell>
                     <div className="price-cell">
                       <span className="price-mono">{item.price}</span>
-                      <Badge className={`change-pill ${item.positive ? "pill-gain" : "pill-loss"}`}>
+                      <span className={`change-pill ${item.positive ? "pill-gain" : "pill-loss"}`}>
                         {item.positive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
                         {item.change}
-                      </Badge>
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge className="pattern-tag">{item.pattern}</Badge>
+                    <span className="pattern-tag">{item.pattern}</span>
                   </TableCell>
                   <TableCell>
                     <div className="rsi-cell">
@@ -119,12 +118,12 @@ export function ScreenerTable({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge className="ema-tag">{item.emaStatus}</Badge>
+                    <span className="ema-tag">{item.emaStatus}</span>
                   </TableCell>
                   <TableCell>
-                    <Badge className={`oi-tag ${isBullishOi ? "oi-bullish" : "oi-bearish"}`}>
+                    <span className={`oi-tag ${isBullishOi ? "oi-bullish" : "oi-bearish"}`}>
                       {item.oiAction}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell>
                     <span
@@ -134,7 +133,7 @@ export function ScreenerTable({
                     </span>
                   </TableCell>
                   <TableCell>
-                    <Badge className={`candidate-badge ${candClass}`}>{item.signalCandidate}</Badge>
+                    <span className={`candidate-badge ${candClass}`}>{item.signalCandidate}</span>
                   </TableCell>
                   <TableCell>
                     {renderAnalyzeLink ? (

@@ -135,6 +135,13 @@ export function MonitorPage({ initialData }: MonitorPageProps) {
           timeframe={timeframe}
           onTimeframeChange={setTimeframe}
           samples={chartSamples}
+          trajectory={signal.trajectoryPoints?.map((t, idx, arr) => ({
+            time: t.time,
+            expected: t.expectedPath,
+            actual: idx === arr.length - 1 && liveTick?.price ? liveTick.price : t.actualPrice,
+            upper: t.upperCone,
+            lower: t.lowerCone,
+          }))}
         />
 
         <MonitorAgentsSection

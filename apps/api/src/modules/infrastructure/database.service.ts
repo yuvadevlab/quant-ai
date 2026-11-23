@@ -5,7 +5,7 @@
 
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { Logger } from "@yuva-devlab/logger";
-import { HealthStatus } from "@quant-ai/shared-types";
+import { HealthStatus, MARKET_EQUITY_REGISTRY } from "@quant-ai/shared-types";
 import { SystemConfigKey } from "@quant-ai/quant-core";
 import {
   createPrismaClient,
@@ -82,6 +82,30 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
           ],
         });
         this.logger.info("[onModuleInit] Seeded market configs successfully.");
+      }
+
+      const stockCount = await this.prismaClient.screenerStock.count();
+      if (stockCount === 0) {
+        this.logger.info(
+          "[onModuleInit] Seeding initial equity reference universe into database...",
+        );
+        for (const stock of MARKET_EQUITY_REGISTRY) {
+          await this.prismaClient.screenerStock.upsert({
+            where: { symbol: stock.symbol },
+            update: {
+              company: stock.company,
+              sector: stock.sector,
+              exchange: stock.exchange,
+            },
+            create: {
+              symbol: stock.symbol,
+              company: stock.company,
+              sector: stock.sector,
+              exchange: stock.exchange,
+            },
+          });
+        }
+        this.logger.info("[onModuleInit] Seeded equity reference master successfully.");
       }
     } catch (error) {
       this.logger.warn(`[onModuleInit] Could not seed initial database assets: ${String(error)}`);

@@ -1,57 +1,57 @@
 /**
  * @file apps/api/src/modules/chat/chat.constants.ts
- * @description Centralized constants, symbol universes, and response templates for AI Copilot chat.
+ * @description Centralized constants, symbol universes, and indicators for AI Copilot chat.
  * @author yuva.devlab@gmail.com
  */
 
-import type { LiveMarketQuote } from "../market/feed";
+import { MARKET_EQUITY_REGISTRY } from "@quant-ai/shared-types";
 
 /**
- * Universal recognizer symbols scanned in chat prompt inquiries.
+ * Benchmark Indian market indices recognized in Copilot prompts.
  */
-export const CHAT_QUERY_SYMBOLS: readonly string[] = [
+export const BENCHMARK_INDEX_SYMBOLS: readonly string[] = [
   "NIFTY 50",
   "NIFTY",
   "BANKNIFTY",
   "BANK NIFTY",
-  "RELIANCE",
-  "TCS",
-  "HDFCBANK",
-  "INFY",
-  "ICICIBANK",
-  "AMZN",
-  "AAPL",
-  "NVDA",
-  "BTC",
-  "GOLD",
-  "CRUDE",
+  "FINNIFTY",
+  "SENSEX",
+  "INDIA VIX",
 ] as const;
 
 /**
- * Chat formatting templates and response generators.
+ * Global commodities and cryptocurrencies recognized in Copilot prompts.
  */
-export const CHAT_TEMPLATES = {
-  /**
-   * Generates formatted quantitative summary when a live instrument is referenced.
-   */
-  LIVE_QUOTE_SUMMARY: (quote: LiveMarketQuote): string => {
-    const sign = quote.change >= 0 ? "+" : "";
-    const sentiment =
-      quote.percentChange >= 0 ? "bullish order flow expansion" : "defensive consolidation";
-    const recommendedStop = (quote.price * 0.985).toFixed(2);
+export const GLOBAL_MACRO_SYMBOLS: readonly string[] = [
+  "BTC",
+  "BITCOIN",
+  "GOLD",
+  "CRUDE",
+  "BRENT",
+] as const;
 
-    return (
-      `${quote.symbol} is currently trading at ${quote.currency} ${quote.price.toLocaleString("en-IN")} ` +
-      `(${sign}${quote.percentChange.toFixed(2)}%). ` +
-      `Day Range: ${quote.dayLow} – ${quote.dayHigh}. Volume: ${quote.volume.toLocaleString()}. ` +
-      `Quantitative consensus indicates ${sentiment} with dynamic stop-loss recommended at ${recommendedStop}.`
-    );
-  },
+/**
+ * Universal dynamic symbol universe recognized in chat inquiries.
+ * Derived directly from shared-types MARKET_EQUITY_REGISTRY SSOT.
+ */
+export const CHAT_QUERY_SYMBOLS: readonly string[] = [
+  ...BENCHMARK_INDEX_SYMBOLS,
+  ...MARKET_EQUITY_REGISTRY.map((s) => s.symbol),
+  ...GLOBAL_MACRO_SYMBOLS,
+] as const;
 
-  /**
-   * Generates default institutional risk response for generic quant inquiries.
-   */
-  GENERIC_QUANT_REPLY: (query: string): string =>
-    `Quantitative analysis for "${query}": Multi-agent deliberation models show overall market volatility regime ` +
-    `is stable. Institutional risk parameters require minimum 2.0x Risk:Reward ratio and strict invalidation on daily close below structural VWAP.`,
-} as const;
+/**
+ * Keywords indicating an inquiry relates to derivatives or options chains.
+ */
+export const OPTION_CHAIN_KEYWORDS: readonly string[] = [
+  "OPTION",
+  "OPTIONS",
+  "CHAIN",
+  "PCR",
+  "STRIKE",
+  "EXPIRY",
+  "CALL",
+  "PUT",
+  "OI",
+  "GREEKS",
+] as const;

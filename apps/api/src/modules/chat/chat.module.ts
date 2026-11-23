@@ -7,6 +7,7 @@
 import { Module } from "@nestjs/common";
 import { MarketModule } from "../market/market.module";
 import { QuantAnalysisModule } from "../quant-analysis/quant-analysis.module";
+import { PredictionsModule } from "../predictions/predictions.module";
 import { ChatController } from "./chat.controller";
 import { ChatService } from "./chat.service";
 
@@ -14,7 +15,7 @@ import { ChatService } from "./chat.service";
  * Module providing interactive AI Copilot and quantitative synthesis.
  */
 @Module({
-  imports: [MarketModule, QuantAnalysisModule],
+  imports: [MarketModule, QuantAnalysisModule, PredictionsModule],
   controllers: [ChatController],
   providers: [ChatService],
   exports: [ChatService],

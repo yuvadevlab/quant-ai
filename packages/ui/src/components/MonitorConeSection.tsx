@@ -35,7 +35,9 @@ export interface MonitorConeSectionProps {
   /** Callback when timeframe period changes */
   readonly onTimeframeChange: (period: string) => void;
   /** Historical and simulated trajectory sample points */
-  readonly samples: readonly TrajectoryPoint[];
+  readonly samples?: readonly TrajectoryPoint[];
+  /** Dynamic trajectory cone points */
+  readonly trajectory?: readonly TrajectoryPoint[];
   /** Panel title */
   readonly title?: string;
   /** Panel subtitle */
@@ -53,7 +55,8 @@ export function MonitorConeSection({
   isActive,
   timeframe,
   onTimeframeChange,
-  samples,
+  samples = [],
+  trajectory,
   title = "REAL-TIME TRAJECTORY CONE",
   subtitle = "Probabilistic price path progression with expected path, 2-sigma variance cone, and excursion tracking.",
 }: MonitorConeSectionProps) {
@@ -110,6 +113,7 @@ export function MonitorConeSection({
         target2={signal.target2}
         stop={signal.stop}
         samples={samples}
+        trajectory={trajectory}
         isActive={isActive}
       />
 

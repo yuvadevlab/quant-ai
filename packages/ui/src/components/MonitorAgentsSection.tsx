@@ -12,7 +12,6 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-  Badge,
 } from "@yuva-devlab/ui";
 import { AgentCard } from "./AgentCard";
 import type { DeliberationAgentItem } from "../types";
@@ -70,10 +69,10 @@ export function MonitorAgentsSection({
         </div>
         <div className="flex items-center gap-2">
           {isConnected && (
-            <Badge className="panel-status-pill text-gain flex items-center gap-1">
+            <span className="panel-status-pill text-gain flex items-center gap-1">
               <Radio size={12} className="animate-pulse" />
               <span>{hasLiveUpdates ? "LIVE STREAM ACTIVE" : "STREAM CONNECTED"}</span>
-            </Badge>
+            </span>
           )}
           {canTrigger && onTrigger && (
             <Button
@@ -87,7 +86,7 @@ export function MonitorAgentsSection({
               <span>{isTriggering ? "DELIBERATING..." : "TRIGGER DELIBERATION"}</span>
             </Button>
           )}
-          <Badge className="panel-status-pill">{specialistsLabel}</Badge>
+          <span className="panel-status-pill">{specialistsLabel}</span>
         </div>
       </CardHeader>
 

@@ -7,13 +7,29 @@
 import { StorageKey } from "@quant-ai/shared-types";
 import { isJwtExpired } from "./jwt";
 
+/**
+ * Resolves full qualified URL for both Node.js (SSR) and Browser (Client).
+ */
+function resolveUrl(endpoint: string): string {
+  if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
+    return endpoint;
+  }
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+
+  if (typeof window === "undefined") {
+    // In SSR (Node.js), relative URLs throw "Failed to parse URL". Resolve against backend host.
+    const host =
+      (typeof process !== "undefined" && process.env?.VITE_API_URL) || "http://localhost:4005";
+    const serverHost = host.replace(/\/api\/?$/, "");
+    return `${serverHost}${cleanEndpoint}`;
+  }
+
+  return cleanEndpoint;
+}
+
 export async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T | null> {
   try {
-    const url = endpoint.startsWith("http")
-      ? endpoint
-      : endpoint.startsWith("/")
-        ? endpoint
-        : `/${endpoint}`;
+    const url = resolveUrl(endpoint);
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",

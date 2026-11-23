@@ -5,7 +5,7 @@
  */
 
 import { Bot, ChevronRight, History, Plus } from "lucide-react";
-import { Badge, Button } from "@yuva-devlab/ui";
+import { Button } from "@yuva-devlab/ui";
 
 /**
  * Props for the ChatHeader presentation component.
@@ -77,14 +77,14 @@ export function ChatHeader({
             <History size={14} />
             <span>History</span>
             {historyCount !== undefined && historyCount > 0 && (
-              <Badge className="chat-history-count-badge">{historyCount}</Badge>
+              <span className="chat-history-count-badge">{historyCount}</span>
             )}
           </Button>
         )}
-        <Badge className="paper-trading-tag">
+        <span className="paper-trading-tag">
           <Bot size={15} />
           <span>{badgeText}</span>
-        </Badge>
+        </span>
       </div>
     </div>
   );

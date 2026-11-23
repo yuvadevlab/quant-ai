@@ -14,7 +14,6 @@ import {
   TableHead,
   TableCell,
   Button,
-  Badge,
   Card,
   CardHeader,
   CardTitle,
@@ -58,7 +57,7 @@ export function PortfolioPositionsTable({
           <Briefcase size={18} className="panel-icon" />
           <CardTitle className="panel-title">{title}</CardTitle>
         </div>
-        <Badge className="panel-status-pill">{positions.length} OPEN</Badge>
+        <span className="panel-status-pill">{positions.length} OPEN</span>
       </CardHeader>
 
       <CardContent className="table-responsive p-0">
@@ -98,9 +97,9 @@ export function PortfolioPositionsTable({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge className={`side-badge ${isLong ? "badge-buy" : "badge-sell"}`}>
+                    <span className={`side-badge ${isLong ? "badge-buy" : "badge-sell"}`}>
                       {pos.side}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell className="mono">{pos.qty}</TableCell>
                   <TableCell className="mono">₹{pos.entryPrice.toLocaleString("en-IN")}</TableCell>
@@ -115,10 +114,10 @@ export function PortfolioPositionsTable({
                     </span>
                   </TableCell>
                   <TableCell>
-                    <Badge className={`change-pill ${pnlPct >= 0 ? "pill-gain" : "pill-loss"}`}>
+                    <span className={`change-pill ${pnlPct >= 0 ? "pill-gain" : "pill-loss"}`}>
                       {pnlPct >= 0 ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
                       {pnlPct >= 0 ? `+${pnlPct}%` : `${pnlPct}%`}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell className="mono text-loss">
                     ₹{pos.stopLoss.toLocaleString("en-IN")}

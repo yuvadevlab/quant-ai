@@ -3,7 +3,7 @@
  * @author yuva.devlab@gmail.com
  */
 
-import { Controller, Get, Param } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from "@nestjs/common";
 import { ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
 import { Logger } from "@yuva-devlab/logger";
 import {
@@ -63,5 +63,25 @@ export class PredictionsController {
   public getTrajectory(@Param("id") id: string): readonly TrajectoryPoint[] {
     this.logger.info(`[getTrajectory] Fetching trajectory points for ${id}`);
     return this.predictionsService.getTrajectory(id);
+  }
+
+  /**
+   * Executes live quantitative analysis scan across database-backed dynamic universe.
+   */
+  @Post("analyze")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Execute live quantitative analysis scan across real market universe" })
+  public async analyzeMarket(
+    @Body()
+    dto?: {
+      readonly sector?: string;
+      readonly symbols?: readonly string[];
+      readonly limit?: number;
+    },
+  ): Promise<readonly Signal[]> {
+    this.logger.info(
+      `[analyzeMarket] Triggering live quantitative scan [Sector: ${dto?.sector ?? "ALL"}] [Symbols: ${dto?.symbols?.length ?? "ALL"}]`,
+    );
+    return this.predictionsService.runLiveMarketAnalysis(dto);
   }
 }

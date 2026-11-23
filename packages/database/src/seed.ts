@@ -3,7 +3,11 @@
  * @author yuva.devlab@gmail.com
  */
 
-import { DefaultConnectionUrl, MARKET_INDEX_REGISTRY } from "@quant-ai/shared-types";
+import {
+  DefaultConnectionUrl,
+  MARKET_EQUITY_REGISTRY,
+  MARKET_INDEX_REGISTRY,
+} from "@quant-ai/shared-types";
 import { createPrismaClient } from "./client.js";
 import { seedLlmProvidersAndModels } from "./seed-llm.js";
 
@@ -29,6 +33,23 @@ export async function seedDatabase(
           name: meta.displayName,
           category: meta.category,
           exchange: "NSE",
+        },
+      });
+    }
+
+    for (const stock of MARKET_EQUITY_REGISTRY) {
+      await prisma.screenerStock.upsert({
+        where: { symbol: stock.symbol },
+        update: {
+          company: stock.company,
+          sector: stock.sector,
+          exchange: stock.exchange,
+        },
+        create: {
+          symbol: stock.symbol,
+          company: stock.company,
+          sector: stock.sector,
+          exchange: stock.exchange,
         },
       });
     }

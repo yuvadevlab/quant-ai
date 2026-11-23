@@ -19,7 +19,9 @@
     border: 1px solid var(--border-subtle);
     color: var(--foreground);
     cursor: pointer;
-    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast);
   }
 
   .chat-action-btn:hover {
@@ -118,7 +120,9 @@
     border: 1px solid var(--border-subtle);
     background-color: var(--bg-card-subtle);
     cursor: pointer;
-    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast);
   }
 
   .history-item:hover {
@@ -185,7 +189,9 @@
     align-items: center;
     justify-content: center;
     opacity: 0.6;
-    transition: opacity var(--transition-fast), color var(--transition-fast);
+    transition:
+      opacity var(--transition-fast),
+      color var(--transition-fast);
   }
 
   .history-delete-btn:hover {

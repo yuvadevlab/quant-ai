@@ -10,7 +10,21 @@ import { AiProviderType, AgentRole, AgentStance, AiModelPurpose } from "@quant-a
 import { LiveMarketFeedService } from "../market/feed";
 import { AiProviderFactory } from "../quant-analysis/ai-provider.factory";
 import { DatabaseService } from "../infrastructure/database.service";
-import { CHAT_QUERY_SYMBOLS, CHAT_TEMPLATES } from "./chat.constants";
+import { PredictionsService } from "../predictions/predictions.service";
+import {
+  BENCHMARK_INDEX_SYMBOLS,
+  CHAT_QUERY_SYMBOLS,
+  OPTION_CHAIN_KEYWORDS,
+} from "./chat.constants";
+import { formatOptionChainAdvisory } from "./chat-option-chain";
+import { mapSignalToEmbeddedSetup, resolvePredictionForChat } from "./chat-prediction-bridge";
+import { formatEquityAdvisory, formatGenericAdvisory } from "./chat-advisor";
+import {
+  getChatSessions,
+  getChatSession,
+  deleteChatSession,
+  persistChatMessages,
+} from "./chat-sessions";
 import type { ChatSessionSummary, ChatSessionDetail, ChatMessageResponse } from "./chat.types";
 
 export type { ChatSessionSummary, ChatSessionDetail, ChatMessageResponse };
@@ -25,94 +39,25 @@ export class ChatService {
 
   public constructor(
     private readonly liveMarketFeed: LiveMarketFeedService,
+    @Optional() private readonly predictionsService?: PredictionsService,
     @Optional() private readonly aiProviderFactory?: AiProviderFactory,
     @Optional() private readonly databaseService?: DatabaseService,
   ) {}
 
-  /**
-   * Retrieves summary list of past conversation sessions.
-   */
   public async getSessions(): Promise<ChatSessionSummary[]> {
-    if (this.databaseService?.client) {
-      try {
-        const rows = await this.databaseService.client.chatSession.findMany({
-          orderBy: { updatedAt: "desc" },
-          take: 30,
-          include: { _count: { select: { messages: true } } },
-        });
-        return rows.map((r) => ({
-          id: r.id,
-          title: r.title,
-          createdAt: r.createdAt.toISOString(),
-          updatedAt: r.updatedAt.toISOString(),
-          messageCount: r._count.messages,
-        }));
-      } catch (err) {
-        this.logger.debug(`[getSessions] DB query failed, using in-memory: ${String(err)}`);
-      }
-    }
-    return Array.from(this.inMemorySessions.values()).map((s) => ({
-      id: s.id,
-      title: s.title,
-      createdAt: s.createdAt,
-      updatedAt: s.updatedAt,
-      messageCount: s.messages.length,
-    }));
+    return getChatSessions(this.databaseService, this.inMemorySessions, this.logger);
   }
 
-  /**
-   * Retrieves full conversation thread detail with all messages.
-   */
   public async getSession(id: string): Promise<ChatSessionDetail | null> {
-    if (this.databaseService?.client) {
-      try {
-        const row = await this.databaseService.client.chatSession.findUnique({
-          where: { id },
-          include: { messages: { orderBy: { createdAt: "asc" } } },
-        });
-        if (row) {
-          return {
-            id: row.id,
-            title: row.title,
-            createdAt: row.createdAt.toISOString(),
-            updatedAt: row.updatedAt.toISOString(),
-            messages: row.messages.map((m) => ({
-              id: m.id,
-              role: m.role as "user" | "assistant",
-              content: m.content,
-              createdAt: m.createdAt.toISOString(),
-            })),
-          };
-        }
-      } catch (err) {
-        this.logger.debug(`[getSession] DB query failed, using in-memory: ${String(err)}`);
-      }
-    }
-    return this.inMemorySessions.get(id) ?? null;
+    return getChatSession(id, this.databaseService, this.inMemorySessions, this.logger);
   }
 
-  /**
-   * Deletes a conversation session by identifier.
-   */
   public async deleteSession(id: string): Promise<boolean> {
-    this.inMemorySessions.delete(id);
-    if (this.databaseService?.client) {
-      try {
-        await this.databaseService.client.chatSession.delete({ where: { id } });
-      } catch {
-        // Safe delete
-      }
-    }
-    return true;
+    return deleteChatSession(id, this.databaseService, this.inMemorySessions);
   }
 
   /**
    * Processes a trader's query with live market data injection and multi-agent synthesis.
-   *
-   * @param query Trader's question or command.
-   * @param sessionId Optional existing session ID to continue.
-   * @param providerOverride Optional LLM backend override.
-   * @returns Structured ChatMessageResponse.
    */
   public async handleUserMessage(
     query: string,
@@ -122,22 +67,7 @@ export class ChatService {
     this.logger.info(`[handleUserMessage] Processing chat inquiry: "${query.slice(0, 60)}"`);
     const activeSessionId = sessionId || `session-${Date.now()}`;
     const sessionTitle = query.slice(0, 42) || "New Discussion";
-
-    const extractedSymbol = this.extractMentionedSymbol(query);
-    let liveQuote = undefined;
-
-    if (extractedSymbol) {
-      try {
-        liveQuote = await this.liveMarketFeed.getLiveQuote(extractedSymbol);
-        this.logger.info(
-          `[handleUserMessage] Successfully resolved live quote for ${extractedSymbol} at ₹${liveQuote.price}`,
-        );
-      } catch (err) {
-        this.logger.debug(
-          `[handleUserMessage] Could not resolve live quote for ${extractedSymbol}: ${String(err)}`,
-        );
-      }
-    }
+    const timestamp = new Date().toISOString();
 
     const adapter = this.aiProviderFactory?.getAdapter(
       providerOverride,
@@ -145,21 +75,87 @@ export class ChatService {
       AiModelPurpose.CHAT,
     );
     if (adapter) {
-      this.logger.debug(
-        `[handleUserMessage] AI Provider adapter selected: ${adapter.constructor.name}`,
-      );
+      this.logger.debug(`[handleUserMessage] Active LLM backend: ${adapter.constructor.name}`);
     }
 
-    const timestamp = new Date().toISOString();
-    const replyText = liveQuote
-      ? CHAT_TEMPLATES.LIVE_QUOTE_SUMMARY(liveQuote)
-      : CHAT_TEMPLATES.GENERIC_QUANT_REPLY(query);
+    const extractedSymbol = this.extractMentionedSymbol(query);
+    const isOptionQuery = this.isOptionChainInquiry(query);
 
-    await this.persistSessionMessages(activeSessionId, sessionTitle, query, replyText);
+    let liveQuote = undefined;
+    if (extractedSymbol) {
+      try {
+        liveQuote = await this.liveMarketFeed.getLiveQuote(extractedSymbol);
+      } catch (err) {
+        this.logger.debug(
+          `[handleUserMessage] Quote resolve failed for ${extractedSymbol}: ${String(err)}`,
+        );
+      }
+    }
 
-    if (liveQuote) {
+    // Benchmark Index or explicit option chain query
+    const isIndex =
+      extractedSymbol && BENCHMARK_INDEX_SYMBOLS.some((idx) => extractedSymbol.includes(idx));
+    if (liveQuote && (isOptionQuery || isIndex)) {
+      const baseTelemetry = formatOptionChainAdvisory(liveQuote);
+      const aiReply = await adapter?.generateChatReply?.({
+        query,
+        symbol: liveQuote.symbol,
+        marketContext: baseTelemetry,
+      });
+      const reply = aiReply?.trim() ? aiReply : baseTelemetry;
+
+      await persistChatMessages(
+        activeSessionId,
+        sessionTitle,
+        query,
+        reply,
+        this.databaseService,
+        this.inMemorySessions,
+        this.logger,
+      );
       return {
-        reply: replyText,
+        reply,
+        sessionId: activeSessionId,
+        referencedSymbol: liveQuote.symbol,
+        livePrice: liveQuote.price,
+        liveChange: liveQuote.percentChange,
+        agentPerspective: {
+          role: AgentRole.MACRO_ANALYST,
+          stance: liveQuote.percentChange >= 0 ? AgentStance.BULLISH : AgentStance.BEARISH,
+          conviction: 88,
+        },
+        timestamp,
+      };
+    }
+
+    // Equity symbol query: generate/resolve setup and link to Prediction Lab
+    if (liveQuote && extractedSymbol) {
+      const { signal, isRevision, priorId } = await resolvePredictionForChat(
+        this.predictionsService,
+        extractedSymbol,
+        query,
+        this.logger,
+      );
+      const signalData = signal ? mapSignalToEmbeddedSetup(signal) : undefined;
+      const baseAdvisory = formatEquityAdvisory(liveQuote, signal, isRevision, priorId);
+      const aiReply = await adapter?.generateChatReply?.({
+        query,
+        symbol: liveQuote.symbol,
+        marketContext: baseAdvisory,
+      });
+      const reply = aiReply?.trim() ? aiReply : baseAdvisory;
+
+      await persistChatMessages(
+        activeSessionId,
+        sessionTitle,
+        query,
+        reply,
+        this.databaseService,
+        this.inMemorySessions,
+        this.logger,
+      );
+      return {
+        reply,
         sessionId: activeSessionId,
         referencedSymbol: liveQuote.symbol,
         livePrice: liveQuote.price,
@@ -167,14 +163,30 @@ export class ChatService {
         agentPerspective: {
           role: AgentRole.MOMENTUM_ANALYST,
           stance: liveQuote.percentChange >= 0 ? AgentStance.BULLISH : AgentStance.BEARISH,
-          conviction: 86,
+          conviction: signal ? signal.confidence : 82,
         },
+        signalData,
+        predictionId: signal?.id,
         timestamp,
       };
     }
 
+    // Fallback generic quant query
+    const baseGeneric = formatGenericAdvisory(query);
+    const aiReply = await adapter?.generateChatReply?.({ query });
+    const reply = aiReply?.trim() ? aiReply : baseGeneric;
+
+    await persistChatMessages(
+      activeSessionId,
+      sessionTitle,
+      query,
+      reply,
+      this.databaseService,
+      this.inMemorySessions,
+      this.logger,
+    );
     return {
-      reply: replyText,
+      reply,
       sessionId: activeSessionId,
       agentPerspective: {
         role: AgentRole.QUANT_RISK_OFFICER,
@@ -185,62 +197,19 @@ export class ChatService {
     };
   }
 
-  private async persistSessionMessages(
-    sessionId: string,
-    title: string,
-    userText: string,
-    assistantText: string,
-  ): Promise<void> {
-    const now = new Date().toISOString();
-    const existing = this.inMemorySessions.get(sessionId);
-    const prevMessages = existing?.messages ?? [];
-    const newMessages = [
-      ...prevMessages,
-      { id: `msg-${Date.now()}-u`, role: "user" as const, content: userText, createdAt: now },
-      {
-        id: `msg-${Date.now()}-a`,
-        role: "assistant" as const,
-        content: assistantText,
-        createdAt: now,
-      },
-    ];
-
-    this.inMemorySessions.set(sessionId, {
-      id: sessionId,
-      title: existing?.title ?? title,
-      createdAt: existing?.createdAt ?? now,
-      updatedAt: now,
-      messages: newMessages,
-    });
-
-    if (this.databaseService?.client) {
-      try {
-        await this.databaseService.client.chatSession.upsert({
-          where: { id: sessionId },
-          update: { updatedAt: new Date() },
-          create: { id: sessionId, title, userId: "default-trader-id" },
-        });
-        await this.databaseService.client.chatMessage.createMany({
-          data: [
-            { sessionId, role: "user", content: userText },
-            { sessionId, role: "assistant", content: assistantText },
-          ],
-        });
-      } catch (err) {
-        this.logger.debug(`[persistSessionMessages] DB save failed: ${String(err)}`);
-      }
-    }
-  }
-
   private extractMentionedSymbol(query: string): string | undefined {
     const upper = query.toUpperCase();
-
-    for (const sym of CHAT_QUERY_SYMBOLS) {
+    const sortedSymbols = [...CHAT_QUERY_SYMBOLS].sort((a, b) => b.length - a.length);
+    for (const sym of sortedSymbols) {
       if (upper.includes(sym)) {
-        this.logger.debug(`[extractMentionedSymbol] Query matched target instrument: ${sym}`);
         return sym;
       }
     }
     return undefined;
+  }
+
+  private isOptionChainInquiry(query: string): boolean {
+    const upper = query.toUpperCase();
+    return OPTION_CHAIN_KEYWORDS.some((kw) => upper.includes(kw));
   }
 }

@@ -6,7 +6,7 @@
 
 import type { ReactNode } from "react";
 import { ArrowRight, ChevronRight } from "lucide-react";
-import { Card, Badge, Button } from "@yuva-devlab/ui";
+import { Card, Button } from "@yuva-devlab/ui";
 import type { TableSignalItem } from "../types";
 
 /**
@@ -75,17 +75,17 @@ export function OverviewSpotlight({
             <Card className="signal-spotlight-card" key={signal.id}>
               <div className="card-top-row">
                 <div className="signal-identity">
-                  <Badge className="signal-id-tag">{signal.id}</Badge>
+                  <span className="signal-id-tag">{signal.id}</span>
                   <h3 className="signal-symbol">{signal.symbol}</h3>
                   {signal.companyName && (
                     <span className="signal-company">{signal.companyName}</span>
                   )}
                 </div>
                 <div className="signal-badge-col">
-                  <Badge className={`direction-badge ${isBuy ? "badge-buy" : "badge-sell"}`}>
+                  <span className={`direction-badge ${isBuy ? "badge-buy" : "badge-sell"}`}>
                     {signal.direction}
-                  </Badge>
-                  <Badge className="horizon-badge">{signal.horizon}</Badge>
+                  </span>
+                  <span className="horizon-badge">{signal.horizon}</span>
                 </div>
               </div>
 
@@ -111,9 +111,9 @@ export function OverviewSpotlight({
               {signal.catalysts && signal.catalysts.length > 0 && (
                 <div className="catalysts-pills">
                   {signal.catalysts.map((cat) => (
-                    <Badge className="catalyst-pill" key={cat}>
+                    <span className="catalyst-pill" key={cat}>
                       {cat}
-                    </Badge>
+                    </span>
                   ))}
                 </div>
               )}

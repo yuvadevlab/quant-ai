@@ -6,7 +6,7 @@
 
 import type { ReactNode } from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { Badge, Card } from "@yuva-devlab/ui";
+import { Card } from "@yuva-devlab/ui";
 import type { ChatThreadMessage, TableSignalItem } from "../types";
 
 /**
@@ -77,41 +77,53 @@ export function ChatThread({
               <div className="msg-text-bubble">
                 <p>{msg.text}</p>
 
-                {msg.hasSignal && featuredSignal && (
-                  <Card className="chat-signal-embed">
-                    <div className="embed-header">
-                      <Badge className="embed-badge">EMBEDDED SETUP</Badge>
-                      <span className="embed-id">{featuredSignal.id}</span>
-                    </div>
+                {msg.hasSignal &&
+                  (msg.signalData || featuredSignal) &&
+                  (() => {
+                    const activeSignal = msg.signalData ?? featuredSignal!;
+                    const isBuy = activeSignal.direction === "BUY";
 
-                    <div className="embed-content">
-                      <div className="embed-main">
-                        <span className="embed-symbol">{featuredSignal.symbol}</span>
-                        {featuredSignal.companyName && (
-                          <span className="embed-company">{featuredSignal.companyName}</span>
+                    return (
+                      <Card className="chat-signal-embed">
+                        <div className="embed-header">
+                          <span className="embed-badge">EMBEDDED SETUP</span>
+                          <span className="embed-id">{activeSignal.id}</span>
+                        </div>
+
+                        <div className="embed-content">
+                          <div className="embed-main">
+                            <span className="embed-symbol">{activeSignal.symbol}</span>
+                            {activeSignal.companyName && (
+                              <span className="embed-company">{activeSignal.companyName}</span>
+                            )}
+                          </div>
+                          <div className="embed-details">
+                            <span className={`embed-dir ${isBuy ? "badge-buy" : "badge-sell"}`}>
+                              {activeSignal.direction}
+                            </span>
+                            <span className="embed-entry">Entry: {activeSignal.entry}</span>
+                            <span className="embed-target">Target 1: {activeSignal.target1}</span>
+                            {activeSignal.stop && (
+                              <span className="embed-target">Stop: {activeSignal.stop}</span>
+                            )}
+                          </div>
+                        </div>
+
+                        {renderTrajectoryLink ? (
+                          renderTrajectoryLink(activeSignal)
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => onViewTrajectory?.(activeSignal.id)}
+                            className="embed-action-btn"
+                          >
+                            <span>VIEW TRAJECTORY CONE</span>
+                            <ArrowRight size={14} />
+                          </button>
                         )}
-                      </div>
-                      <div className="embed-details">
-                        <Badge className="embed-dir badge-buy">{featuredSignal.direction}</Badge>
-                        <span className="embed-entry">Entry: {featuredSignal.entry}</span>
-                        <span className="embed-target">Target 1: {featuredSignal.target1}</span>
-                      </div>
-                    </div>
-
-                    {renderTrajectoryLink ? (
-                      renderTrajectoryLink(featuredSignal)
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => onViewTrajectory?.(featuredSignal.id)}
-                        className="embed-action-btn"
-                      >
-                        <span>VIEW TRAJECTORY CONE</span>
-                        <ArrowRight size={14} />
-                      </button>
-                    )}
-                  </Card>
-                )}
+                      </Card>
+                    );
+                  })()}
               </div>
             </div>
           </div>

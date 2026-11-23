@@ -16,7 +16,6 @@ import {
   CardHeader,
   CardTitle,
   CardContent,
-  Badge,
 } from "@yuva-devlab/ui";
 import type { ExecutionItem } from "../types";
 
@@ -53,7 +52,7 @@ export function PortfolioOrdersTable({
           <ShieldCheck size={18} className="panel-icon" />
           <CardTitle className="panel-title">{title}</CardTitle>
         </div>
-        <Badge className="panel-status-pill">{statusPill}</Badge>
+        <span className="panel-status-pill">{statusPill}</span>
       </CardHeader>
 
       <CardContent className="table-responsive p-0">
@@ -90,9 +89,9 @@ export function PortfolioOrdersTable({
                     <strong>{ord.symbol}</strong>
                   </TableCell>
                   <TableCell>
-                    <Badge className={`side-badge ${isBuy ? "badge-buy" : "badge-sell"}`}>
+                    <span className={`side-badge ${isBuy ? "badge-buy" : "badge-sell"}`}>
                       {ord.type}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell className="mono">{ord.qty}</TableCell>
                   <TableCell className="mono">{ord.price ?? ord.entryPrice}</TableCell>
@@ -103,9 +102,9 @@ export function PortfolioOrdersTable({
                     </strong>
                   </TableCell>
                   <TableCell>
-                    <Badge className={`outcome-pill ${isTargetHit ? "pill-target" : "pill-stop"}`}>
+                    <span className={`outcome-pill ${isTargetHit ? "pill-target" : "pill-stop"}`}>
                       {resultText}
-                    </Badge>
+                    </span>
                   </TableCell>
                   <TableCell className="text-muted">{ord.time ?? ord.timestamp}</TableCell>
                 </TableRow>

@@ -5,7 +5,6 @@
  */
 
 import { ChevronRight, ShieldCheck } from "lucide-react";
-import { Badge } from "@yuva-devlab/ui";
 
 /**
  * Props for the PortfolioHeader presentation component.
@@ -50,12 +49,12 @@ export function PortfolioHeader({
         <p className="desk-subtitle">{subtitle}</p>
       </div>
       <div className="desk-actions">
-        <Badge className="paper-trading-tag">
+        <span className="paper-trading-tag">
           <ShieldCheck size={16} />
           <span>
             {simulationStatusLabel} · {formattedCapital} VIRTUAL CAPITAL
           </span>
-        </Badge>
+        </span>
       </div>
     </div>
   );

@@ -21,10 +21,16 @@ export interface MonitorData {
  * @returns MonitorData payload
  */
 export async function getMonitorData(signalId: string): Promise<MonitorData> {
-  let backendSignal = await apiFetch<BackendSignal>(`/api/predictions/${signalId}`);
+  let backendSignal = await apiFetch<BackendSignal>(
+    `/api/predictions/${encodeURIComponent(signalId)}`,
+  );
   if (!backendSignal) {
     const all = await apiFetch<BackendSignal[]>("/api/predictions");
-    backendSignal = all?.find((s) => s.id === signalId) ?? all?.[0] ?? null;
+    const target = signalId.toLowerCase().trim();
+    backendSignal =
+      all?.find((s) => s.id.toLowerCase() === target || s.ticker.toLowerCase() === target) ??
+      all?.[0] ??
+      null;
   }
 
   if (!backendSignal) {

@@ -42,13 +42,3 @@ export const GLOBAL_FEED_SYMBOL_MAP: Readonly<Record<string, string>> = Object.f
   BTC: "BTC-USD",
   BITCOIN: "BTC-USD",
 });
-
-export const INDIAN_BLUE_CHIP_SYMBOLS: readonly string[] = [
-  "RELIANCE",
-  "TCS",
-  "HDFCBANK",
-  "INFY",
-  "ICICIBANK",
-  "SBIN",
-  "LT",
-];

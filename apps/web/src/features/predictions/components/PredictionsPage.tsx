@@ -7,10 +7,15 @@
 
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { ArrowRight, Download, Sparkles } from "lucide-react";
+import { Button } from "@yuva-devlab/ui";
 import { QuantShell } from "@/components/layout";
 import { HorizonFilter, LedgerFilterTab } from "@/constants";
 import { UiSignalStatus } from "@/components/quantai/data";
+import { apiFetch } from "@/lib/api-fetcher";
+import { useRealtimeTicks } from "@/hooks/use-realtime-ticks";
+import { useRealtimeDeliberation } from "@/hooks/use-realtime-deliberation";
 import {
   PredictionsHeader,
   PredictionsKpiGrid,
@@ -25,12 +30,42 @@ export interface PredictionsPageProps {
 }
 
 export function PredictionsPage({ initialData }: PredictionsPageProps) {
+  const queryClient = useQueryClient();
+  const { ticks } = useRealtimeTicks();
+  const { latestSignalUpdate } = useRealtimeDeliberation();
+
   const [activeFilter, setActiveFilter] = useState<LedgerFilterTab>(LedgerFilterTab.ALL);
   const [horizonFilter, setHorizonFilter] = useState<string>(HorizonFilter.ALL);
   const [search, setSearch] = useState("");
+  const [isScanning, setIsScanning] = useState(false);
+
+  const handleRunAnalysis = async () => {
+    setIsScanning(true);
+    try {
+      await apiFetch("/api/predictions/analyze", { method: "POST" });
+      await queryClient.invalidateQueries({ queryKey: ["predictions-ledger"] });
+    } finally {
+      setIsScanning(false);
+    }
+  };
+
+  const liveSignals = useMemo(() => {
+    return initialData.signals.map((signal) => {
+      const tick = ticks[signal.symbol];
+      const isTargetSignal = latestSignalUpdate && latestSignalUpdate.id === signal.id;
+      const status = isTargetSignal ? (latestSignalUpdate.status as UiSignalStatus) : signal.status;
+      const last = tick?.price ? `₹${tick.price.toLocaleString("en-IN")}` : signal.last;
+
+      return {
+        ...signal,
+        status,
+        last,
+      };
+    });
+  }, [initialData.signals, ticks, latestSignalUpdate]);
 
   const filteredSignals = useMemo(() => {
-    return initialData.signals.filter((signal) => {
+    return liveSignals.filter((signal) => {
       const matchesTab =
         activeFilter === LedgerFilterTab.ALL ||
         (activeFilter === LedgerFilterTab.ACTIVE && signal.status === UiSignalStatus.ACTIVE) ||
@@ -50,22 +85,45 @@ export function PredictionsPage({ initialData }: PredictionsPageProps) {
 
       return matchesTab && matchesHorizon && matchesSearch;
     });
-  }, [initialData.signals, activeFilter, horizonFilter, search]);
+  }, [liveSignals, activeFilter, horizonFilter, search]);
 
   const counts = useMemo(
     () => ({
-      all: initialData.signals.length,
-      active: initialData.signals.filter((s) => s.status === UiSignalStatus.ACTIVE).length,
-      targetHit: initialData.signals.filter((s) => s.status === UiSignalStatus.TARGET_HIT).length,
-      stopHit: initialData.signals.filter((s) => s.status === UiSignalStatus.STOP_HIT).length,
+      all: liveSignals.length,
+      active: liveSignals.filter((s) => s.status === UiSignalStatus.ACTIVE).length,
+      targetHit: liveSignals.filter((s) => s.status === UiSignalStatus.TARGET_HIT).length,
+      stopHit: liveSignals.filter((s) => s.status === UiSignalStatus.STOP_HIT).length,
     }),
-    [initialData.signals],
+    [liveSignals],
   );
 
   return (
     <QuantShell>
       <div className="desk-container">
-        <PredictionsHeader activeCount={counts.active} />
+        <PredictionsHeader
+          activeCount={counts.active}
+          actionSlot={
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <Button type="button" className="btn-secondary" onClick={() => window.print()}>
+                <Download size={14} />
+                <span>{PREDICTIONS_COPY.HEADER.EXPORT_AUDIT}</span>
+              </Button>
+              <Button
+                type="button"
+                className="btn-primary"
+                onClick={handleRunAnalysis}
+                disabled={isScanning}
+              >
+                <Sparkles size={14} />
+                <span>
+                  {isScanning
+                    ? PREDICTIONS_COPY.HEADER.ANALYZING
+                    : PREDICTIONS_COPY.HEADER.RUN_ANALYSIS}
+                </span>
+              </Button>
+            </div>
+          }
+        />
         <PredictionsKpiGrid
           totalGenerated={initialData.totalGenerated}
           activeCount={initialData.activeCount}
@@ -90,6 +148,8 @@ export function PredictionsPage({ initialData }: PredictionsPageProps) {
         />
         <PredictionsTable
           signals={filteredSignals}
+          emptyTitle={PREDICTIONS_COPY.EMPTY.TITLE}
+          emptyDescription={PREDICTIONS_COPY.EMPTY.DESCRIPTION}
           renderInspectLink={(signal) => (
             <Link to="/predictions/$id" params={{ id: signal.id }} className="btn-table-action">
               <span>{PREDICTIONS_COPY.TABLE.INSPECT_ACTION}</span>

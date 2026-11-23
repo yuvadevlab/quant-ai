@@ -6,7 +6,7 @@
 
 import { WEB_ENV } from "@/constants/env.constants";
 import { ApiRoute } from "@/constants/routes.constants";
-import type { ChatSessionHistoryItem, ChatThreadMessage } from "@quant-ai/ui";
+import type { ChatSessionHistoryItem, ChatThreadMessage, TableSignalItem } from "@quant-ai/ui";
 
 export interface ChatReplyPayload {
   readonly reply: string;
@@ -14,6 +14,8 @@ export interface ChatReplyPayload {
   readonly referencedSymbol?: string;
   readonly livePrice?: number;
   readonly liveChange?: number;
+  readonly signalData?: TableSignalItem;
+  readonly predictionId?: string;
   readonly timestamp: string;
 }
 
@@ -30,6 +32,12 @@ export interface ChatSessionDetailPayload {
   }>;
 }
 
+function getApiEndpoint(route: string): string {
+  const base = (WEB_ENV.VITE_API_URL || "http://localhost:4005").replace(/\/api\/?$/, "");
+  const normalizedRoute = route.startsWith("/") ? route : `/${route}`;
+  return `${base}${normalizedRoute}`;
+}
+
 /**
  * Sends a chat message to the QuantAI backend and retrieves AI reasoning.
  */
@@ -37,14 +45,14 @@ export async function sendChatMessage(
   message: string,
   sessionId?: string,
 ): Promise<ChatReplyPayload> {
-  const endpoint = `${WEB_ENV.VITE_API_URL}${ApiRoute.CHAT_MESSAGE}`;
+  const endpoint = getApiEndpoint(ApiRoute.CHAT_MESSAGE);
 
   try {
     const res = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message, sessionId }),
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(15000),
     });
 
     if (!res.ok) {
@@ -65,7 +73,7 @@ export async function sendChatMessage(
  * Fetches all past conversation sessions from the API.
  */
 export async function fetchChatSessions(): Promise<ChatSessionHistoryItem[]> {
-  const endpoint = `${WEB_ENV.VITE_API_URL}/chat/sessions`;
+  const endpoint = getApiEndpoint("/api/chat/sessions");
   try {
     const res = await fetch(endpoint, { signal: AbortSignal.timeout(4000) });
     if (!res.ok) return [];
@@ -81,7 +89,7 @@ export async function fetchChatSessions(): Promise<ChatSessionHistoryItem[]> {
 export async function fetchChatSession(
   sessionId: string,
 ): Promise<ChatSessionDetailPayload | null> {
-  const endpoint = `${WEB_ENV.VITE_API_URL}/chat/sessions/${encodeURIComponent(sessionId)}`;
+  const endpoint = getApiEndpoint(`/api/chat/sessions/${encodeURIComponent(sessionId)}`);
   try {
     const res = await fetch(endpoint, { signal: AbortSignal.timeout(4000) });
     if (!res.ok) return null;
@@ -95,7 +103,7 @@ export async function fetchChatSession(
  * Deletes a conversation session from the API.
  */
 export async function deleteChatSession(sessionId: string): Promise<boolean> {
-  const endpoint = `${WEB_ENV.VITE_API_URL}/chat/sessions/${encodeURIComponent(sessionId)}`;
+  const endpoint = getApiEndpoint(`/api/chat/sessions/${encodeURIComponent(sessionId)}`);
   try {
     const res = await fetch(endpoint, { method: "DELETE", signal: AbortSignal.timeout(4000) });
     return res.ok;

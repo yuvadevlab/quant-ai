@@ -6,7 +6,7 @@
 
 import type { ReactNode } from "react";
 import { BarChart3, ChevronRight } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent, Badge, Button } from "@yuva-devlab/ui";
+import { Card, CardHeader, CardTitle, CardContent, Button } from "@yuva-devlab/ui";
 import { MarketBreadthCard } from "./MarketBreadthCard";
 import type { MarketBreadthItem, SectorItem } from "../types";
 
@@ -78,9 +78,9 @@ export function OverviewBreadthSectors({
             <div className="sector-row" key={sec.name}>
               <div className="sector-info">
                 <span className="sector-name">{sec.name}</span>
-                <Badge className={`sector-tag tag-${sec.momentum.toLowerCase()}`}>
+                <span className={`sector-tag tag-${sec.momentum.toLowerCase()}`}>
                   {sec.momentum}
-                </Badge>
+                </span>
               </div>
               <div className="sector-values">
                 <div

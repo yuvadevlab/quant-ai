@@ -37,9 +37,20 @@ export interface AgentDebateOutput {
 }
 
 /**
+ * Input context for interactive Copilot chat generation.
+ */
+export interface ChatCompletionInput {
+  readonly query: string;
+  readonly symbol?: string;
+  readonly marketContext?: string;
+  readonly systemPrompt?: string;
+}
+
+/**
  * Generic contract for AI provider model adapters.
  */
 export interface AiModelAdapter {
   readonly providerName: string;
   generateAgentVerdict(input: GenerateDeliberationInput): Promise<AgentDebateOutput>;
+  generateChatReply?(input: ChatCompletionInput): Promise<string>;
 }

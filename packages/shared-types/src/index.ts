@@ -30,3 +30,4 @@ export * from "./events.constants";
 export * from "./query-keys";
 export * from "./auth.constants";
 export * from "./auth.types";
+export * from "./universe.constants";

@@ -1,13 +1,14 @@
 /**
  * @file packages/ui/src/styles/badges.css
- * @description Modular stylesheet for badges.
+ * @description Modular stylesheet for high-contrast institutional badges and tags.
  * Architecture: W3C Cascade Layer @layer dl-components
+ * @author yuva.devlab@gmail.com
  */
 
 @layer dl-components {
   /* ==========================================================================
-   Buttons & Tags Common
-   ========================================================================== */
+     Buttons & Action Triggers
+     ========================================================================== */
 
   .btn-primary {
     display: inline-flex;
@@ -49,6 +50,92 @@
     color: var(--foreground);
   }
 
+  /* ==========================================================================
+     Universal High-Contrast Badge Overrides
+     ========================================================================== */
+
+  .dl-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.3;
+    padding: 2.5px 8px;
+    letter-spacing: 0.03em;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .dl-badge--default {
+    background-color: color-mix(in srgb, var(--primary) 14%, transparent) !important;
+    color: var(--brand-cyan) !important;
+    border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent) !important;
+    box-shadow: none !important;
+  }
+
+  .dl-badge--secondary {
+    background-color: color-mix(in srgb, var(--foreground) 7%, transparent) !important;
+    color: var(--text-secondary) !important;
+    border: 1px solid var(--border-subtle) !important;
+  }
+
+  .dl-badge--success {
+    background-color: color-mix(in srgb, #22c55e 14%, transparent) !important;
+    color: #4ade80 !important;
+    border: 1px solid color-mix(in srgb, #22c55e 32%, transparent) !important;
+  }
+
+  .dl-badge--destructive {
+    background-color: color-mix(in srgb, #ef4444 14%, transparent) !important;
+    color: #f87171 !important;
+    border: 1px solid color-mix(in srgb, #ef4444 32%, transparent) !important;
+  }
+
+  .dl-badge--warning {
+    background-color: color-mix(in srgb, #f59e0b 14%, transparent) !important;
+    color: #fbbf24 !important;
+    border: 1px solid color-mix(in srgb, #f59e0b 32%, transparent) !important;
+  }
+
+  .dl-badge--info {
+    background-color: color-mix(in srgb, var(--primary) 14%, transparent) !important;
+    color: var(--brand-cyan) !important;
+    border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent) !important;
+  }
+
+  .dl-badge--outline {
+    background-color: transparent !important;
+    color: var(--foreground) !important;
+    border: 1px solid var(--border-subtle) !important;
+  }
+
+  .dl-badge.direction-badge,
+  .dl-badge.outcome-pill,
+  .dl-badge.sector-badge,
+  .dl-badge.change-pill,
+  .dl-badge.pattern-tag,
+  .dl-badge.ema-tag,
+  .dl-badge.oi-tag,
+  .dl-badge.candidate-badge,
+  .dl-badge.side-badge,
+  .dl-badge.paper-trading-tag,
+  .dl-badge.panel-status-pill,
+  .dl-badge.signal-id-tag,
+  .dl-badge.horizon-badge,
+  .dl-badge.catalyst-pill,
+  .dl-badge.embed-badge,
+  .dl-badge.embed-dir,
+  .dl-badge.hero-badge,
+  .dl-badge.sector-tag,
+  .dl-badge.provider-tag {
+    box-shadow: none !important;
+  }
+
+  /* ==========================================================================
+     Common Domain Tags
+     ========================================================================== */
+
   .paper-trading-tag {
     display: inline-flex;
     align-items: center;
@@ -56,10 +143,37 @@
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.6px;
-    background-color: color-mix(in srgb, var(--primary) 8%, transparent);
-    border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
-    color: var(--brand-cyan);
-    padding: 6px 12px;
-    border-radius: var(--radius-full);
+    background-color: color-mix(in srgb, var(--primary) 10%, transparent) !important;
+    border: 1px solid color-mix(in srgb, var(--primary) 28%, transparent) !important;
+    color: var(--brand-cyan) !important;
+    padding: 5px 12px !important;
+    border-radius: var(--radius-full) !important;
+  }
+
+  .pattern-tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    background-color: color-mix(in srgb, var(--primary) 10%, transparent) !important;
+    border: 1px solid color-mix(in srgb, var(--primary) 28%, transparent) !important;
+    color: var(--brand-cyan) !important;
+    padding: 3px 8px !important;
+    border-radius: var(--radius-sm) !important;
+  }
+
+  .panel-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    background-color: color-mix(in srgb, var(--foreground) 7%, transparent) !important;
+    border: 1px solid color-mix(in srgb, var(--foreground) 16%, transparent) !important;
+    color: var(--text-secondary) !important;
+    padding: 3px 8px !important;
+    border-radius: var(--radius-sm) !important;
   }
 }

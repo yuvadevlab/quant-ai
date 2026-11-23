@@ -26,7 +26,8 @@ export interface TriggerDeliberationParams {
  * @returns True if successfully dispatched, false otherwise
  */
 export async function triggerDeliberation(params: TriggerDeliberationParams): Promise<boolean> {
-  const endpoint = `${WEB_ENV.VITE_API_URL}${ApiRoute.DELIBERATION_TRIGGER}`;
+  const base = (WEB_ENV.VITE_API_URL || "http://localhost:4005").replace(/\/api\/?$/, "");
+  const endpoint = `${base}${ApiRoute.DELIBERATION_TRIGGER}`;
 
   try {
     const res = await fetch(endpoint, {

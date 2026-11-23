@@ -125,6 +125,7 @@ export interface ChatThreadMessage {
   readonly text: string;
   readonly time: string;
   readonly hasSignal?: boolean;
+  readonly signalData?: TableSignalItem;
 }
 
 /**

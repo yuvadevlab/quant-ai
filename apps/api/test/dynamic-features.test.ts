@@ -5,6 +5,7 @@
  */
 
 import { describe, expect, it } from "vitest";
+import { AgentRole } from "@quant-ai/shared-types";
 import { LiveMarketFeedService } from "../src/modules/market/feed";
 import { MarketService } from "../src/modules/market/market.service";
 import { MarketController } from "../src/modules/market/market.controller";
@@ -43,6 +44,18 @@ describe("Dynamic Workstation Features", () => {
       expect(typeof response.livePrice).toBe("number");
       expect(response.livePrice).toBeGreaterThan(0);
       expect(response.timestamp).toBeDefined();
+    });
+
+    it("synthesizes institutional option chain intelligence for NIFTY", async () => {
+      const response = await chatController.sendMessage({
+        message: "What is the option chain and PCR for NIFTY?",
+      });
+
+      expect(response).toBeDefined();
+      expect(response.reply).toContain("Option Chain");
+      expect(response.reply).toContain("Put-Call Ratio (PCR)");
+      expect(response.referencedSymbol).toBe("NIFTY");
+      expect(response.agentPerspective?.role).toBe(AgentRole.MACRO_ANALYST);
     });
 
     it("handles generic market questions gracefully without crashing", async () => {
