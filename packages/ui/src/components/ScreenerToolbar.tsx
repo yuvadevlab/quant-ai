@@ -4,10 +4,7 @@
  * @author yuva.devlab@gmail.com
  */
 
-import { Search } from "lucide-react";
-import { Button } from "@yuva-devlab/ui";
-import { Input } from "@yuva-devlab/ui";
-import { Card, CardContent } from "@yuva-devlab/ui";
+import { Button, Card, CardContent, SearchInput } from "@yuva-devlab/ui";
 
 /**
  * Props for the ScreenerToolbar presentation component.
@@ -53,6 +50,8 @@ export function ScreenerToolbar({
   searchPlaceholder = "Search symbol, sector, pattern (e.g. HDFC, IT, Volume Breakout)...",
   sectorLabel = "SECTOR FILTER:",
 }: ScreenerToolbarProps) {
+  const isTabActive = (tab: string) => activeTab.trim().toLowerCase() === tab.trim().toLowerCase();
+
   return (
     <Card className="screener-controls-card">
       <CardContent className="p-0">
@@ -60,44 +59,49 @@ export function ScreenerToolbar({
           <div className="tab-pill-group">
             <Button
               type="button"
-              className={`tab-pill ${activeTab === "all" ? "active" : ""}`}
+              variant="ghost"
+              size="sm"
+              className={`tab-pill ${isTabActive("all") ? "active" : ""}`}
               onClick={() => onSelectTab("all")}
             >
               All Matches ({totalCount})
             </Button>
             <Button
               type="button"
-              className={`tab-pill ${activeTab === "breakouts" ? "active" : ""}`}
+              variant="ghost"
+              size="sm"
+              className={`tab-pill ${isTabActive("breakouts") ? "active" : ""}`}
               onClick={() => onSelectTab("breakouts")}
             >
               High Volume Breakouts
             </Button>
             <Button
               type="button"
-              className={`tab-pill ${activeTab === "options" ? "active" : ""}`}
+              variant="ghost"
+              size="sm"
+              className={`tab-pill ${isTabActive("options") ? "active" : ""}`}
               onClick={() => onSelectTab("options")}
             >
               Options Heavy OI
             </Button>
             <Button
               type="button"
-              className={`tab-pill ${activeTab === "momentum" ? "active" : ""}`}
+              variant="ghost"
+              size="sm"
+              className={`tab-pill ${isTabActive("momentum") ? "active" : ""}`}
               onClick={() => onSelectTab("momentum")}
             >
               RSI Momentum &gt; 60
             </Button>
           </div>
 
-          <div className="search-wrap">
-            <Search size={14} className="search-icon" />
-            <Input
-              type="text"
-              className="search-input"
-              placeholder={searchPlaceholder}
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-            />
-          </div>
+          <SearchInput
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            onClear={() => onSearchChange("")}
+            placeholder={searchPlaceholder}
+            className="toolbar-search-input screener-search-input"
+          />
         </div>
 
         <div className="sector-filter-row">
@@ -107,6 +111,8 @@ export function ScreenerToolbar({
               <Button
                 key={sec}
                 type="button"
+                variant="ghost"
+                size="sm"
                 className={`sector-pill ${selectedSector === sec ? "active" : ""}`}
                 onClick={() => onSelectSector(sec)}
               >

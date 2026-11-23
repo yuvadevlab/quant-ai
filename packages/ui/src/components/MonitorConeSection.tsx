@@ -73,6 +73,8 @@ export function MonitorConeSection({
               <Button
                 key={period}
                 type="button"
+                variant="ghost"
+                size="sm"
                 className={`tab-pill ${timeframe === period ? "active" : ""}`}
                 onClick={() => onTimeframeChange(period)}
               >

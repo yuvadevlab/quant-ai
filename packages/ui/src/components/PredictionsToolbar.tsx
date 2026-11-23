@@ -4,11 +4,17 @@
  * @author yuva.devlab@gmail.com
  */
 
-import { Search } from "lucide-react";
-import { Button } from "@yuva-devlab/ui";
-import { Input } from "@yuva-devlab/ui";
-import { Card, CardContent } from "@yuva-devlab/ui";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@yuva-devlab/ui";
+import {
+  Button,
+  Card,
+  CardContent,
+  SearchInput,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@yuva-devlab/ui";
 
 /**
  * Filter tab definition for prediction ledger.
@@ -49,6 +55,16 @@ export interface PredictionsToolbarProps {
 }
 
 /**
+ * Helper to normalize tab keys for resilient comparison.
+ *
+ * @param key - Raw tab key string.
+ * @returns Standardized uppercase normalized key.
+ */
+function normalizeKey(key: string): string {
+  return key.trim().toUpperCase().replace("-", "_");
+}
+
+/**
  * Tabular controls toolbar for filtering predictions by status, horizon, and ticker query.
  *
  * @param props - Filter states, tab counts, and change handlers.
@@ -66,11 +82,13 @@ export function PredictionsToolbar({
   customTabs,
 }: PredictionsToolbarProps) {
   const tabs = customTabs ?? [
-    { key: "all", label: "All Calls", count: counts.all },
-    { key: "active", label: "Active", count: counts.active },
-    { key: "target-hit", label: "Target Hit", count: counts.targetHit },
-    { key: "stop-hit", label: "Stop Hit", count: counts.stopHit },
+    { key: "ALL", label: "All Calls", count: counts.all },
+    { key: "ACTIVE", label: "Active", count: counts.active },
+    { key: "TARGET_HIT", label: "Target Hit", count: counts.targetHit },
+    { key: "STOP_HIT", label: "Stop Hit", count: counts.stopHit },
   ];
+
+  const isTabActive = (tabKey: string) => normalizeKey(tabKey) === normalizeKey(activeFilter);
 
   return (
     <Card className="screener-controls-card">
@@ -81,7 +99,9 @@ export function PredictionsToolbar({
               <Button
                 key={tab.key}
                 type="button"
-                className={`tab-pill ${activeFilter === tab.key ? "active" : ""}`}
+                variant="ghost"
+                size="sm"
+                className={`tab-pill ${isTabActive(tab.key) ? "active" : ""}`}
                 onClick={() => onSelectFilter(tab.key)}
               >
                 {tab.label} ({tab.count})
@@ -90,19 +110,16 @@ export function PredictionsToolbar({
           </div>
 
           <div className="search-filter-wrapper">
-            <div className="search-box">
-              <Search size={15} className="search-icon" />
-              <Input
-                type="text"
-                placeholder={searchPlaceholder}
-                value={search}
-                onChange={(e) => onSearchChange(e.target.value)}
-                className="search-input"
-              />
-            </div>
+            <SearchInput
+              value={search}
+              onChange={(e) => onSearchChange(e.target.value)}
+              onClear={() => onSearchChange("")}
+              placeholder={searchPlaceholder}
+              className="toolbar-search-input"
+            />
 
             <Select value={horizonFilter} onValueChange={onSelectHorizon}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="toolbar-select-trigger">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
