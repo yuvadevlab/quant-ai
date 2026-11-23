@@ -5,14 +5,7 @@
  */
 
 import { Bot, Radio, Sparkles } from "lucide-react";
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@yuva-devlab/ui";
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from "@yuva-devlab/ui";
 import { AgentCard } from "./AgentCard";
 import type { DeliberationAgentItem } from "../types";
 

@@ -64,7 +64,10 @@
     line-height: 1.3;
     padding: 2.5px 8px;
     letter-spacing: 0.03em;
-    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
   }
 
   .dl-badge--default {
