@@ -9,7 +9,7 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { type ReactNode, useEffect } from "react";
-import { Button, Card, Badge } from "@quant-ai/ui";
+import { Button, Card } from "@quant-ai/ui";
 import { StorageKey } from "@quant-ai/shared-types";
 import { AuthProvider } from "../providers/auth";
 
