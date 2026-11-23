@@ -8,15 +8,18 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { type ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
+import { Button, Card } from "@quant-ai/ui";
+import { StorageKey } from "@quant-ai/shared-types";
+import { AuthProvider } from "../providers/auth";
 
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
   return (
     <div className="not-found-container">
-      <div className="not-found-card">
-        <span className="not-found-badge">404</span>
+      <Card className="not-found-card">
+        <div className="not-found-badge">404</div>
         <h1 className="not-found-title">Page not found</h1>
         <p className="not-found-description">
           The requested intelligence desk or analytics route does not exist.
@@ -26,7 +29,7 @@ function NotFoundComponent() {
             Return to Overview Desk
           </Link>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -37,15 +40,18 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 
   return (
     <div className="not-found-container">
-      <div className="not-found-card">
-        <span className="not-found-badge error-badge">SYSTEM ERROR</span>
+      <Card className="not-found-card">
+        <div className="error-badge-wrapper">
+          <span className="error-badge">SYSTEM ERROR</span>
+        </div>
         <h1 className="not-found-title">Failed to render desk</h1>
         <p className="not-found-description">
           An unexpected render cycle exception occurred. You can retry or return to the overview
           desk.
         </p>
         <div className="not-found-actions">
-          <button
+          <Button
+            type="button"
             onClick={() => {
               router.invalidate();
               reset();
@@ -53,12 +59,12 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
             className="btn-primary"
           >
             Retry Desk
-          </button>
+          </Button>
           <Link to="/" className="btn-secondary">
             Go Home
           </Link>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -116,9 +122,20 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const activeTheme = localStorage.getItem(StorageKey.THEME) || "quantai-dark";
+      document.documentElement.setAttribute("data-theme", activeTheme);
+      document.documentElement.setAttribute("data-brand", "quantai");
+      document.documentElement.classList.toggle("dark", activeTheme.includes("dark"));
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <AuthProvider>
+        <Outlet />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

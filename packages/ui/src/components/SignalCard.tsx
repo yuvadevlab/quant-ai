@@ -6,6 +6,7 @@
 import { SignalDirection } from "@quant-ai/shared-types";
 import type { ReactNode } from "react";
 import { cn } from "@yuva-devlab/ui";
+import { UI_COPY_CONSTANTS } from "../constants/ui-copy.constants";
 import { ConfidenceMeter } from "./ConfidenceMeter";
 import { StatusBadge } from "./StatusBadge";
 
@@ -81,7 +82,7 @@ export function SignalCard({
 
         {convictionScore !== undefined && (
           <div className="spotlight-conviction-badge">
-            <span className="conviction-label">CONVICTION</span>
+            <span className="conviction-label">{UI_COPY_CONSTANTS.SIGNAL_CARD.CONVICTION}</span>
             <span className="conviction-score mono">{convictionScore}/100</span>
           </div>
         )}

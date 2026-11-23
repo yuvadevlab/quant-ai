@@ -1,6 +1,6 @@
 /**
  * @file packages/ui/src/styles/forms.css
- * @description Modular stylesheet for forms.
+ * @description Modular stylesheet for toolbars, search controls, and segmented filter tabs.
  * Architecture: W3C Cascade Layer @layer dl-components
  */
 
@@ -13,51 +13,94 @@
     background-color: var(--bg-card);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
-    padding: 16px 20px;
+    padding: 14px 18px;
   }
 
   .screener-tabs-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
+    gap: 16px;
   }
 
   .tab-pill-group {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     background-color: var(--bg-card-subtle);
-    padding: 4px;
+    padding: 3px;
     border-radius: var(--radius-md);
     border: 1px solid var(--border-subtle);
+    height: var(--control-height-md, 2.125rem);
+    box-sizing: border-box;
   }
 
-  .tab-pill {
-    padding: 8px 14px;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--text-muted);
+  .tab-pill-group .tab-pill,
+  button.tab-pill {
+    height: calc(var(--control-height-md, 2.125rem) - 8px);
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted) !important;
+    background-color: transparent !important;
+    border: none !important;
     border-radius: var(--radius-sm);
-    transition: all 0.15s;
+    box-shadow: none !important;
+    transition:
+      color 0.15s ease-in-out,
+      background-color 0.15s ease-in-out,
+      box-shadow 0.15s ease-in-out;
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .tab-pill:hover {
-    color: var(--text-primary);
+  .tab-pill-group .tab-pill:hover,
+  button.tab-pill:hover {
+    color: var(--text-primary) !important;
+    background-color: color-mix(in srgb, var(--foreground) 7%, transparent) !important;
   }
 
-  .tab-pill.active {
-    background-color: var(--bg-card);
-    color: var(--foreground);
-    box-shadow: 0 2px 8px color-mix(in srgb, var(--background) 70%, black);
+  .tab-pill-group .tab-pill.active,
+  button.tab-pill.active {
+    background-color: var(--bg-card) !important;
+    color: var(--foreground) !important;
+    font-weight: 600;
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--background) 70%, black) !important;
   }
+
+  /* ==========================================================================
+   Toolbar Search & Select Sizing Consistency
+   ========================================================================== */
 
   .search-filter-wrapper {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
   }
 
+  .toolbar-search-input {
+    width: 280px;
+    height: var(--control-height-md, 2.125rem);
+  }
+
+  .screener-search-input {
+    width: 320px;
+  }
+
+  .toolbar-select-trigger {
+    width: 150px;
+    height: var(--control-height-md, 2.125rem);
+  }
+
+  .dl-select-content[data-state="closed"] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Legacy Fallback Classes */
   .search-box {
     display: flex;
     align-items: center;
@@ -65,8 +108,10 @@
     background-color: var(--bg-input);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 7px 12px;
+    padding: 0 10px;
+    height: var(--control-height-md, 2.125rem);
     width: 260px;
+    box-sizing: border-box;
   }
 
   .search-box:focus-within {
@@ -75,6 +120,7 @@
 
   .search-icon {
     color: var(--text-dim);
+    flex-shrink: 0;
   }
 
   .search-input {
@@ -84,23 +130,71 @@
     font-size: 13px;
     width: 100%;
     outline: none;
+    box-shadow: none;
   }
 
   .search-input::placeholder {
     color: var(--text-dim);
   }
 
-  .sector-select {
-    background-color: var(--bg-input);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    color: var(--text-primary);
-    font-size: 13px;
-    padding: 8px 12px;
-    outline: none;
+  /* ==========================================================================
+   Sector Chips Filter Row
+   ========================================================================== */
+
+  .sector-filter-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-subtle);
   }
 
-  .sector-select:focus {
-    border-color: var(--border-focus);
+  .sector-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .sector-pills {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .sector-pills .sector-pill,
+  button.sector-pill {
+    height: 26px;
+    padding: 0 10px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--text-muted) !important;
+    background-color: var(--bg-card-subtle) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: var(--radius-sm);
+    box-shadow: none !important;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sector-pills .sector-pill:hover,
+  button.sector-pill:hover {
+    color: var(--text-primary) !important;
+    border-color: var(--border-active) !important;
+    background-color: color-mix(in srgb, var(--foreground) 7%, transparent) !important;
+  }
+
+  .sector-pills .sector-pill.active,
+  button.sector-pill.active {
+    background-color: var(--primary) !important;
+    color: var(--primary-foreground) !important;
+    border-color: var(--primary) !important;
+    font-weight: 600;
   }
 }

@@ -4,7 +4,7 @@
  */
 
 import type { HTMLAttributes, Key, ReactNode } from "react";
-import { cn } from "@yuva-devlab/ui";
+import { cn, Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@yuva-devlab/ui";
 
 /**
  * Column definition for DataTable.
@@ -56,30 +56,30 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
   return (
     <div className={cn("quant-table-container", className)} {...rest}>
-      <table className={cn("quant-table", tableClassName)} role="table">
-        <thead>
-          <tr>
+      <Table className={cn("quant-table", tableClassName)}>
+        <TableHeader>
+          <TableRow>
             {columns.map((col, idx) => (
-              <th
+              <TableHead
                 key={idx}
                 scope="col"
                 className={cn("quant-th", col.headerClassName ?? col.className)}
               >
                 {col.header}
-              </th>
+              </TableHead>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {data.length === 0 ? (
-            <tr>
-              <td colSpan={columns.length} className="quant-table-empty" aria-live="polite">
+            <TableRow>
+              <TableCell colSpan={columns.length} className="quant-table-empty" aria-live="polite">
                 {emptyMessage}
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ) : (
             data.map((item) => (
-              <tr
+              <TableRow
                 key={rowKey(item)}
                 className={cn(onRowClick ? "table-row-hover table-row-interactive" : "")}
                 onClick={() => onRowClick?.(item)}
@@ -96,15 +96,15 @@ export function DataTable<T>({
                 }
               >
                 {columns.map((col, idx) => (
-                  <td key={idx} className={cn("quant-td", col.className)}>
+                  <TableCell key={idx} className={cn("quant-td", col.className)}>
                     {col.accessor(item)}
-                  </td>
+                  </TableCell>
                 ))}
-              </tr>
+              </TableRow>
             ))
           )}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

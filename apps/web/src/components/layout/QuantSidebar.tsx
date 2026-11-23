@@ -1,6 +1,8 @@
 /**
  * @file src/components/layout/QuantSidebar.tsx
- * @description Collapsible terminal sidebar navigation for QuantAI workstation. */
+ * @description Collapsible terminal sidebar navigation for QuantAI workstation.
+ * @author yuva.devlab@gmail.com
+ */
 
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
@@ -13,9 +15,15 @@ import {
   Sparkles,
   TrendingUp,
 } from "lucide-react";
+import { Button } from "@quant-ai/ui";
 import { AppRoute } from "../../constants";
 import { COMMON_COPY } from "../../lib/ui-copy";
-import { getBenchmarkTicks, getMarketBreadth } from "../../services/market-feed.service";
+import { useWorkstationSession } from "../../hooks/use-workstation-session";
+import {
+  useBenchmarkTicks,
+  useMarketBreadth,
+  DEFAULT_BREADTH,
+} from "../../services/market-feed.service";
 
 /**
  * Props for the workstation sidebar navigation.
@@ -34,14 +42,17 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
   const location = useRouterState({
     select: (state) => state.location.pathname,
   });
-  const ticks = getBenchmarkTicks();
-  const breadth = getMarketBreadth();
-  const vixPrice = ticks.find((t) => t.isVix)?.price ?? "13.48";
+  const { sessionInfo, telemetry, isConnected } = useWorkstationSession();
+  const { data: ticks = [] } = useBenchmarkTicks();
+  const { data: breadth = DEFAULT_BREADTH } = useMarketBreadth();
+  const vixTick = ticks.find((t) => t.isVix || t.name.includes("VIX"));
+  const vixPrice = vixTick ? vixTick.price : "13.42";
+  const copy = COMMON_COPY.SIDEBAR;
 
   return (
-    <aside className="quant-sidebar" aria-label="Workstation Navigation" role="navigation">
+    <aside className="quant-sidebar" aria-label={copy.NAV_ARIA} role="navigation">
       <div className="sidebar-brand-box">
-        <Link to={AppRoute.OVERVIEW} className="sidebar-brand" aria-label="QuantAI Home">
+        <Link to={AppRoute.OVERVIEW} className="sidebar-brand" aria-label={copy.HOME_ARIA}>
           <div className="brand-logo-icon">
             <TrendingUp size={20} strokeWidth={2.5} aria-hidden="true" />
           </div>
@@ -55,19 +66,21 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
             </div>
           )}
         </Link>
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           type="button"
           className="sidebar-collapse-btn"
-          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={isCollapsed ? copy.EXPAND : copy.COLLAPSE}
           onClick={onToggleCollapse}
-          title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          title={isCollapsed ? copy.EXPAND : copy.COLLAPSE}
         >
           {isCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
-        </button>
+        </Button>
       </div>
 
-      <nav className="sidebar-nav" aria-label="Main Navigation">
-        <div className="nav-group-label">{!isCollapsed && "ANALYTICS & DESKS"}</div>
+      <nav className="sidebar-nav" aria-label={copy.MAIN_NAV_ARIA}>
+        <div className="nav-group-label">{!isCollapsed && copy.GROUP_ANALYTICS}</div>
 
         <Link
           to={AppRoute.OVERVIEW}
@@ -88,7 +101,11 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
           {!isCollapsed && (
             <>
               <span className="nav-label">{COMMON_COPY.NAV.PREDICTIONS}</span>
-              <span className="nav-pill-badge">4 Live</span>
+              {telemetry.activeCount > 0 && (
+                <span className="nav-pill-badge">
+                  {telemetry.activeCount} {copy.LIVE_BADGE_SUFFIX}
+                </span>
+              )}
             </>
           )}
         </Link>
@@ -111,7 +128,7 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
           {!isCollapsed && <span className="nav-label">{COMMON_COPY.NAV.PORTFOLIO}</span>}
         </Link>
 
-        <div className="nav-group-label">{!isCollapsed && "INTELLIGENCE"}</div>
+        <div className="nav-group-label">{!isCollapsed && copy.GROUP_INTELLIGENCE}</div>
 
         <Link
           to={AppRoute.CHAT}
@@ -119,12 +136,7 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
           title={COMMON_COPY.NAV.CHAT}
         >
           <Sparkles size={18} className="nav-icon copilot-icon" aria-hidden="true" />
-          {!isCollapsed && (
-            <>
-              <span className="nav-label">{COMMON_COPY.NAV.CHAT}</span>
-              <span className="nav-pill-badge copilot-badge">v2.4</span>
-            </>
-          )}
+          {!isCollapsed && <span className="nav-label">{COMMON_COPY.NAV.CHAT}</span>}
         </Link>
 
         <Link
@@ -141,18 +153,28 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
         {!isCollapsed ? (
           <div className="footer-status-card">
             <div className="status-live-header">
-              <span className="live-dot" aria-hidden="true" />
+              <span
+                className={`live-dot ${isConnected ? "is-connected" : ""}`}
+                aria-hidden="true"
+              />
               <span className="live-exchange">{COMMON_COPY.STATUS.LIVE_STREAM}</span>
             </div>
-            <div className="status-caption">Session: 09:15 - 15:30 IST</div>
+            <div className="status-caption">{sessionInfo.statusText}</div>
             <div className="status-meta">
-              <span>VIX {vixPrice}</span>
-              <span className="meta-fii">{breadth.fiiNet} FII</span>
+              <span>
+                {copy.VIX_PREFIX} {vixPrice}
+              </span>
+              <span className="meta-fii">
+                {breadth.fiiNet} {copy.FII_SUFFIX}
+              </span>
             </div>
           </div>
         ) : (
-          <div className="footer-collapsed-dot" title="NSE Live Connected">
-            <span className="live-dot" aria-hidden="true" />
+          <div
+            className="footer-collapsed-dot"
+            title={isConnected ? copy.FEED_CONNECTED : copy.FEED_DISCONNECTED}
+          >
+            <span className={`live-dot ${isConnected ? "is-connected" : ""}`} aria-hidden="true" />
           </div>
         )}
       </div>

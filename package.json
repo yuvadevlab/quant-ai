@@ -22,7 +22,8 @@
     "format:check": "prettier --check .",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
-    "check": "pnpm lint && pnpm typecheck && pnpm test"
+    "check": "pnpm lint && pnpm typecheck && pnpm test",
+    "db:seed": "pnpm --filter @quant-ai/database db:seed"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",

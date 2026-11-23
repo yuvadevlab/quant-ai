@@ -15,10 +15,21 @@
     gap: 24px;
   }
 
+  .settings-engine-content {
+    padding: var(--card-padding, 18px);
+  }
+
   .settings-options-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 16px;
+    width: 100%;
+  }
+
+  @media (max-width: 900px) {
+    .settings-options-list {
+      grid-template-columns: 1fr !important;
+    }
   }
 
   .provider-radio-card {
@@ -31,6 +42,8 @@
     padding: 18px;
     cursor: pointer;
     transition: all 0.15s;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .provider-radio-card.selected {
@@ -38,35 +51,120 @@
     background-color: color-mix(in srgb, var(--primary) 5%, transparent);
   }
 
+  .provider-radio-card.is-deprecated {
+    opacity: 0.6;
+  }
+
+  /* Radio Item Ring & Indicator Styling */
+  .provider-radio-card .dl-radio-item {
+    aspect-ratio: 1;
+    height: 18px;
+    width: 18px;
+    border-radius: 9999px;
+    border: 2px solid var(--border-subtle);
+    background-color: var(--bg-card);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-top: 2px;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+    outline: none;
+  }
+
+  .provider-radio-card:hover .dl-radio-item:not([disabled]) {
+    border-color: var(--brand-cyan);
+  }
+
+  .provider-radio-card .dl-radio-item:focus,
+  .provider-radio-card .dl-radio-item:focus-visible {
+    outline: none;
+    border-color: var(--brand-cyan);
+    box-shadow: 0 0 0 3px var(--brand-cyan-glow);
+  }
+
+  .provider-radio-card.selected .dl-radio-item,
+  .provider-radio-card .dl-radio-item[data-state="checked"] {
+    border-color: var(--brand-cyan);
+    background-color: transparent;
+    box-shadow: 0 0 0 2px var(--brand-cyan-glow);
+  }
+
+  .provider-radio-card .dl-radio-item__indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .provider-radio-card .dl-radio-item__indicator svg {
+    fill: var(--brand-cyan);
+    color: var(--brand-cyan);
+    width: 10px;
+    height: 10px;
+  }
+
+  .provider-radio-card .dl-radio-item:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+    border-color: var(--border-subtle);
+  }
+
   .provider-radio-card input {
     margin-top: 3px;
     accent-color: var(--brand-cyan);
   }
 
+  .provider-info {
+    flex: 1;
+    min-width: 0;
+  }
+
   .provider-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .provider-name-title {
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
-  .provider-name-row strong {
+  .provider-name-title strong {
     font-size: 14px;
     color: var(--foreground);
   }
 
+  .provider-meta {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
   .provider-tag {
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 0.6px;
-    padding: 2px 6px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 2px 7px;
     border-radius: var(--radius-sm);
-    background-color: color-mix(in srgb, var(--foreground) 6%, transparent);
-    color: var(--text-dim);
+    background-color: color-mix(in srgb, var(--foreground) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--foreground) 16%, transparent);
+    color: var(--text-secondary);
   }
 
   .tag-active {
-    background-color: var(--color-gain-bg);
-    color: var(--color-gain);
+    background-color: color-mix(in srgb, #22c55e 16%, transparent) !important;
+    border: 1px solid color-mix(in srgb, #22c55e 32%, transparent) !important;
+    color: #4ade80 !important;
   }
 
   .provider-desc {
@@ -101,51 +199,6 @@
     font-size: 12px;
     color: var(--text-muted);
     margin-top: 2px;
-  }
-
-  .switch-wrapper {
-    position: relative;
-    display: inline-block;
-    width: 44px;
-    height: 24px;
-  }
-
-  .switch-wrapper input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  .switch-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: color-mix(in srgb, var(--foreground) 15%, transparent);
-    transition: 0.2s;
-    border-radius: 24px;
-  }
-
-  .switch-slider:before {
-    position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    bottom: 3px;
-    background-color: var(--foreground);
-    transition: 0.2s;
-    border-radius: 50%;
-  }
-
-  .switch-wrapper input:checked + .switch-slider {
-    background-color: var(--brand-cyan);
-  }
-
-  .switch-wrapper input:checked + .switch-slider:before {
-    transform: translateX(20px);
   }
 
   .sso-status-card {

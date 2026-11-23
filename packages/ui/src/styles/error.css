@@ -27,16 +27,36 @@
 
   .not-found-badge {
     display: inline-block;
-    font-size: 36px;
+    font-size: 48px;
     font-weight: 900;
     font-family: var(--font-mono);
-    color: var(--brand-cyan);
-    margin-bottom: 12px;
+    color: var(--brand-cyan) !important;
+    background: transparent !important;
+    border: none !important;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .error-badge-wrapper {
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
   }
 
   .error-badge {
-    color: var(--color-loss);
-    font-size: 14px;
+    background-color: color-mix(in srgb, var(--color-loss) 14%, transparent) !important;
+    color: var(--color-loss) !important;
+    border: 1px solid color-mix(in srgb, var(--color-loss) 32%, transparent) !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    font-family: var(--font-mono);
+    letter-spacing: 0.08em;
+    padding: 5px 14px !important;
+    border-radius: 9999px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .not-found-title {
@@ -56,6 +76,22 @@
     margin-top: 24px;
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 12px;
+  }
+
+  .not-found-actions .btn-primary,
+  .not-found-actions .btn-secondary {
+    height: 40px !important;
+    min-height: 40px !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 20px !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    border-radius: var(--radius-md) !important;
   }
 }

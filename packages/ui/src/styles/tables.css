@@ -2,6 +2,7 @@
  * @file packages/ui/src/styles/tables.css
  * @description Modular stylesheet for tables.
  * Architecture: W3C Cascade Layer @layer dl-components
+ * @author yuva.devlab@gmail.com
  */
 
 @layer dl-components {
@@ -19,6 +20,7 @@
 
   .table-responsive {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .quant-table {
@@ -34,12 +36,13 @@
   }
 
   .quant-table th {
-    padding: 14px 18px;
+    padding: 12px 16px;
     font-size: 10.5px;
     font-weight: 700;
     letter-spacing: 0.8px;
     color: var(--text-dim);
     white-space: nowrap;
+    text-transform: uppercase;
   }
 
   .quant-table tbody tr {
@@ -52,15 +55,70 @@
   }
 
   .quant-table td {
-    padding: 16px 18px;
+    padding: 13px 16px;
     vertical-align: middle;
     color: var(--text-secondary);
+    white-space: nowrap;
   }
 
   .symbol-cell {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    white-space: nowrap;
+  }
+
+  .instrument-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    white-space: nowrap;
+  }
+
+  .symbol-strong {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--foreground);
+    letter-spacing: 0.2px;
+  }
+
+  .instrument-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .targets-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  .direction-badge,
+  .side-badge,
+  .embed-dir {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2.5px 8px;
+    letter-spacing: 0.05em;
+    border-radius: var(--radius-sm);
+  }
+
+  .badge-buy {
+    background-color: color-mix(in srgb, #22c55e 15%, transparent) !important;
+    color: #4ade80 !important;
+    border: 1px solid color-mix(in srgb, #22c55e 32%, transparent) !important;
+  }
+
+  .badge-sell {
+    background-color: color-mix(in srgb, #ef4444 15%, transparent) !important;
+    color: #f87171 !important;
+    border: 1px solid color-mix(in srgb, #ef4444 32%, transparent) !important;
   }
 
   .symbol-name {
@@ -76,14 +134,22 @@
   }
 
   .sector-badge {
-    font-size: 11.5px;
-    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary) !important;
+    background-color: color-mix(in srgb, var(--foreground) 7%, transparent) !important;
+    border: 1px solid color-mix(in srgb, var(--foreground) 15%, transparent) !important;
+    padding: 2.5px 8px !important;
+    border-radius: var(--radius-sm) !important;
   }
 
   .price-cell {
     display: flex;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
   }
 
   .price-mono {
@@ -95,49 +161,49 @@
   .change-pill {
     display: inline-flex;
     align-items: center;
-    gap: 2px;
+    gap: 3px;
     font-size: 11px;
     font-weight: 700;
     font-family: var(--font-mono);
-    padding: 2px 6px;
+    padding: 2px 7px;
     border-radius: var(--radius-sm);
   }
 
   .pill-gain {
-    background-color: var(--color-gain-bg);
-    color: var(--color-gain);
+    background-color: color-mix(in srgb, #22c55e 15%, transparent) !important;
+    color: #4ade80 !important;
+    border: 1px solid color-mix(in srgb, #22c55e 30%, transparent) !important;
   }
 
   .pill-loss {
-    background-color: var(--color-loss-bg);
-    color: var(--color-loss);
+    background-color: color-mix(in srgb, #ef4444 15%, transparent) !important;
+    color: #f87171 !important;
+    border: 1px solid color-mix(in srgb, #ef4444 30%, transparent) !important;
   }
 
-  .pattern-tag {
-    font-size: 12px;
+  .table-empty-cell {
+    text-align: center;
+    padding: 48px 24px !important;
+  }
+
+  .table-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .table-empty-title {
+    font-size: 14px;
+    font-weight: 600;
     color: var(--text-primary);
   }
 
-  .rsi-cell {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    width: 70px;
-  }
-
-  .rsi-val {
-    font-size: 12px;
-    font-weight: 700;
-    font-family: var(--font-mono);
-  }
-
-  .rsi-high {
-    color: var(--color-loss);
-  }
-  .rsi-low {
-    color: var(--brand-cyan);
-  }
-  .rsi-mid {
-    color: var(--color-gain);
+  .table-empty-desc {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    max-width: 440px;
+    line-height: 1.5;
   }
 }

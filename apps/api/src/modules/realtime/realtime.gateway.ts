@@ -13,7 +13,7 @@ import {
   ConnectedSocket,
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
-import { Logger } from "@nestjs/common";
+import { Logger } from "@yuva-devlab/logger";
 import {
   DefaultNetworkHost,
   HttpMethod,
@@ -28,6 +28,7 @@ import type {
   RealtimeTickPayload,
   RealtimeRegimePayload,
   RealtimeAgentSpeechPayload,
+  RealtimeSignalPayload,
 } from "./realtime.types";
 
 /**
@@ -50,7 +51,7 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
    * Handles new client connection and greets with server state.
    */
   public handleConnection(client: Socket): void {
-    this.logger.log(`Client connected: ${client.id}`);
+    this.logger.info(`[handleConnection] Client connected: ${client.id}`);
     client.emit(RealtimeServerEvent.CONNECTED, {
       clientId: client.id,
       timestamp: new Date().toISOString(),
@@ -62,7 +63,7 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
    * Handles client disconnection.
    */
   public handleDisconnect(client: Socket): void {
-    this.logger.log(`Client disconnected: ${client.id}`);
+    this.logger.info(`[handleDisconnect] Client disconnected: ${client.id}`);
   }
 
   /**
@@ -80,7 +81,7 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
       };
     }
     client.join(payload.room);
-    this.logger.debug(`Client ${client.id} joined ${payload.room}`);
+    this.logger.debug(`[handleSubscribe] Client ${client.id} joined ${payload.room}`);
     return {
       status: RealtimeSubscriptionStatus.SUBSCRIBED,
       room: payload.room,
@@ -102,7 +103,7 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
       };
     }
     client.leave(payload.room);
-    this.logger.debug(`Client ${client.id} left ${payload.room}`);
+    this.logger.debug(`[handleUnsubscribe] Client ${client.id} left ${payload.room}`);
     return {
       status: RealtimeSubscriptionStatus.UNSUBSCRIBED,
       room: payload.room,
@@ -133,6 +134,14 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
   public broadcastRegimeChange(payload: RealtimeRegimePayload): void {
     if (!this.server) return;
     this.server.to(RealtimeRoom.REGIMES).emit(RealtimeServerEvent.REGIME_CHANGE, payload);
+  }
+
+  /**
+   * Broadcasts signal trajectory updates to SIGNALS room.
+   */
+  public broadcastSignalUpdate(payload: RealtimeSignalPayload): void {
+    if (!this.server) return;
+    this.server.to(RealtimeRoom.SIGNALS).emit(RealtimeServerEvent.SIGNAL_UPDATE, payload);
   }
 
   /**

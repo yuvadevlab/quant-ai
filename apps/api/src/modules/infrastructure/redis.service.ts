@@ -3,7 +3,8 @@
  * @author yuva.devlab@gmail.com
  */
 
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
+import { Logger } from "@yuva-devlab/logger";
 import { ConfigService } from "./config.service";
 
 interface CacheEntry<T> {
@@ -20,7 +21,9 @@ export class RedisService {
   private readonly memoryStore = new Map<string, CacheEntry<unknown>>();
 
   public constructor(private readonly configService: ConfigService) {
-    this.logger.log(`Cache service initialized (URL: ${this.configService.redisUrl})`);
+    this.logger.info(
+      `[constructor] Cache service initialized (URL: ${this.configService.redisUrl})`,
+    );
   }
 
   /**

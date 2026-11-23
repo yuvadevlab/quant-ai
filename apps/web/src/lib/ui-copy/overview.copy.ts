@@ -1,30 +1,58 @@
 /**
  * @file src/lib/ui-copy/overview.copy.ts
- * @description Centralized copy for the Overview Desk. */
+ * @description Centralized copy for the Overview Desk and Market Intelligence radar.
+ * @author yuva.devlab@gmail.com
+ */
 
 export const OVERVIEW_COPY = {
   HEADER: {
+    BADGE: "QUANTITATIVE MARKET INTELLIGENCE",
     TITLE: "Market Intelligence & Signal Radar",
     SUBTITLE:
-      "Real-time algorithmic surveillance across NSE indices and high-liquidity Indian equities.",
+      "Real-time algorithmic surveillance across NSE indices, option chains, and high-liquidity Indian equities.",
+    ASK_COPILOT: "Ask AI Copilot",
+    VIEW_PREDICTIONS: "View All Predictions",
   },
-  METRICS: {
-    HIT_RATE_TITLE: "30-Day Win Rate",
-    HIT_RATE_SUB: "128 of 163 signals reached Target 1",
-    CONFIDENCE_TITLE: "Model Avg Confidence",
-    CONFIDENCE_SUB: "Across 4 active multi-agent models",
-    ACTIVE_TARGETS_TITLE: "Active Trajectories",
-    ACTIVE_TARGETS_SUB: "Live surveillance monitors",
-    SHARPE_TITLE: "Algorithmic Sharpe",
-    SHARPE_SUB: "Risk-adjusted performance score",
+  SECTOR_MATRIX: {
+    TITLE: "Sector Momentum Matrix",
+    SCREEN_SECTORS: "Screen Sectors",
   },
-  REGIME: {
-    LABEL: "CURRENT REGIME",
-    TITLE: "NIFTY Regime: Mild Bullish with High IV Skew",
-    DESCRIPTION:
-      "VIX currently consolidating at 13.4. Options open interest indicates strong support at 24,000 and institutional call writing clustering near 24,500.",
-    VIX_LEVEL: "VIX 13.4 (Neutral)",
-    PULLBACK_ODDS: "Pullback Risk: 18%",
+  LAUNCHPAD: {
+    ARIA_LABEL: "Workstation Desks Quick Launch",
+    SECTION_LABEL: "WORKSTATION MODULES",
+    SECTION_TITLE: "Institutional Trading Desks",
+    SCREENER_TITLE: "Quantitative Screener",
+    SCREENER_DESC: "Scan 2,000+ NSE & BSE stocks for volume surges, RSI extremes, and momentum.",
+    SCREENER_ACTION: "Open Desk",
+    PREDICTIONS_TITLE: "Prediction Lab & Ledger",
+    PREDICTIONS_DESC: "Audit automated signal generation, win-rates, excursions, and outcome logs.",
+    PREDICTIONS_ACTION: "Audit Ledger",
+    COPILOT_TITLE: "AI Financial Copilot",
+    COPILOT_DESC: "Chat with multi-agent consensus models regarding regimes, setups, and Greeks.",
+    COPILOT_ACTION: "Launch Chat",
+  },
+  SPOTLIGHT: {
+    SECTION_LABEL: "AUTOMATED MULTI-AGENT INFERENCE",
+    TITLE: "Active High-Conviction Signals",
+    VIEW_ALL_LEDGER: "View Full Prediction Ledger",
+    ENTRY_ZONE: "ENTRY ZONE",
+    CURRENT_LTP: "CURRENT LTP",
+    TARGET_1: "TARGET 1",
+    STOP_LOSS: "STOP LOSS",
+    AGENT_CONVICTION: "AGENT CONVICTION",
+    INSPECT_TRAJECTORY: "Inspect Trajectory",
+    BADGE: "TOP ACTIVE SIGNAL",
+    VIEW_TRAJECTORY: "View Full Trajectory →",
+    ENTRY: "Entry",
+    STOP: "Stop",
+    TARGET_2: "Target 2",
+    HORIZON: "Horizon",
+    THESIS_TITLE: "Algorithmic Thesis & Momentum Drivers:",
+  },
+  INDICES: {
+    TITLE: "Live Benchmark Indices",
+    SUBTITLE:
+      "Institutional multi-timeframe quotes, tick volatility, and percentage drift across NSE sectoral pillars.",
   },
   INDEX_FILTERS: {
     ALL: "All Benchmarks",
@@ -32,14 +60,5 @@ export const OVERVIEW_COPY = {
     FINANCIALS: "Banking & Financials",
     SECTORAL: "Sectoral Leaders",
     VOLATILITY: "Volatility & Macro",
-  },
-  HOT_SIGNALS: {
-    TITLE: "High-Confidence Active Signals",
-    VIEW_ALL: "View Full Predictions Lab →",
-  },
-  AGENT_PULSE: {
-    TITLE: "Autonomous Multi-Agent Consensus Stream",
-    SUBTITLE:
-      "Live deliberation feed combining macro, momentum, volatility, and order-flow agents.",
   },
 } as const;

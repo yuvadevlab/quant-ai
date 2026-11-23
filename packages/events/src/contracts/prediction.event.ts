@@ -7,11 +7,12 @@
 import { z } from "zod";
 import { createEventEnvelope, type DomainEventEnvelope } from "@yuva-devlab/events";
 import {
-  MarketIndex,
+  AssetClass,
+  EventTopic,
   SignalDirection,
   SignalRegime,
   SignalStatus,
-  EventTopic,
+  TradeStrategy,
 } from "@quant-ai/shared-types";
 
 /**
@@ -19,8 +20,10 @@ import {
  */
 export const PredictionSignalPayloadSchema = z.object({
   predictionId: z.string().min(1),
-  symbol: z.nativeEnum(MarketIndex),
+  symbol: z.string().min(1),
   direction: z.nativeEnum(SignalDirection),
+  strategy: z.nativeEnum(TradeStrategy).optional(),
+  assetClass: z.nativeEnum(AssetClass).optional(),
   confidenceScore: z.number().min(0).max(100),
   expectedValue: z.number(),
   targetPrice: z.number().positive(),

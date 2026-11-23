@@ -1,5 +1,7 @@
 /**
- * @fileoverview Canonical financial market and prediction state enums. */
+ * @fileoverview Canonical financial market, strategy, asset class, and prediction state enums.
+ * @author yuva.devlab@gmail.com
+ */
 
 /**
  * Supported AI model provider backends for quantitative deliberation and research.
@@ -53,37 +55,62 @@ export enum IndexCategory {
 }
 
 /**
- * National Stock Exchange (NSE) & global market benchmarks.
+ * Trading execution strategy category across multi-asset universes.
  */
-export enum MarketIndex {
-  // Broad Market
-  NIFTY_50 = "NIFTY 50",
-  NIFTY_NEXT_50 = "NIFTY NEXT 50",
-  NIFTY_100 = "NIFTY 100",
-  NIFTY_MIDCAP_100 = "NIFTY MIDCAP 100",
-  NIFTY_SMALLCAP_100 = "NIFTY SMALLCAP 100",
-  NIFTY_500 = "NIFTY 500",
+export enum TradeStrategy {
+  INTRADAY_SCALP = "SCALP",
+  SWING = "SWING",
+  OPTIONS_EXPIRY = "OPTIONS",
+  ALGO = "ALGO",
+  POSITIONAL_INVESTMENT = "INVESTMENT",
+}
 
-  // Banking & Financials
-  BANKNIFTY = "BANKNIFTY",
-  FINNIFTY = "FINNIFTY",
-  NIFTY_PSU_BANK = "NIFTY PSU BANK",
-  NIFTY_PVT_BANK = "NIFTY PVT BANK",
+/**
+ * High-level financial asset classification.
+ */
+export enum AssetClass {
+  INDEX = "INDEX",
+  EQUITY = "EQUITY",
+  OPTION = "OPTION",
+  FUTURE = "FUTURE",
+  CRYPTO = "CRYPTO",
+  COMMODITY = "COMMODITY",
+  FOREX = "FOREX",
+}
 
-  // Sectoral Leaders
-  NIFTY_IT = "NIFTY IT",
-  NIFTY_AUTO = "NIFTY AUTO",
-  NIFTY_PHARMA = "NIFTY PHARMA",
-  NIFTY_FMCG = "NIFTY FMCG",
-  NIFTY_METAL = "NIFTY METAL",
-  NIFTY_ENERGY = "NIFTY ENERGY",
-  NIFTY_REALTY = "NIFTY REALTY",
-  NIFTY_INFRA = "NIFTY INFRA",
+/**
+ * Options derivative contract type.
+ */
+export enum OptionType {
+  CALL = "CE",
+  PUT = "PE",
+}
 
-  // Volatility & Global
-  INDIA_VIX = "INDIA VIX",
-  SENSEX = "SENSEX",
-  BRENT_CRUDE = "BRENT CRUDE",
+/**
+ * Trade execution horizon & holding duration.
+ */
+export enum TradeHorizon {
+  M5_SCALP = "5M_SCALP",
+  M15_SCALP = "15M_SCALP",
+  INTRADAY = "INTRADAY",
+  EXPIRY_ZERO_DTE = "0DTE_EXPIRY",
+  EXPIRY_WEEKLY = "WEEKLY_EXPIRY",
+  SWING_DAYS = "SWING_DAYS",
+  SWING_WEEKS = "SWING_WEEKS",
+  POSITIONAL_MONTHS = "POSITIONAL_MONTHS",
+}
+
+/**
+ * Global market exchange identifier.
+ */
+export enum MarketExchange {
+  NSE = "NSE",
+  BSE = "BSE",
+  NASDAQ = "NASDAQ",
+  NYSE = "NYSE",
+  BINANCE = "BINANCE",
+  CME = "CME",
+  GLOBAL = "GLOBAL",
 }
 
 /**

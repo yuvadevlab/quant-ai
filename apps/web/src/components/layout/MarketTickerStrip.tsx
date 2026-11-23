@@ -5,7 +5,8 @@
  */
 
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import { getBenchmarkTicks } from "../../services/market-feed.service";
+import { COMMON_COPY } from "../../lib/ui-copy";
+import { useBenchmarkTicks } from "../../services/market-feed.service";
 import { useRealtimeTicks } from "../../hooks/use-realtime-ticks";
 
 /**
@@ -13,8 +14,10 @@ import { useRealtimeTicks } from "../../hooks/use-realtime-ticks";
  * Displays live index ticks with SVG sparkline trajectories and WebSocket stream state.
  */
 export function MarketTickerStrip() {
-  const staticTicks = getBenchmarkTicks();
+  const { data: dbTicks } = useBenchmarkTicks();
+  const staticTicks = dbTicks ?? [];
   const { ticks: liveTicks, isConnected } = useRealtimeTicks();
+  const copy = COMMON_COPY.TICKER_STRIP;
 
   const ticks = staticTicks.map((tick) => {
     const live = liveTicks[tick.name];
@@ -37,9 +40,9 @@ export function MarketTickerStrip() {
   });
 
   return (
-    <div className="ticker-strip" aria-label="Real-time Indian Benchmark Ticker" role="region">
+    <div className="ticker-strip" aria-label={copy.ARIA_LABEL} role="region">
       <div className={`ticker-badge ${isConnected ? "is-connected" : ""}`}>
-        {isConnected ? "LIVE WS" : "LIVE DESK"}
+        {isConnected ? copy.CONNECTED_BADGE : copy.DESK_BADGE}
       </div>
       <div className="ticker-scroll-content">
         {ticks.map((tick) => {

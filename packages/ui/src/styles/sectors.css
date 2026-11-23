@@ -32,31 +32,38 @@
   }
 
   .sector-tag {
-    font-size: 9px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 9.5px;
     font-weight: 700;
-    padding: 1px 6px;
+    padding: 1.5px 6px;
     border-radius: var(--radius-sm);
     text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
   .tag-strong {
-    background-color: var(--color-gain-bg);
-    color: var(--color-gain);
+    background-color: color-mix(in srgb, #22c55e 16%, transparent) !important;
+    color: #4ade80 !important;
+    border: 1px solid color-mix(in srgb, #22c55e 32%, transparent) !important;
   }
 
   .tag-moderate {
-    background-color: color-mix(in srgb, var(--primary) 12%, transparent);
-    color: var(--brand-cyan);
+    background-color: color-mix(in srgb, var(--primary) 14%, transparent) !important;
+    color: var(--brand-cyan) !important;
+    border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent) !important;
   }
 
   .tag-neutral {
-    background-color: color-mix(in srgb, var(--foreground) 6%, transparent);
-    color: var(--text-muted);
+    background-color: color-mix(in srgb, var(--foreground) 7%, transparent) !important;
+    color: var(--text-secondary) !important;
+    border: 1px solid color-mix(in srgb, var(--foreground) 15%, transparent) !important;
   }
 
   .tag-weak {
-    background-color: var(--color-loss-bg);
-    color: var(--color-loss);
+    background-color: color-mix(in srgb, #ef4444 16%, transparent) !important;
+    color: #f87171 !important;
+    border: 1px solid color-mix(in srgb, #ef4444 32%, transparent) !important;
   }
 
   .sector-values {

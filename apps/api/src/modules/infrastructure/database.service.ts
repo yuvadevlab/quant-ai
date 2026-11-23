@@ -3,9 +3,15 @@
  * @author yuva.devlab@gmail.com
  */
 
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import { HealthStatus } from "@quant-ai/shared-types";
-import { createPrismaClient, type PrismaClient } from "@quant-ai/database";
+import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
+import { Logger } from "@yuva-devlab/logger";
+import { HealthStatus, MARKET_EQUITY_REGISTRY } from "@quant-ai/shared-types";
+import { SystemConfigKey } from "@quant-ai/quant-core";
+import {
+  createPrismaClient,
+  seedLlmProvidersAndModels,
+  type PrismaClient,
+} from "@quant-ai/database";
 import { ConfigService } from "./config.service";
 
 /**
@@ -23,9 +29,87 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
    * Initializes Prisma connection.
    */
   public async onModuleInit(): Promise<void> {
-    this.logger.log(`Database service initializing [Driver: ${this.configService.databaseDriver}]`);
+    this.logger.info(
+      `[onModuleInit] Database service initializing [Driver: ${this.configService.databaseDriver}]`,
+    );
     this.prismaClient = createPrismaClient(this.configService.databaseUrl);
     this.isConnected = true;
+
+    try {
+      const count = await this.prismaClient.llmModel.count();
+      if (count === 0) {
+        this.logger.info(
+          "[onModuleInit] Seeding initial LLM providers and models into database...",
+        );
+        await seedLlmProvidersAndModels(this.prismaClient);
+        this.logger.info("[onModuleInit] Seeded LLM providers and models successfully.");
+      }
+
+      const configCount = await this.prismaClient.systemConfig.count();
+      if (configCount === 0) {
+        this.logger.info("[onModuleInit] Seeding initial configurable market parameters...");
+        await this.prismaClient.systemConfig.createMany({
+          data: [
+            {
+              key: SystemConfigKey.MARKET_BREADTH,
+              description:
+                "Configurable market breadth, institutional flows, and regime thresholds",
+              value: {
+                totalUniverseCount: 2214,
+                fiiNetCr: 2145.0,
+                diiNetCr: 1280.0,
+                fiiCurrencyPrefix: "₹",
+                fiiUnitSuffix: "Cr",
+                vixLowThreshold: 15.0,
+                vixHighThreshold: 22.0,
+                bullishRegime: "Institutional Accumulation",
+                cautiousRegime: "Distribution & Profit Taking",
+                neutralRegime: "Consolidation & Rangebound",
+                lowVolText: "Low Volatility",
+                elevatedVolText: "Elevated Volatility",
+                highVolText: "Extreme Volatility",
+              },
+            },
+            {
+              key: SystemConfigKey.SECTOR_MOMENTUM,
+              description: "Configurable sector momentum classification percentage thresholds",
+              value: {
+                strongThreshold: 1.5,
+                moderateThreshold: 0.5,
+                weakThreshold: -1.0,
+              },
+            },
+          ],
+        });
+        this.logger.info("[onModuleInit] Seeded market configs successfully.");
+      }
+
+      const stockCount = await this.prismaClient.screenerStock.count();
+      if (stockCount === 0) {
+        this.logger.info(
+          "[onModuleInit] Seeding initial equity reference universe into database...",
+        );
+        for (const stock of MARKET_EQUITY_REGISTRY) {
+          await this.prismaClient.screenerStock.upsert({
+            where: { symbol: stock.symbol },
+            update: {
+              company: stock.company,
+              sector: stock.sector,
+              exchange: stock.exchange,
+            },
+            create: {
+              symbol: stock.symbol,
+              company: stock.company,
+              sector: stock.sector,
+              exchange: stock.exchange,
+            },
+          });
+        }
+        this.logger.info("[onModuleInit] Seeded equity reference master successfully.");
+      }
+    } catch (error) {
+      this.logger.warn(`[onModuleInit] Could not seed initial database assets: ${String(error)}`);
+    }
   }
 
   /**

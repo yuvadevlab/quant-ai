@@ -124,6 +124,7 @@
     letter-spacing: 1px;
     color: var(--brand-cyan);
     background-color: color-mix(in srgb, var(--primary) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--primary) 28%, transparent);
     padding: 4px 10px;
     border-radius: var(--radius-full);
     margin-bottom: 12px;
