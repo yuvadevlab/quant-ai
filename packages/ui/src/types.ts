@@ -124,8 +124,8 @@ export interface ChatThreadMessage {
   readonly type: "user" | "assistant" | string;
   readonly text: string;
   readonly time: string;
-  readonly hasSignal?: boolean;
-  readonly signalData?: TableSignalItem;
+  readonly hasSignal?: boolean | undefined;
+  readonly signalData?: TableSignalItem | undefined;
 }
 
 /**

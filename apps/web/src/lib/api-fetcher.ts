@@ -19,7 +19,7 @@ function resolveUrl(endpoint: string): string {
   if (typeof window === "undefined") {
     // In SSR (Node.js), relative URLs throw "Failed to parse URL". Resolve against backend host.
     const host =
-      (typeof process !== "undefined" && process.env?.VITE_API_URL) || "http://localhost:4005";
+      (typeof process !== "undefined" && process.env?.["VITE_API_URL"]) || "http://localhost:4005";
     const serverHost = host.replace(/\/api\/?$/, "");
     return `${serverHost}${cleanEndpoint}`;
   }

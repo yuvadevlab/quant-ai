@@ -120,7 +120,7 @@ export function ChatPage({ initialData, conversationId }: ChatPageProps) {
         id: userMsgId + 1,
         time: timeStr,
         hasSignal: !!response.signalData || !!initialData.featuredSignal,
-        signalData: response.signalData,
+        ...(response.signalData ? { signalData: response.signalData } : {}),
       };
 
       const finalMessages = [...nextMessages, assistantMessage];

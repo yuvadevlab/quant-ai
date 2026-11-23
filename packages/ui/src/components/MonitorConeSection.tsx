@@ -35,9 +35,9 @@ export interface MonitorConeSectionProps {
   /** Callback when timeframe period changes */
   readonly onTimeframeChange: (period: string) => void;
   /** Historical and simulated trajectory sample points */
-  readonly samples?: readonly TrajectoryPoint[];
+  readonly samples?: readonly TrajectoryPoint[] | undefined;
   /** Dynamic trajectory cone points */
-  readonly trajectory?: readonly TrajectoryPoint[];
+  readonly trajectory?: readonly TrajectoryPoint[] | undefined;
   /** Panel title */
   readonly title?: string;
   /** Panel subtitle */
