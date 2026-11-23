@@ -9,7 +9,6 @@ import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, Download, Sparkles } from "lucide-react";
-import { Button } from "@yuva-devlab/ui";
 import { QuantShell } from "@/components/layout";
 import { HorizonFilter, LedgerFilterTab } from "@/constants";
 import { UiSignalStatus } from "@/components/quantai/data";
@@ -17,6 +16,7 @@ import { apiFetch } from "@/lib/api-fetcher";
 import { useRealtimeTicks } from "@/hooks/use-realtime-ticks";
 import { useRealtimeDeliberation } from "@/hooks/use-realtime-deliberation";
 import {
+  Button,
   PredictionsHeader,
   PredictionsKpiGrid,
   PredictionsToolbar,
