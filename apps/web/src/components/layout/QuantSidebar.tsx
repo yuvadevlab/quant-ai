@@ -9,16 +9,20 @@ import { MarketDataStatus } from "@quant-ai/shared-types";
 import {
   Briefcase,
   LayoutGrid,
+  Moon,
   PanelLeftClose,
   PanelLeftOpen,
   ScanLine,
   Settings2,
   Sparkles,
+  Sun,
   TrendingUp,
 } from "lucide-react";
 import { Button } from "@quant-ai/ui";
 import { AppRoute } from "../../constants";
 import { COMMON_COPY } from "../../lib/ui-copy";
+import { useQuantTheme } from "../../hooks/use-quant-theme";
+import { useAuth } from "../../providers/auth";
 import { useWorkstationSession } from "../../hooks/use-workstation-session";
 import {
   useBenchmarkTicks,
@@ -43,7 +47,9 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
   const location = useRouterState({
     select: (state) => state.location.pathname,
   });
+  const { isAuthenticated } = useAuth();
   const { sessionInfo, telemetry, isConnected } = useWorkstationSession();
+  const { isDark, toggleTheme } = useQuantTheme(isAuthenticated);
   const { data: ticks = [] } = useBenchmarkTicks();
   const { data: breadth = DEFAULT_BREADTH } = useMarketBreadth();
   const vixTick = ticks.find((t) => t.isVix || t.name.includes("VIX"));
@@ -71,17 +77,6 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
             </div>
           )}
         </Link>
-        <Button
-          variant="ghost"
-          size="icon"
-          type="button"
-          className="sidebar-collapse-btn"
-          aria-label={isCollapsed ? copy.EXPAND : copy.COLLAPSE}
-          onClick={onToggleCollapse}
-          title={isCollapsed ? copy.EXPAND : copy.COLLAPSE}
-        >
-          {isCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
-        </Button>
       </div>
 
       <nav className="sidebar-nav" aria-label={copy.MAIN_NAV_ARIA}>
@@ -140,7 +135,7 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
           className={`nav-item ${location.startsWith(AppRoute.CHAT) ? "active" : ""}`}
           title={COMMON_COPY.NAV.CHAT}
         >
-          <Sparkles size={18} className="nav-icon copilot-icon" aria-hidden="true" />
+          <Sparkles size={18} className="nav-icon" aria-hidden="true" />
           {!isCollapsed && <span className="nav-label">{COMMON_COPY.NAV.CHAT}</span>}
         </Link>
 
@@ -184,6 +179,53 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
             <span className={`live-dot ${isConnected ? "is-connected" : ""}`} aria-hidden="true" />
           </div>
         )}
+        <div className="sidebar-footer-actions">
+          <Button
+            variant="ghost"
+            size={isCollapsed ? "icon" : "sm"}
+            type="button"
+            className="sidebar-collapse-btn"
+            aria-label={copy.THEME_TOGGLE_ARIA}
+            onClick={toggleTheme}
+            title={isDark ? copy.THEME_LIGHT : copy.THEME_DARK}
+          >
+            {isDark ? (
+              isCollapsed ? (
+                <Sun size={16} />
+              ) : (
+                <>
+                  <Sun size={15} />
+                  <span>{copy.THEME_LIGHT}</span>
+                </>
+              )
+            ) : isCollapsed ? (
+              <Moon size={16} />
+            ) : (
+              <>
+                <Moon size={15} />
+                <span>{copy.THEME_DARK}</span>
+              </>
+            )}
+          </Button>
+          <Button
+            variant="ghost"
+            size={isCollapsed ? "icon" : "sm"}
+            type="button"
+            className="sidebar-collapse-btn"
+            aria-label={isCollapsed ? copy.EXPAND : copy.COLLAPSE}
+            onClick={onToggleCollapse}
+            title={isCollapsed ? copy.EXPAND : copy.COLLAPSE}
+          >
+            {isCollapsed ? (
+              <PanelLeftOpen size={16} />
+            ) : (
+              <>
+                <PanelLeftClose size={15} />
+                <span>{copy.COLLAPSE}</span>
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </aside>
   );
