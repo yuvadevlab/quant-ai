@@ -40,9 +40,9 @@
   }
 
   .oi-bullish {
-    background-color: color-mix(in srgb, #22c55e 15%, transparent) !important;
-    color: #4ade80 !important;
-    border: 1px solid color-mix(in srgb, #22c55e 32%, transparent) !important;
+    background-color: var(--color-gain-bg) !important;
+    color: var(--color-gain) !important;
+    border: 1px solid color-mix(in srgb, var(--color-gain) 28%, transparent) !important;
   }
 
   .oi-bearish {
@@ -109,9 +109,9 @@
   }
 
   .pill-target {
-    background-color: color-mix(in srgb, #22c55e 16%, transparent) !important;
-    color: #4ade80 !important;
-    border: 1px solid color-mix(in srgb, #22c55e 35%, transparent) !important;
+    background-color: var(--color-gain-bg) !important;
+    color: var(--color-gain) !important;
+    border: 1px solid color-mix(in srgb, var(--color-gain) 28%, transparent) !important;
   }
 
   .pill-stop {
