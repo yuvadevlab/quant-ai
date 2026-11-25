@@ -56,6 +56,7 @@ export interface PredictiveSignal {
   readonly time: string;
   readonly confidence: string;
   readonly riskReward: string;
+  readonly rationale?: string;
   readonly catalysts: readonly string[];
   readonly agents: MultiAgentConsensus;
   readonly trajectoryPoints?: readonly TrajectoryPoint[];

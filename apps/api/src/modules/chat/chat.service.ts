@@ -11,11 +11,7 @@ import { LiveMarketFeedService } from "../market/feed";
 import { AiProviderFactory } from "../quant-analysis/ai-provider.factory";
 import { DatabaseService } from "../infrastructure/database.service";
 import { PredictionsService } from "../predictions/predictions.service";
-import {
-  BENCHMARK_INDEX_SYMBOLS,
-  CHAT_QUERY_SYMBOLS,
-  OPTION_CHAIN_KEYWORDS,
-} from "./chat.constants";
+import { BENCHMARK_INDEX_SYMBOLS, OPTION_CHAIN_KEYWORDS } from "./chat.constants";
 import { formatOptionChainAdvisory } from "./chat-option-chain";
 import { mapSignalToEmbeddedSetup, resolvePredictionForChat } from "./chat-prediction-bridge";
 import { formatEquityAdvisory, formatGenericAdvisory } from "./chat-advisor";
@@ -199,11 +195,54 @@ export class ChatService {
 
   private extractMentionedSymbol(query: string): string | undefined {
     const upper = query.toUpperCase();
-    const sortedSymbols = [...CHAT_QUERY_SYMBOLS].sort((a, b) => b.length - a.length);
-    for (const sym of sortedSymbols) {
-      if (upper.includes(sym)) {
-        return sym;
-      }
+    for (const sym of BENCHMARK_INDEX_SYMBOLS) {
+      if (upper.includes(sym)) return sym;
+    }
+
+    const commonWords = new Set([
+      "WHAT",
+      "YOUR",
+      "ABOUT",
+      "AFTER",
+      "RECENT",
+      "SETUP",
+      "STOCK",
+      "TRADE",
+      "PRICE",
+      "CALL",
+      "ANALYSIS",
+      "VIEW",
+      "TODAY",
+      "LEVELS",
+      "MARKET",
+      "PLEASE",
+      "ASSESSMENT",
+      "BREAKOUT",
+      "OUTLOOK",
+      "TARGET",
+      "EXPLAIN",
+      "PREDICTION",
+      "PCR",
+      "OPTION",
+      "OPTIONS",
+      "CHAIN",
+      "STRIKE",
+      "EXPIRY",
+      "PUT",
+      "OI",
+      "GREEKS",
+    ]);
+
+    const exactCaps = query.match(/\b[A-Z]{3,12}\b/g);
+    if (exactCaps) {
+      const foundCap = exactCaps.find((w) => !commonWords.has(w));
+      if (foundCap) return foundCap;
+    }
+
+    const words = upper.match(/\b[A-Z]{3,12}\b/g);
+    if (words) {
+      const found = words.find((w) => !commonWords.has(w));
+      if (found) return found;
     }
     return undefined;
   }

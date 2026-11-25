@@ -41,9 +41,9 @@ export function calculateSignalsTelemetry(
   let rrCount = 0;
 
   for (const s of allSignals) {
-    const entry = s.entryPrice || parseFloat(String(s.entry).replace(/,/g, ""));
-    const t1 = parseFloat(String(s.target1).replace(/,/g, ""));
-    const sl = parseFloat(String(s.stop).replace(/,/g, ""));
+    const entry = s.entryPrice || parseFloat(String(s.entry).replace(/[^0-9.-]/g, ""));
+    const t1 = parseFloat(String(s.target1).replace(/[^0-9.-]/g, ""));
+    const sl = parseFloat(String(s.stop).replace(/[^0-9.-]/g, ""));
 
     if (entry > 0 && t1 > 0) {
       totalGainPct += ((t1 - entry) / entry) * 100;

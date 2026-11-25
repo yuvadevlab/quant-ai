@@ -1,134 +1,210 @@
 /**
  * @file packages/ui/src/styles/monitor-cone.css
- * @description Modular stylesheet for monitor-cone.
+ * @description High-contrast institutional stylesheet for benchmark notes and visual indicators.
  * Architecture: W3C Cascade Layer @layer dl-components
+ * @author yuva.devlab@gmail.com
  */
 
 @layer dl-components {
   /* ==========================================================================
-   Trajectory Monitor (Visual Cone Chart & Multi-Agent Deliberation)
-   ========================================================================== */
+     Trajectory Monitor (High-Contrast Benchmark Notes & Visual Indicators)
+     ========================================================================== */
 
-  .chart-legend-row {
+  .chart-legend-row.tv-benchmark-notes-bar {
     display: flex;
     align-items: center;
-    gap: 20px;
-    font-size: 12px;
-    color: var(--text-muted);
+    gap: 10px;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    background-color: #0b0f19;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
   }
 
-  .legend-item {
+  .tv-note-pill {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    background-color: #111827;
+    border: 1px solid #1f2937;
+    transition: all 0.15s ease;
+  }
+
+  .tv-note-pill.note-actual {
+    background-color: rgba(15, 23, 42, 0.9);
+    border-color: rgba(56, 189, 248, 0.35);
+  }
+
+  .tv-note-pill.note-expected {
+    background-color: rgba(56, 189, 248, 0.12);
+    border-color: rgba(56, 189, 248, 0.5);
+  }
+
+  .tv-note-pill.note-cone {
+    background-color: rgba(129, 140, 248, 0.12);
+    border-color: rgba(129, 140, 248, 0.5);
+  }
+
+  .tv-note-pill.note-target {
+    background-color: rgba(16, 185, 129, 0.14);
+    border-color: rgba(16, 185, 129, 0.55);
+  }
+
+  .tv-note-pill.note-stop {
+    background-color: rgba(244, 63, 94, 0.14);
+    border-color: rgba(244, 63, 94, 0.55);
+  }
+
+  .tv-note-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .candle-wick {
+    width: 2px;
+    height: 14px;
+    border-radius: 1px;
+    margin-right: 1px;
+  }
+
+  .candle-body {
+    width: 6px;
+    height: 10px;
+    border-radius: 1px;
+  }
+
+  .wick-bull,
+  .body-bull {
+    background-color: #10b981;
+  }
+
+  .spline-line-icon {
+    width: 16px;
+    height: 3px;
+    background: #38bdf8;
+    border-radius: 2px;
+    box-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
+  }
+
+  .cone-box-icon {
+    width: 15px;
+    height: 9px;
+    border: 1px dashed #818cf8;
+    background-color: rgba(129, 140, 248, 0.25);
+    border-radius: 2px;
+  }
+
+  .milestone-line-icon {
+    width: 16px;
+    height: 3px;
+    border-radius: 2px;
+  }
+
+  .line-emerald {
+    background-color: #10b981;
+    box-shadow: 0 0 5px rgba(16, 185, 129, 0.55);
+  }
+
+  .line-rose {
+    background-color: #f43f5e;
+    box-shadow: 0 0 5px rgba(244, 63, 94, 0.55);
+  }
+
+  .tv-note-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .tv-note-title-row {
     display: flex;
     align-items: center;
     gap: 6px;
   }
 
-  .legend-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+  .tv-note-label {
+    font-size: 0.64rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #cbd5e1;
   }
 
-  .dot-actual {
-    background-color: var(--chart-actual);
-    box-shadow: 0 0 6px var(--chart-actual);
-  }
-  .dot-expected {
-    background-color: var(--color-gain);
+  .note-expected .tv-note-label {
+    color: #7dd3fc;
   }
 
-  .legend-box {
-    width: 12px;
-    height: 8px;
-    border-radius: 2px;
+  .note-cone .tv-note-label {
+    color: #c7d2fe;
   }
 
-  .box-cone {
-    background-color: color-mix(in srgb, var(--primary) 30%, transparent);
+  .note-target .tv-note-label {
+    color: #6ee7b7;
   }
 
-  .legend-line {
-    width: 14px;
-    height: 2px;
+  .note-stop .tv-note-label {
+    color: #fda4af;
   }
 
-  .line-target {
-    background-color: var(--color-gain);
+  .tv-note-delta {
+    font-size: 0.64rem;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: var(--font-mono, monospace);
   }
-  .line-stop {
-    background-color: var(--color-loss);
+
+  .delta-gain {
+    color: #05df72;
+    background-color: rgba(5, 223, 114, 0.22);
+    border: 1px solid rgba(5, 223, 114, 0.5);
+  }
+
+  .delta-loss {
+    color: #ff4d6d;
+    background-color: rgba(255, 77, 109, 0.22);
+    border: 1px solid rgba(255, 77, 109, 0.5);
+  }
+
+  .tv-note-val {
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-family: var(--font-mono, monospace);
+    font-feature-settings: "tnum";
+    color: #ffffff;
+  }
+
+  .tv-note-val.text-cyan {
+    color: #38bdf8;
+  }
+
+  .tv-note-val.text-purple {
+    color: #a5b4fc;
+  }
+
+  .tv-note-val.text-emerald {
+    color: #10b981;
+    font-weight: 800;
+  }
+
+  .tv-note-val.text-rose {
+    color: #f43f5e;
+    font-weight: 800;
   }
 
   .trajectory-chart-viewport {
     position: relative;
-    background-color: color-mix(in srgb, var(--background) 95%, black);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
+    background-color: #0b0f19;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
     padding: 10px 12px;
     height: 330px;
     overflow: hidden;
-  }
-
-  .trajectory-svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-
-  .chart-gridline {
-    stroke: color-mix(in srgb, var(--foreground) 5%, transparent);
-    stroke-width: 1;
-  }
-
-  .chart-level-target2 {
-    stroke: var(--color-gain);
-    stroke-width: 1.2;
-    stroke-dasharray: 6 4;
-  }
-
-  .chart-level-target1 {
-    stroke: var(--color-gain);
-    stroke-width: 1.8;
-    stroke-dasharray: 8 4;
-  }
-
-  .chart-level-entry {
-    stroke: var(--brand-cyan);
-    stroke-width: 1.5;
-  }
-
-  .chart-level-stop {
-    stroke: var(--color-loss);
-    stroke-width: 1.8;
-    stroke-dasharray: 6 4;
-  }
-
-  .chart-path-expected {
-    stroke: var(--color-gain);
-    stroke-width: 2.2;
-    fill: none;
-  }
-
-  .chart-path-actual {
-    stroke: var(--chart-actual);
-    stroke-width: 2.8;
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .chart-point-dot {
-    fill: var(--primary-foreground);
-    stroke: var(--chart-actual);
-    stroke-width: 2;
-  }
-
-  .beacon-halo {
-    fill: var(--chart-actual);
-    opacity: 0.3;
-  }
-
-  .beacon-core {
-    fill: var(--primary-foreground);
   }
 }

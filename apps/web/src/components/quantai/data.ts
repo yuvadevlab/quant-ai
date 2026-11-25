@@ -43,6 +43,7 @@ export interface Signal {
   horizon: UiSignalHorizon | "Intraday" | "Swing" | "Options" | "Scalp";
   entry: string;
   entryPrice: number;
+  currentPrice?: number;
   target1: string;
   target2: string;
   stop: string;
@@ -54,6 +55,7 @@ export interface Signal {
   time: string;
   confidence: string;
   riskReward: string;
+  rationale?: string;
   catalysts: string[];
   agents: {
     technical: { score: number; verdict: string };

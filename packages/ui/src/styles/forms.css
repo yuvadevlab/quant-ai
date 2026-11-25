@@ -59,16 +59,17 @@
 
   .tab-pill-group .tab-pill:hover,
   button.tab-pill:hover {
-    color: var(--text-primary) !important;
-    background-color: color-mix(in srgb, var(--foreground) 7%, transparent) !important;
+    color: var(--foreground) !important;
+    background-color: color-mix(in srgb, var(--primary) 12%, transparent) !important;
   }
 
   .tab-pill-group .tab-pill.active,
   button.tab-pill.active {
-    background-color: var(--bg-card) !important;
-    color: var(--foreground) !important;
-    font-weight: 600;
-    box-shadow: 0 1px 3px color-mix(in srgb, var(--background) 70%, black) !important;
+    background-color: var(--primary) !important;
+    color: var(--primary-foreground) !important;
+    border-color: var(--primary) !important;
+    font-weight: 700;
+    box-shadow: 0 0 10px color-mix(in srgb, var(--primary) 35%, transparent) !important;
   }
 
   /* ==========================================================================
@@ -82,7 +83,7 @@
   }
 
   .toolbar-search-input {
-    width: 280px;
+    width: clamp(180px, 18vw, 260px);
     height: var(--control-height-md, 2.125rem);
   }
 
@@ -91,7 +92,7 @@
   }
 
   .toolbar-select-trigger {
-    width: 150px;
+    width: clamp(130px, 12vw, 145px);
     height: var(--control-height-md, 2.125rem);
   }
 

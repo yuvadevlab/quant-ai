@@ -1,0 +1,177 @@
+/**
+ * @file packages/ui/src/styles/prediction-accuracy.css
+ * @description Styles for prediction accuracy ribbon and live trajectory verification bar.
+ * Architecture: W3C Cascade Layer @layer dl-components
+ * @author yuva.devlab@gmail.com
+ */
+
+@layer dl-components {
+  /* ==========================================================================
+     Prediction Accuracy Ribbon (5-Metric Ledger Summary)
+     ========================================================================== */
+
+  .prediction-accuracy-ribbon {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+
+  @media (max-width: 1200px) {
+    .prediction-accuracy-ribbon {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .prediction-accuracy-ribbon {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .accuracy-card {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md, 8px);
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: all 0.15s ease-in-out;
+  }
+
+  .accuracy-card:hover {
+    border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  }
+
+  .accuracy-card-header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .accuracy-icon {
+    flex-shrink: 0;
+  }
+
+  .accuracy-card-label {
+    font-size: 0.66rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted-foreground);
+  }
+
+  .accuracy-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .accuracy-val {
+    font-size: 1.15rem;
+    font-weight: 800;
+    font-family: var(--font-mono, monospace);
+    font-feature-settings: "tnum";
+    letter-spacing: -0.01em;
+  }
+
+  .accuracy-hint {
+    font-size: 0.7rem;
+    color: var(--muted-foreground);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ==========================================================================
+     Live Trajectory Verification Strip (Monitor Detail Header)
+     ========================================================================== */
+
+  .live-trajectory-verification-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 9px 14px;
+    margin-bottom: 12px;
+    background-color: color-mix(in srgb, var(--card) 95%, black);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md, 8px);
+    flex-wrap: wrap;
+  }
+
+  .live-verification-status {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .live-beacon-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #10b981;
+    box-shadow: 0 0 8px #10b981;
+    animation: live-beacon-pulse 1.8s infinite ease-in-out;
+    flex-shrink: 0;
+  }
+
+  @keyframes live-beacon-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.45;
+      transform: scale(0.85);
+    }
+  }
+
+  .live-status-badge {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #10b981;
+    background-color: rgba(16, 185, 129, 0.14);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  .live-status-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  .live-accuracy-metrics {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .acc-metric {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .acc-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted-foreground);
+  }
+
+  .acc-val {
+    font-size: 0.82rem;
+    font-weight: 800;
+    font-family: var(--font-mono, monospace);
+  }
+}

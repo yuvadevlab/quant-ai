@@ -50,8 +50,8 @@ export function PredictionsTable({
   onInspect,
   inspectLabel = "INSPECT",
   ariaLabel = "Prediction Signals Audit Ledger",
-  emptyTitle = "No Algorithmic Predictions Tracked",
-  emptyDescription = "No real analyzed signals currently active. Run a live market analysis scan to evaluate genuine setups.",
+  emptyTitle = "No Active Predictions",
+  emptyDescription = "No signals match the selected filter criteria. Run a market scan to analyze new opportunities.",
 }: PredictionsTableProps) {
   return (
     <Card className="desk-table-card">

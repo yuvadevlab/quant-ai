@@ -22,7 +22,8 @@ export const SETTINGS_COPY = {
     },
     RISK: {
       TITLE: "Deterministic Risk Limits",
-      SUBTITLE: "Hardcoded limits enforced by Risk Guardian. LLM cannot override these rules.",
+      SUBTITLE:
+        "Deterministic safety thresholds enforced by Risk Guardian. Autonomous agents cannot override these rules.",
       MAX_RISK_LABEL: "Max Risk Per Signal",
       MAX_RISK_SUBTITLE: "Maximum allowable capital risk per single trade recommendation.",
       MAX_RISK_OPTIONS: {

@@ -19,7 +19,6 @@ import { ArrowLeft, ChevronRight, Sparkles } from "lucide-react";
 import { QuantShell } from "@/components/layout";
 import { AppRoute } from "@/constants/routes.constants";
 import { UiSignalStatus } from "@/components/quantai/data";
-import { chartSamples } from "@/components/quantai/chart-samples";
 import { useRealtimeDeliberation } from "@/hooks/use-realtime-deliberation";
 import { useRealtimeTicks } from "@/hooks/use-realtime-ticks";
 import { MONITOR_COPY } from "@/lib/ui-copy/monitor.copy";
@@ -41,6 +40,13 @@ export function MonitorPage({ initialData }: MonitorPageProps) {
 
   const liveTick = ticks[signal.symbol];
   const currentPrice = liveTick?.price ? `₹${liveTick.price.toLocaleString("en-IN")}` : signal.last;
+  const currentPriceNum =
+    (liveTick?.price ??
+      signal.currentPrice ??
+      parseFloat(String(signal.last).replace(/[^0-9.-]/g, ""))) ||
+    (typeof signal.entryPrice === "number"
+      ? signal.entryPrice
+      : parseFloat(String(signal.entryPrice).replace(/[^0-9.-]/g, "")) || 1000);
   const currentChange = liveTick
     ? `${liveTick.percentChange >= 0 ? "+" : ""}${liveTick.percentChange.toFixed(2)}%`
     : signal.change;
@@ -134,7 +140,8 @@ export function MonitorPage({ initialData }: MonitorPageProps) {
           isActive={isActive}
           timeframe={timeframe}
           onTimeframeChange={setTimeframe}
-          samples={chartSamples}
+          currentPrice={currentPriceNum}
+          samples={[]}
           trajectory={signal.trajectoryPoints?.map((t, idx, arr) => ({
             time: t.time,
             expected: t.expectedPath,

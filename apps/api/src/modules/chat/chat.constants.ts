@@ -4,8 +4,6 @@
  * @author yuva.devlab@gmail.com
  */
 
-import { MARKET_EQUITY_REGISTRY } from "@quant-ai/shared-types";
-
 /**
  * Benchmark Indian market indices recognized in Copilot prompts.
  */
@@ -28,16 +26,6 @@ export const GLOBAL_MACRO_SYMBOLS: readonly string[] = [
   "GOLD",
   "CRUDE",
   "BRENT",
-] as const;
-
-/**
- * Universal dynamic symbol universe recognized in chat inquiries.
- * Derived directly from shared-types MARKET_EQUITY_REGISTRY SSOT.
- */
-export const CHAT_QUERY_SYMBOLS: readonly string[] = [
-  ...BENCHMARK_INDEX_SYMBOLS,
-  ...MARKET_EQUITY_REGISTRY.map((s) => s.symbol),
-  ...GLOBAL_MACRO_SYMBOLS,
 ] as const;
 
 /**

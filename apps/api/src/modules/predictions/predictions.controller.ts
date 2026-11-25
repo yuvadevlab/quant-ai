@@ -46,9 +46,9 @@ export class PredictionsController {
   @Get(":id")
   @ApiOperation({ summary: SwaggerSummary.PREDICTION_BY_ID })
   @ApiParam({ name: "id", example: "PRED-8942" })
-  public findById(@Param("id") id: string): Signal {
+  public async findById(@Param("id") id: string): Promise<Signal> {
     this.logger.info(`[findById] Fetching prediction details for ${id}`);
-    return this.predictionsService.findById(id);
+    return this.predictionsService.findOrGenerate(id);
   }
 
   /**
@@ -60,9 +60,10 @@ export class PredictionsController {
   @Get(`:id/${ApiSegment.TRAJECTORY}`)
   @ApiOperation({ summary: SwaggerSummary.PREDICTION_TRAJECTORY })
   @ApiParam({ name: "id", example: "PRED-8942" })
-  public getTrajectory(@Param("id") id: string): readonly TrajectoryPoint[] {
+  public async getTrajectory(@Param("id") id: string): Promise<readonly TrajectoryPoint[]> {
     this.logger.info(`[getTrajectory] Fetching trajectory points for ${id}`);
-    return this.predictionsService.getTrajectory(id);
+    const signal = await this.predictionsService.findOrGenerate(id);
+    return signal.trajectory ?? [];
   }
 
   /**

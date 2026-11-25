@@ -107,11 +107,41 @@ export class PredictionsService implements OnModuleInit, OnModuleDestroy {
   }
 
   public findById(id: string): Signal {
-    const signal = this.predictions.get(id);
+    const signal = this.predictions.get(id) ?? this.findActiveBySymbol(id);
     if (!signal) {
       throw new NotFoundException(`Prediction with ID "${id}" not found.`);
     }
     return signal;
+  }
+
+  /**
+   * Resolves a prediction by ID or ticker; dynamically analyzes and generates if not yet present.
+   */
+  public async findOrGenerate(idOrTicker: string): Promise<Signal> {
+    try {
+      return this.findById(idOrTicker);
+    } catch {
+      if (/^pred_/i.test(idOrTicker)) {
+        throw new NotFoundException(`Prediction with ID "${idOrTicker}" not found.`);
+      }
+
+      const cleanSym = idOrTicker
+        .toUpperCase()
+        .replace(/^PRED-/, "")
+        .trim();
+      const analyzed = await executeRealMarketAnalysis(
+        this.databaseService,
+        this.liveMarketFeed,
+        this.logger,
+        { symbols: [cleanSym] },
+      );
+      if (analyzed.length > 0 && analyzed[0]) {
+        const generated = analyzed[0];
+        this.predictions.set(generated.id, generated);
+        return generated;
+      }
+      throw new NotFoundException(`Could not analyze or generate prediction for "${idOrTicker}".`);
+    }
   }
 
   /**
