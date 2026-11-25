@@ -34,7 +34,11 @@
 @import "./styles/forms.css";
 @import "./styles/tables.css";
 @import "./styles/table-cells.css";
+@import "./styles/recommendation-card.css";
 @import "./styles/monitor-cone.css";
+@import "./styles/prediction-accuracy.css";
+@import "./styles/chart-toolbar.css";
+@import "./styles/lightweight-chart.css";
 @import "./styles/monitor-agents.css";
 @import "./styles/chat-thread.css";
 @import "./styles/chat-composer.css";

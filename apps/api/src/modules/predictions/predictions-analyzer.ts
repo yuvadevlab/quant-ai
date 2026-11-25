@@ -6,12 +6,7 @@
  */
 
 import { Logger } from "@yuva-devlab/logger";
-import {
-  AssetClass,
-  MARKET_EQUITY_REGISTRY,
-  Signal,
-  SignalDirection,
-} from "@quant-ai/shared-types";
+import { AssetClass, Signal, SignalDirection } from "@quant-ai/shared-types";
 import {
   calculateRiskRewardRatio,
   calculateRsiFromSparkline,
@@ -35,19 +30,28 @@ interface TargetInstrument {
 }
 
 /**
- * Resolves the dynamic stock universe from PostgreSQL SSOT with fallback to reference registry.
+ * Resolves the dynamic stock universe from request parameters or PostgreSQL SSOT.
+ * Zero hardcoded equities — purely on-demand and database-driven.
  */
 async function resolveDynamicUniverse(
   databaseService: DatabaseService | undefined,
   options?: AnalysisFilterOptions,
   logger?: Logger,
 ): Promise<readonly TargetInstrument[]> {
+  if (options?.symbols && options.symbols.length > 0) {
+    return options.symbols.map((s) => ({
+      symbol: s.toUpperCase().trim(),
+      name: s.toUpperCase().trim(),
+      sector: "Equity",
+      assetClass: AssetClass.EQUITY,
+    }));
+  }
+
   if (databaseService) {
     try {
       const dbStocks = await databaseService.client.screenerStock.findMany({
         where: {
           ...(options?.sector ? { sector: { equals: options.sector, mode: "insensitive" } } : {}),
-          ...(options?.symbols?.length ? { symbol: { in: options.symbols as string[] } } : {}),
         },
         take: options?.limit ?? 25,
       });
@@ -61,23 +65,11 @@ async function resolveDynamicUniverse(
         }));
       }
     } catch (err) {
-      logger?.warn(`[resolveDynamicUniverse] Database query fallback: ${String(err)}`);
+      logger?.warn(`[resolveDynamicUniverse] Database query error: ${String(err)}`);
     }
   }
 
-  // Resilient fallback to shared reference registry if database is empty or offline
-  const filtered = options?.sector
-    ? MARKET_EQUITY_REGISTRY.filter((s) => s.sector.toLowerCase() === options.sector?.toLowerCase())
-    : options?.symbols?.length
-      ? MARKET_EQUITY_REGISTRY.filter((s) => options.symbols?.includes(s.symbol))
-      : MARKET_EQUITY_REGISTRY;
-
-  return filtered.map((s) => ({
-    symbol: s.symbol,
-    name: s.company,
-    sector: s.sector,
-    assetClass: AssetClass.EQUITY,
-  }));
+  return [];
 }
 
 /**

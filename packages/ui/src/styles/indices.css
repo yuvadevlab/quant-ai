@@ -35,9 +35,10 @@
   }
 
   .indices-filter-btn.is-active {
-    background-color: var(--color-accent, #3b82f6);
-    color: #ffffff;
-    border-color: var(--color-accent, #3b82f6);
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    border-color: var(--primary);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--primary) 35%, transparent);
   }
 
   .indices-grid {

@@ -50,6 +50,7 @@ export function mapBackendSignalToUi(s: BackendSignal): Signal {
     horizon: (s.horizon as Signal["horizon"]) || "Intraday",
     entry: `₹${entry.toLocaleString("en-IN")}`,
     entryPrice: entry,
+    currentPrice: current,
     target1: `₹${s.target.toLocaleString("en-IN")}`,
     target2: `₹${(s.target * 1.02).toFixed(2)}`,
     stop: `₹${s.stopLoss.toLocaleString("en-IN")}`,
@@ -61,6 +62,7 @@ export function mapBackendSignalToUi(s: BackendSignal): Signal {
     time: "Live Feed",
     confidence: `${s.confidence}%`,
     riskReward: `1:${s.riskReward ?? 2.5}`,
+    rationale: s.thesis,
     catalysts: s.catalysts
       ? [...s.catalysts]
       : ["Volume profile expansion", "Structural trend breakout"],

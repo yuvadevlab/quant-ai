@@ -53,15 +53,24 @@ export class MarketTickService implements OnModuleInit, OnModuleDestroy {
   private async loadTrackedSymbolsFromDb(): Promise<void> {
     if (!this.databaseService) return;
     try {
+      const preds = await this.databaseService.client.prediction.findMany({
+        where: { status: "ACTIVE" },
+        select: { ticker: true },
+        take: 50,
+      });
+      for (const p of preds) {
+        this.trackedSymbols.add(p.ticker);
+      }
+
       const indices = await this.databaseService.client.benchmarkIndex.findMany({
         select: { symbol: true },
-        take: 10,
+        take: 20,
       });
       for (const idx of indices) {
         this.trackedSymbols.add(idx.symbol);
       }
     } catch {
-      // Fallback if db table empty
+      // Clean start if db table empty
     }
   }
 

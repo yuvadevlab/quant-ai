@@ -3,16 +3,13 @@
  * @author yuva.devlab@gmail.com
  */
 
-import {
-  DefaultConnectionUrl,
-  MARKET_EQUITY_REGISTRY,
-  MARKET_INDEX_REGISTRY,
-} from "@quant-ai/shared-types";
+import { DefaultConnectionUrl } from "@quant-ai/shared-types";
 import { createPrismaClient } from "./client.js";
 import { seedLlmProvidersAndModels } from "./seed-llm.js";
 
 /**
  * Executes database seed transaction.
+ * Only system configurations and AI models are registered.
  */
 export async function seedDatabase(
   databaseUrl: string = DefaultConnectionUrl.DATABASE,
@@ -20,40 +17,6 @@ export async function seedDatabase(
   const prisma = createPrismaClient(databaseUrl);
 
   try {
-    for (const [symbol, meta] of Object.entries(MARKET_INDEX_REGISTRY)) {
-      await prisma.benchmarkIndex.upsert({
-        where: { symbol },
-        update: {
-          name: meta.displayName,
-          category: meta.category,
-          exchange: "NSE",
-        },
-        create: {
-          symbol,
-          name: meta.displayName,
-          category: meta.category,
-          exchange: "NSE",
-        },
-      });
-    }
-
-    for (const stock of MARKET_EQUITY_REGISTRY) {
-      await prisma.screenerStock.upsert({
-        where: { symbol: stock.symbol },
-        update: {
-          company: stock.company,
-          sector: stock.sector,
-          exchange: stock.exchange,
-        },
-        create: {
-          symbol: stock.symbol,
-          company: stock.company,
-          sector: stock.sector,
-          exchange: stock.exchange,
-        },
-      });
-    }
-
     await prisma.systemConfig.upsert({
       where: { key: "market.breadth_config" },
       update: {},

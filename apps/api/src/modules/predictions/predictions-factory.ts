@@ -91,9 +91,7 @@ export function buildSignal(params: SignalBuildParams): Signal {
     side,
     confidence,
   } = params;
-  const timestampBase36 = Date.now().toString(36);
-  const entropy = Math.random().toString(36).slice(2, 7);
-  const predictionId = `pred_${symbol.toLowerCase()}_${timestampBase36}_${entropy}`;
+  const predictionId = `PRED-${symbol.toUpperCase()}`;
   const summary = `Algorithmic ${direction} setup identified for ${name}: Current LTP ₹${current.toLocaleString("en-IN")}, RSI ${rsi.toFixed(1)}, intraday momentum ${percentChange >= 0 ? "+" : ""}${percentChange.toFixed(2)}%, ATR volatility ₹${atr.toFixed(2)}.`;
 
   const trajectory = buildSignalTrajectory(current, target, atr);
@@ -157,6 +155,12 @@ export async function persistPredictionToDb(
 ): Promise<void> {
   if (!databaseService) return;
   try {
+    await databaseService.client.prediction.deleteMany({
+      where: {
+        OR: [{ id: signal.id }, { ticker: signal.ticker }],
+      },
+    });
+
     await databaseService.client.prediction.create({
       data: {
         id: signal.id,
@@ -192,6 +196,17 @@ export async function persistPredictionToDb(
             lowerP05: t.lower ?? 0,
           })),
         },
+      },
+    });
+
+    await databaseService.client.screenerStock.upsert({
+      where: { symbol: signal.ticker },
+      update: { company: signal.name },
+      create: {
+        symbol: signal.ticker,
+        company: signal.name,
+        sector: "Equity",
+        exchange: "NSE",
       },
     });
   } catch (dbErr) {

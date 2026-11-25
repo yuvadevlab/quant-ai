@@ -26,6 +26,10 @@ export interface TableSignalItem {
   readonly time: string;
   readonly confidence?: string;
   readonly catalysts?: readonly string[];
+  readonly sector?: string;
+  readonly rationale?: string;
+  readonly riskReward?: string;
+  readonly score?: number;
 }
 
 /**

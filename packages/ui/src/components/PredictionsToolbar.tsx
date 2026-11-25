@@ -4,6 +4,7 @@
  * @author yuva.devlab@gmail.com
  */
 
+import { LayoutGrid, Table2 } from "lucide-react";
 import {
   Button,
   Card,
@@ -52,6 +53,10 @@ export interface PredictionsToolbarProps {
   readonly searchPlaceholder?: string;
   /** Custom tab options overriding defaults */
   readonly customTabs?: readonly PredictionFilterTabOption[];
+  /** Active view mode presentation */
+  readonly viewMode?: "cards" | "table";
+  /** Callback to switch view mode */
+  readonly onToggleViewMode?: (mode: "cards" | "table") => void;
 }
 
 /**
@@ -80,6 +85,8 @@ export function PredictionsToolbar({
   counts,
   searchPlaceholder = "Filter by symbol (e.g. RELIANCE, NIFTY), ID, or thesis...",
   customTabs,
+  viewMode = "cards",
+  onToggleViewMode,
 }: PredictionsToolbarProps) {
   const tabs = customTabs ?? [
     { key: "ALL", label: "All Calls", count: counts.all },
@@ -124,11 +131,38 @@ export function PredictionsToolbar({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All styles">All Styles</SelectItem>
-                <SelectItem value="Intraday">Intraday</SelectItem>
-                <SelectItem value="Swing">Swing</SelectItem>
-                <SelectItem value="Options">Options</SelectItem>
+                <SelectItem value="Intraday">⚡ Intraday Scalp</SelectItem>
+                <SelectItem value="Swing">🎯 Swing Momentum</SelectItem>
+                <SelectItem value="Options">🛡️ Positional & Options</SelectItem>
               </SelectContent>
             </Select>
+
+            {onToggleViewMode && (
+              <div className="view-mode-toggle-group">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className={`view-toggle-btn ${viewMode === "cards" ? "active" : ""}`}
+                  onClick={() => onToggleViewMode("cards")}
+                  title="Spacious Cards View"
+                >
+                  <LayoutGrid className="view-toggle-icon" />
+                  Cards
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className={`view-toggle-btn ${viewMode === "table" ? "active" : ""}`}
+                  onClick={() => onToggleViewMode("table")}
+                  title="Dense Pro Table View"
+                >
+                  <Table2 className="view-toggle-icon" />
+                  Table
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>

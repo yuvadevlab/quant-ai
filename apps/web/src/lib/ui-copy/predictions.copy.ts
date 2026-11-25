@@ -58,8 +58,8 @@ export const PREDICTIONS_COPY = {
     INSPECT_ACTION: "Inspect",
   },
   EMPTY: {
-    TITLE: "No Algorithmic Predictions Tracked",
+    TITLE: "No Active Predictions",
     DESCRIPTION:
-      "Zero dummy seed data is injected into QuantAI. Trigger a live market analysis scan to evaluate genuine technical setups across active market symbols.",
+      "Search for any stock symbol above or run a market scan to discover real-time setups and predictive trajectory cones.",
   },
 } as const;

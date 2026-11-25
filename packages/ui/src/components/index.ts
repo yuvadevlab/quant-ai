@@ -20,8 +20,15 @@ export * from "./AgentCard";
 export * from "./InvalidationCard";
 export * from "./TelemetryBar";
 export * from "./TrajectoryConeChart";
+export * from "./LightweightTrajectoryChart";
+export * from "./ChartTopBar";
+export * from "./ChartToolsSidebar";
+export * from "./ChartOhlcLegend";
+export * from "./ChartRangeBar";
 export * from "./SignalHeader";
 export * from "./MonitorKpiGrid";
+export * from "./PredictionAccuracyRibbon";
+export * from "./use-live-chart-ticker";
 export * from "./MarketBreadthCard";
 export * from "./SectorPerformanceCard";
 
@@ -30,6 +37,9 @@ export * from "./PredictionsHeader";
 export * from "./PredictionsKpiGrid";
 export * from "./PredictionsToolbar";
 export * from "./PredictionsTable";
+export * from "./RecommendationCard";
+export * from "./RecommendationCardGrid";
+export * from "./ai-research-generator";
 
 // Screener Desk presentation blocks
 export * from "./ScreenerHeader";

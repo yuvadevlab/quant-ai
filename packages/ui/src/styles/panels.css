@@ -140,4 +140,50 @@
     font-size: 12px;
     font-weight: 600;
   }
+
+  /* View Mode Toggle Controls */
+  .view-mode-toggle-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background-color: var(--card);
+    padding: 3px;
+    border-radius: var(--radius-md, 6px);
+    border: 1px solid var(--border);
+    height: var(--control-height-md, 2.125rem);
+    box-sizing: border-box;
+  }
+
+  .view-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: calc(var(--control-height-md, 2.125rem) - 8px);
+    padding: 0 10px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--muted-foreground) !important;
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: var(--radius-sm, 4px);
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+  }
+
+  .view-toggle-btn:hover {
+    color: var(--foreground) !important;
+    background-color: color-mix(in srgb, var(--primary) 12%, transparent) !important;
+  }
+  .view-toggle-btn.active {
+    background-color: var(--primary) !important;
+    color: var(--primary-foreground) !important;
+    border-color: var(--primary) !important;
+    font-weight: 700;
+    box-shadow: 0 0 10px color-mix(in srgb, var(--primary) 35%, transparent) !important;
+  }
+
+  .view-toggle-icon {
+    width: 13px;
+    height: 13px;
+  }
 }
