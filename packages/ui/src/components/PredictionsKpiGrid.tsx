@@ -6,6 +6,7 @@
 
 import { Activity, BarChart3, Target, TrendingUp } from "lucide-react";
 import { MetricCard } from "./MetricCard";
+import { UI_COPY_CONSTANTS } from "../constants/ui-copy.constants";
 
 /**
  * Props for the PredictionsKpiGrid presentation component.
@@ -22,19 +23,17 @@ export interface PredictionsKpiGridProps {
   /** Average risk-to-reward ratio string (e.g. '1:2.4') */
   readonly riskReward: string;
   /** Count of signals that hit target */
-  readonly targetHitCount?: number;
+  readonly targetHitCount: number;
   /** Count of signals that hit stop loss */
-  readonly stopHitCount?: number;
+  readonly stopHitCount: number;
   /** Average gain metric text */
-  readonly avgGainText?: string;
+  readonly avgGainText: string;
   /** Average loss metric text */
-  readonly avgLossText?: string;
+  readonly avgLossText: string;
   /** Win rate card badge text */
-  readonly winRateBadge?: string;
+  readonly winRateBadge: string;
   /** Holding period hint */
-  readonly holdingHint?: string;
-  /** Profit factor badge text */
-  readonly profitFactorBadge?: string;
+  readonly holdingHint: string;
 }
 
 /**
@@ -49,50 +48,57 @@ export function PredictionsKpiGrid({
   winRate,
   profitFactor,
   riskReward,
-  targetHitCount = 0,
-  stopHitCount = 0,
-  avgGainText = "+3.6% avg gain",
-  avgLossText = "−1.2% avg loss",
-  winRateBadge = "+3.2% THIS MONTH",
-  holdingHint = "Avg holding: 42m (Intraday) / 4d (Swing)",
-  profitFactorBadge = "EXCELLENT",
+  targetHitCount,
+  stopHitCount,
+  avgGainText,
+  avgLossText,
+  winRateBadge,
+  holdingHint,
 }: PredictionsKpiGridProps) {
+  const copy = UI_COPY_CONSTANTS.PREDICTIONS_KPI_GRID;
+
   return (
-    <section className="metric-grid" aria-label="TOTAL GENERATED">
+    <section className="metric-grid" aria-label={copy.ARIA_LABEL}>
       <MetricCard
-        label="TOTAL GENERATED"
+        label={copy.TOTAL_GENERATED}
         value={String(totalGenerated)}
         icon={<Activity size={16} />}
-        badge="ALL-TIME"
+        badge={copy.ALL_TIME}
         hint={
           <>
-            <span className="text-gain">{activeCount} active</span>
+            <span className="text-gain">
+              {activeCount} {copy.ACTIVE_SUFFIX}
+            </span>
             <span className="metric-divider">·</span>
-            <span>{totalGenerated - activeCount} settled</span>
+            <span>
+              {totalGenerated - activeCount} {copy.SETTLED_SUFFIX}
+            </span>
           </>
         }
       />
 
       <MetricCard
-        label="WIN RATE"
-        value={<span className="text-gain">{winRate}</span>}
+        label={copy.WIN_RATE}
+        value={winRate}
         icon={<Target size={16} />}
         badge={winRateBadge}
-        badgeClass="badge-green"
         hint={
           <>
-            <span className="text-gain">{targetHitCount} targets hit</span>
+            <span className="text-gain">
+              {targetHitCount} {copy.TARGETS_HIT_SUFFIX}
+            </span>
             <span className="metric-divider">·</span>
-            <span className="text-loss">{stopHitCount} stops</span>
+            <span className="text-loss">
+              {stopHitCount} {copy.STOPS_SUFFIX}
+            </span>
           </>
         }
       />
 
       <MetricCard
-        label="PROFIT FACTOR"
+        label={copy.PROFIT_FACTOR}
         value={profitFactor}
         icon={<BarChart3 size={16} />}
-        badge={profitFactorBadge}
         hint={
           <>
             <span className="text-gain">{avgGainText}</span>
@@ -103,11 +109,9 @@ export function PredictionsKpiGrid({
       />
 
       <MetricCard
-        label="AVG RISK / REWARD"
-        value={<span className="text-gain">{riskReward}</span>}
+        label={copy.AVG_RISK_REWARD}
+        value={riskReward}
         icon={<TrendingUp size={16} />}
-        badge="POSITIVE EXPECTANCY"
-        badgeClass="badge-green"
         hint={<span>{holdingHint}</span>}
       />
     </section>

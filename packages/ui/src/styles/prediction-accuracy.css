@@ -1,27 +1,21 @@
 /**
  * @file packages/ui/src/styles/prediction-accuracy.css
- * @description Styles for prediction accuracy ribbon and live trajectory verification bar.
+ * @description Styles for eligible-outcome prediction performance metrics.
  * Architecture: W3C Cascade Layer @layer dl-components
  * @author yuva.devlab@gmail.com
  */
 
 @layer dl-components {
   /* ==========================================================================
-     Prediction Accuracy Ribbon (5-Metric Ledger Summary)
+     Verified Prediction Performance Summary
      ========================================================================== */
 
   .prediction-accuracy-ribbon {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
     margin-bottom: 20px;
     width: 100%;
-  }
-
-  @media (max-width: 1200px) {
-    .prediction-accuracy-ribbon {
-      grid-template-columns: repeat(3, 1fr);
-    }
   }
 
   @media (max-width: 768px) {

@@ -26,6 +26,12 @@ import {
   type PredictionTickPayload,
   type DeliberationCompletedPayload,
 } from "./predictions-events";
+import { invalidatePrediction } from "./predictions-lifecycle";
+import {
+  findRecentResearchRuns,
+  recordNoPredictionRun,
+  type ResearchRunSummary,
+} from "./research-runs.repository";
 
 /**
  * Service managing dynamic multi-strategy prediction ledgers, live PnL, and trajectories.
@@ -48,12 +54,23 @@ export class PredictionsService implements OnModuleInit, OnModuleDestroy {
     if (this.eventBusService) {
       this.unsubTick = this.eventBusService.subscribe(
         EventTopic.MARKET_TICKS,
-        (envelope: unknown) => {
-          handlePredictionTick(
+        async (envelope: unknown) => {
+          const completedSignals = handlePredictionTick(
             this.predictions,
             envelope as DomainEventEnvelope<PredictionTickPayload>,
             this.realtimeService,
           );
+          for (const signal of completedSignals) {
+            await this.databaseService?.client.prediction.update({
+              where: { id: signal.id },
+              data: {
+                status: signal.status,
+                outcomePrice: signal.outcomePrice,
+                outcomeAt: signal.outcomeAt ? new Date(signal.outcomeAt) : null,
+                metricEligible: signal.metricEligible ?? false,
+              },
+            });
+          }
         },
       );
       this.unsubDeliberation = this.eventBusService.subscribe(
@@ -90,6 +107,13 @@ export class PredictionsService implements OnModuleInit, OnModuleDestroy {
    */
   public findAll(): readonly Signal[] {
     return Array.from(this.predictions.values());
+  }
+
+  /**
+   * Retrieves recent persisted research runs, including scans that produced no prediction.
+   */
+  public async findResearchRuns(): Promise<readonly ResearchRunSummary[]> {
+    return findRecentResearchRuns(this.databaseService);
   }
 
   /**
@@ -163,39 +187,14 @@ export class PredictionsService implements OnModuleInit, OnModuleDestroy {
    * Invalidates a previous prediction and records audit status in database and live stream.
    */
   public async invalidateSignal(id: string, reason?: string): Promise<boolean> {
-    const signal = this.predictions.get(id);
-    if (!signal) return false;
-
-    const updated: Signal = {
-      ...signal,
-      status: SignalStatus.INVALIDATED,
-      thesis: reason ? `${signal.thesis} [Invalidated: ${reason}]` : signal.thesis,
-    };
-    this.predictions.set(id, updated);
-
-    if (this.databaseService) {
-      try {
-        await this.databaseService.client.prediction.update({
-          where: { id },
-          data: { status: SignalStatus.INVALIDATED },
-        });
-      } catch (err) {
-        this.logger.warn(`[invalidateSignal] DB update failed for ${id}: ${String(err)}`);
-      }
-    }
-
-    this.realtimeService?.emitSignalUpdate({
+    return invalidatePrediction(
+      this.predictions,
       id,
-      ticker: signal.ticker,
-      currentPrice: signal.current,
-      pnlPercent: signal.pnlPercent ?? 0,
-      status: SignalStatus.INVALIDATED,
-    });
-
-    this.logger.info(
-      `[invalidateSignal] Marked prediction ${id} as INVALIDATED (${reason ?? "thesis break"})`,
+      reason,
+      this.databaseService,
+      this.realtimeService,
+      this.logger,
     );
-    return true;
   }
 
   /**
@@ -221,6 +220,10 @@ export class PredictionsService implements OnModuleInit, OnModuleDestroy {
       this.logger,
       options,
     );
+    if (signals.length === 0 && this.databaseService) {
+      await recordNoPredictionRun(this.databaseService, options);
+    }
+
     for (const signal of signals) {
       this.predictions.set(signal.id, signal);
       this.realtimeService?.emitSignalUpdate({

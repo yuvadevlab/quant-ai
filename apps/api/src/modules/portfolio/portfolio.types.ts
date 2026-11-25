@@ -4,6 +4,8 @@
  * @author yuva.devlab@gmail.com
  */
 
+import type { MarketDataStatus } from "@quant-ai/shared-types";
+
 /**
  * Trade position direction.
  */
@@ -30,6 +32,7 @@ export interface PaperPosition {
   readonly qty: number;
   readonly entryPrice: number;
   readonly currentPrice: number;
+  readonly dataStatus: MarketDataStatus;
   readonly pnl: number;
   readonly returnPercent: number;
   readonly stopLoss: number;

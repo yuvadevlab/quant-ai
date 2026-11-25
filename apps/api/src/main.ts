@@ -4,6 +4,8 @@
  */
 
 import "reflect-metadata";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { Logger } from "@yuva-devlab/logger";
@@ -21,6 +23,15 @@ import { ConfigService } from "./modules/infrastructure/config.service";
  * Bootstraps the NestJS API application server.
  */
 async function bootstrap(): Promise<void> {
+  // Load workspace or local .env when started directly via `node dist/main.js`
+  const envCandidates = [resolve(process.cwd(), ".env"), resolve(__dirname, "../../../.env")];
+  for (const envPath of envCandidates) {
+    if (existsSync(envPath) && typeof process.loadEnvFile === "function") {
+      process.loadEnvFile(envPath);
+      break;
+    }
+  }
+
   const logger = new Logger("Bootstrap");
   const app = await NestFactory.create(AppModule, { logger });
   const configService = app.get(ConfigService);

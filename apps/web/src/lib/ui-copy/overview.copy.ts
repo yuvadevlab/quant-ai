@@ -6,10 +6,10 @@
 
 export const OVERVIEW_COPY = {
   HEADER: {
-    BADGE: "QUANTITATIVE MARKET INTELLIGENCE",
-    TITLE: "Market Intelligence & Signal Radar",
+    BADGE: "MARKET DATA & RESEARCH",
+    TITLE: "Understand the market before you act",
     SUBTITLE:
-      "Real-time algorithmic surveillance across NSE indices, option chains, and high-liquidity Indian equities.",
+      "Review provider-backed quotes and research setups with clear context. Missing or simulated data is shown as unavailable; no trade outcome is guaranteed.",
     ASK_COPILOT: "Ask AI Copilot",
     VIEW_PREDICTIONS: "View All Predictions",
   },

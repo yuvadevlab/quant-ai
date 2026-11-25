@@ -5,27 +5,28 @@
  * @author yuva.devlab@gmail.com
  */
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type SyntheticEvent } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, Download, Sparkles } from "lucide-react";
+import { ArrowRight, Download, Search } from "lucide-react";
 import { QuantShell } from "@/components/layout";
 import { HorizonFilter, LedgerFilterTab } from "@/constants";
 import { UiSignalStatus } from "@/components/quantai/data";
 import { apiFetch } from "@/lib/api-fetcher";
-import { useRealtimeTicks } from "@/hooks/use-realtime-ticks";
 import { useRealtimeDeliberation } from "@/hooks/use-realtime-deliberation";
 import {
   Button,
+  Input,
+  Label,
   PredictionsHeader,
   PredictionsKpiGrid,
-  PredictionAccuracyRibbon,
   PredictionsToolbar,
   PredictionsTable,
   RecommendationCardGrid,
 } from "@quant-ai/ui";
 import { PREDICTIONS_COPY } from "@/lib/ui-copy/predictions.copy";
 import type { PredictionsData } from "../api/getPredictionsData";
+import { ResearchRunsPanel } from "./ResearchRunsPanel";
 
 export interface PredictionsPageProps {
   readonly initialData: PredictionsData;
@@ -34,25 +35,46 @@ export interface PredictionsPageProps {
 export function PredictionsPage({ initialData }: PredictionsPageProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { ticks } = useRealtimeTicks();
   const { latestSignalUpdate } = useRealtimeDeliberation();
 
   const [activeFilter, setActiveFilter] = useState<LedgerFilterTab>(LedgerFilterTab.ALL);
   const [horizonFilter, setHorizonFilter] = useState<string>(HorizonFilter.ALL);
   const [search, setSearch] = useState("");
+  const [researchSymbol, setResearchSymbol] = useState("");
   const [isScanning, setIsScanning] = useState(false);
+  const [analysisMessage, setAnalysisMessage] = useState("");
+  const [analysisFailed, setAnalysisFailed] = useState(false);
   const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
 
   const handleRunAnalysis = async () => {
+    const symbol = researchSymbol.trim().toUpperCase();
+    if (!symbol) {
+      setAnalysisFailed(true);
+      setAnalysisMessage(PREDICTIONS_COPY.RESEARCH.REQUIRED);
+      return;
+    }
+
     setIsScanning(true);
+    setAnalysisMessage("");
+    setAnalysisFailed(false);
     try {
-      const symbolsToScan = search.trim() ? [search.trim().toUpperCase()] : undefined;
-      const reqInit: RequestInit = { method: "POST" };
-      if (symbolsToScan) {
-        reqInit.body = JSON.stringify({ symbols: symbolsToScan });
+      const result = await apiFetch<readonly unknown[]>("/api/predictions/analyze", {
+        method: "POST",
+        body: JSON.stringify({ symbols: [symbol] }),
+      });
+      if (result === null) {
+        setAnalysisFailed(true);
+        setAnalysisMessage(PREDICTIONS_COPY.RESEARCH.SERVICE_ERROR);
+        return;
       }
-      await apiFetch("/api/predictions/analyze", reqInit);
+
+      setAnalysisMessage(
+        result.length > 0 ? PREDICTIONS_COPY.RESEARCH.SUCCESS : PREDICTIONS_COPY.RESEARCH.NO_SETUP,
+      );
       await queryClient.invalidateQueries({ queryKey: ["predictions-ledger"] });
+    } catch {
+      setAnalysisFailed(true);
+      setAnalysisMessage(PREDICTIONS_COPY.RESEARCH.SERVICE_ERROR);
     } finally {
       setIsScanning(false);
     }
@@ -60,18 +82,11 @@ export function PredictionsPage({ initialData }: PredictionsPageProps) {
 
   const liveSignals = useMemo(() => {
     return initialData.signals.map((signal) => {
-      const tick = ticks[signal.symbol];
       const isTargetSignal = latestSignalUpdate && latestSignalUpdate.id === signal.id;
       const status = isTargetSignal ? (latestSignalUpdate.status as UiSignalStatus) : signal.status;
-      const last = tick?.price ? `₹${tick.price.toLocaleString("en-IN")}` : signal.last;
-
-      return {
-        ...signal,
-        status,
-        last,
-      };
+      return { ...signal, status };
     });
-  }, [initialData.signals, ticks, latestSignalUpdate]);
+  }, [initialData.signals, latestSignalUpdate]);
 
   const filteredSignals = useMemo(() => {
     return liveSignals.filter((signal) => {
@@ -111,33 +126,61 @@ export function PredictionsPage({ initialData }: PredictionsPageProps) {
       <div className="desk-container">
         <PredictionsHeader
           activeCount={counts.active}
+          title={PREDICTIONS_COPY.HEADER.TITLE}
+          subtitle={PREDICTIONS_COPY.HEADER.SUBTITLE}
+          inFlightSuffix={PREDICTIONS_COPY.HEADER.IN_FLIGHT_SUFFIX}
           actionSlot={
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <div className="predictions-header-actions">
+              <form
+                className="research-form"
+                onSubmit={(event: SyntheticEvent<HTMLFormElement>) => {
+                  event.preventDefault();
+                  void handleRunAnalysis();
+                }}
+              >
+                <Label className="sr-only" htmlFor="research-symbol">
+                  {PREDICTIONS_COPY.RESEARCH.FORM_LABEL}
+                </Label>
+                <Input
+                  id="research-symbol"
+                  className="research-symbol-input"
+                  value={researchSymbol}
+                  onChange={(event) => setResearchSymbol(event.target.value)}
+                  placeholder={PREDICTIONS_COPY.RESEARCH.SYMBOL_PLACEHOLDER}
+                  autoComplete="off"
+                />
+                <Button type="submit" className="btn-primary" disabled={isScanning}>
+                  <Search size={14} />
+                  <span>
+                    {isScanning ? PREDICTIONS_COPY.RESEARCH.RUNNING : PREDICTIONS_COPY.RESEARCH.RUN}
+                  </span>
+                </Button>
+              </form>
               <Button type="button" className="btn-secondary" onClick={() => window.print()}>
                 <Download size={14} />
                 <span>{PREDICTIONS_COPY.HEADER.EXPORT_AUDIT}</span>
               </Button>
-              <Button
-                type="button"
-                className="btn-primary"
-                onClick={handleRunAnalysis}
-                disabled={isScanning}
-              >
-                <Sparkles size={14} />
-                <span>
-                  {isScanning
-                    ? PREDICTIONS_COPY.HEADER.ANALYZING
-                    : PREDICTIONS_COPY.HEADER.RUN_ANALYSIS}
-                </span>
-              </Button>
             </div>
           }
         />
+        <div className="research-guidance">
+          <p>{PREDICTIONS_COPY.RESEARCH.GUIDANCE}</p>
+          <p>{PREDICTIONS_COPY.RESEARCH.MARKET_DATA_NOTE}</p>
+          {analysisMessage && (
+            <p
+              className={analysisFailed ? "research-message is-error" : "research-message"}
+              role="status"
+              aria-live="polite"
+            >
+              {analysisMessage}
+            </p>
+          )}
+        </div>
         <PredictionsKpiGrid
           totalGenerated={initialData.totalGenerated}
           activeCount={initialData.activeCount}
-          targetHitCount={counts.targetHit}
-          stopHitCount={counts.stopHit}
+          targetHitCount={initialData.targetHitCount}
+          stopHitCount={initialData.stopHitCount}
           winRate={initialData.winRate}
           winRateBadge={initialData.winRateBadge}
           profitFactor={initialData.profitFactor}
@@ -145,19 +188,6 @@ export function PredictionsPage({ initialData }: PredictionsPageProps) {
           avgGainText={initialData.avgGainText}
           avgLossText={initialData.avgLossText}
           holdingHint={initialData.holdingHint}
-        />
-        <PredictionAccuracyRibbon
-          winRate={initialData.winRate || "74.5%"}
-          targetsHit={counts.targetHit}
-          stopsHit={counts.stopHit}
-          profitFactor={
-            initialData.profitFactor && initialData.profitFactor !== "0.00"
-              ? initialData.profitFactor
-              : "2.84x"
-          }
-          coneAdherence="92.4%"
-          directionalAccuracy="83.1%"
-          brierScore="0.11"
         />
         <PredictionsToolbar
           activeFilter={activeFilter}
@@ -177,24 +207,6 @@ export function PredictionsPage({ initialData }: PredictionsPageProps) {
             onInspect={(id) => navigate({ to: "/predictions/$id", params: { id } })}
             emptyTitle={PREDICTIONS_COPY.EMPTY.TITLE}
             emptyDescription={PREDICTIONS_COPY.EMPTY.DESCRIPTION}
-            actionSlot={
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleRunAnalysis}
-                disabled={isScanning}
-                className="gap-2 text-xs"
-              >
-                <Sparkles size={14} className={isScanning ? "animate-spin" : ""} />
-                <span>
-                  {isScanning
-                    ? "Scanning..."
-                    : search.trim()
-                      ? `Analyze ${search.trim().toUpperCase()}`
-                      : "Scan Market"}
-                </span>
-              </Button>
-            }
           />
         ) : (
           <PredictionsTable
@@ -209,6 +221,7 @@ export function PredictionsPage({ initialData }: PredictionsPageProps) {
             )}
           />
         )}
+        <ResearchRunsPanel runs={initialData.researchRuns} />
       </div>
     </QuantShell>
   );

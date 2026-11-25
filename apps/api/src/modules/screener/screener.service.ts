@@ -6,7 +6,7 @@
 
 import { Injectable, OnModuleInit, OnModuleDestroy, Optional } from "@nestjs/common";
 import { Logger } from "@yuva-devlab/logger";
-import { EventTopic, AgentStance } from "@quant-ai/shared-types";
+import { EventTopic, AgentStance, MarketDataStatus } from "@quant-ai/shared-types";
 import {
   calculateRsiFromSparkline,
   CurrencyCode,
@@ -16,7 +16,7 @@ import {
 import { type DomainEventEnvelope } from "@yuva-devlab/events";
 import { EventBusService } from "../infrastructure/event-bus.service";
 import { DatabaseService } from "../infrastructure/database.service";
-import { LiveMarketFeedService } from "../market/feed";
+import { isUsableMarketDataStatus, LiveMarketFeedService } from "../market/feed";
 import { ScreenerItem, ScreenerQueryDto } from "./screener.types";
 
 interface ScreenerTickPayload extends Record<string, unknown> {
@@ -24,6 +24,7 @@ interface ScreenerTickPayload extends Record<string, unknown> {
   price?: number;
   change?: number;
   percentChange?: number;
+  dataStatus?: MarketDataStatus;
 }
 
 /**
@@ -115,7 +116,12 @@ export class ScreenerService implements OnModuleInit, OnModuleDestroy {
    */
   public handleIncomingTick(envelope: DomainEventEnvelope<ScreenerTickPayload>): void {
     const tick = envelope?.payload;
-    if (!tick?.symbol || typeof tick.price !== "number") {
+    if (
+      !tick?.symbol ||
+      typeof tick.price !== "number" ||
+      !tick.dataStatus ||
+      !isUsableMarketDataStatus(tick.dataStatus)
+    ) {
       return;
     }
 
@@ -157,6 +163,12 @@ export class ScreenerService implements OnModuleInit, OnModuleDestroy {
       symbols.map(async (symbol) => {
         try {
           const live = await this.liveMarketFeed.getLiveQuote(symbol);
+          if (!isUsableMarketDataStatus(live.dataStatus)) {
+            this.logger.warn(
+              `[scanLiveUniverse] Skipping ${symbol}: quote status is ${live.dataStatus}`,
+            );
+            return;
+          }
           const rsi = calculateRsiFromSparkline(live.sparkline);
           const trend =
             live.percentChange > 0.5

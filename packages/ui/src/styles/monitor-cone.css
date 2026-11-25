@@ -6,6 +6,12 @@
  */
 
 @layer dl-components {
+  .chart-unavailable-note {
+    padding: 2rem;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+
   /* ==========================================================================
      Trajectory Monitor (High-Contrast Benchmark Notes & Visual Indicators)
      ========================================================================== */

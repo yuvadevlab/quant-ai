@@ -6,6 +6,7 @@
  */
 
 import { Injectable } from "@nestjs/common";
+import { MarketDataStatus } from "@quant-ai/shared-types";
 import type { LiveMarketQuote } from "./market-feed.types";
 
 /**
@@ -58,6 +59,8 @@ export class StochasticMarketSimulator {
       exchange: this.inferExchange(symbol),
       instrumentType: this.inferInstrumentType(symbol),
       sparkline,
+      source: "Synthetic simulator",
+      dataStatus: MarketDataStatus.SIMULATED,
       timestamp: new Date().toISOString(),
     };
   }

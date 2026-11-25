@@ -33,9 +33,9 @@ export function SettingsPage({ initialData }: SettingsPageProps) {
 
   const [currentTheme, setCurrentTheme] = useState<string>(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem(StorageKey.THEME) || "quantai-dark";
+      return localStorage.getItem(StorageKey.THEME) || "quantai-light";
     }
-    return "quantai-dark";
+    return "quantai-light";
   });
 
   function handleSave() {

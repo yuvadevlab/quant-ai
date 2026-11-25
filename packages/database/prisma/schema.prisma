@@ -81,27 +81,58 @@ model BenchmarkIndex {
 
 /// Quantitative prediction forecast records and life-cycle state.
 model Prediction {
-  id           String            @id
-  ticker       String
-  name         String
-  direction    String
-  status       String
-  entry        Float
-  target       Float
-  stopLoss     Float
-  currentPrice Float
-  confidence   Float
-  riskReward   Float
-  timeHorizon  String
-  regime       String
-  summary      String
-  verdicts     AgentVerdict[]
-  trajectory   TrajectoryPoint[]
-  createdAt    DateTime          @default(now())
-  expiresAt    DateTime
+  id             String            @id
+  ticker         String
+  name           String
+  direction      String
+  status         String
+  entry          Float
+  target         Float
+  stopLoss       Float
+  currentPrice   Float
+  confidence     Float
+  riskReward     Float
+  strategy       String            @default("SWING")
+  assetClass     String            @default("EQUITY") @map("asset_class")
+  timeHorizon    String
+  regime         String
+  summary        String
+  verdicts       AgentVerdict[]
+  trajectory     TrajectoryPoint[]
+  researchRuns   ResearchRun[]
+  dataSource     String?           @map("data_source")
+  dataStatus     String            @default("UNAVAILABLE") @map("data_status")
+  observedAt     DateTime?         @map("observed_at")
+  metricEligible Boolean           @default(false) @map("metric_eligible")
+  outcomePrice   Float?            @map("outcome_price")
+  outcomeAt      DateTime?         @map("outcome_at")
+  createdAt      DateTime          @default(now())
+  expiresAt      DateTime
 
   @@index([ticker, status])
+  @@index([metricEligible, status])
   @@map("predictions")
+}
+
+/// Append-only record of each requested analysis, including runs with no prediction.
+model ResearchRun {
+  id             String      @id @default(cuid())
+  ticker         String
+  serviceMode    String      @map("service_mode")
+  timeHorizon    String      @map("time_horizon")
+  result         String      @default("NO_SETUP")
+  dataSource     String?     @map("data_source")
+  dataStatus     String      @default("UNAVAILABLE") @map("data_status")
+  observedAt     DateTime?   @map("observed_at")
+  referencePrice Float?      @map("reference_price")
+  snapshot       Json        @default("{}")
+  predictionId   String?     @map("prediction_id")
+  prediction     Prediction? @relation(fields: [predictionId], references: [id], onDelete: SetNull)
+  createdAt      DateTime    @default(now()) @map("created_at")
+
+  @@index([ticker, serviceMode, timeHorizon, createdAt(sort: Desc)])
+  @@index([result, createdAt(sort: Desc)])
+  @@map("research_runs")
 }
 
 /// Multi-agent debate transcript speeches and verdicts.
@@ -168,18 +199,18 @@ model ScreenerStock {
 
 /// Registered AI model providers (Google Gemini, Anthropic, Ollama, OpenAI, Groq, etc.).
 model LlmProvider {
-  id           String      @id @default(cuid())
-  name         String      @db.VarChar(120)
-  slug         String      @unique @db.VarChar(64)
-  providerType String      @map("provider_type") @db.VarChar(64)
-  description  String?     @db.VarChar(500)
-  baseUrl      String?     @map("base_url") @db.VarChar(512)
-  config       Json        @default("{}")
-  isEnabled    Boolean     @default(true) @map("is_enabled")
-  sortOrder    Int         @default(0) @map("sort_order")
-  createdAt    DateTime    @default(now()) @map("created_at")
-  updatedAt    DateTime    @updatedAt @map("updated_at")
-  createdBy    String?     @map("created_by") @db.VarChar(128)
+  id           String     @id @default(cuid())
+  name         String     @db.VarChar(120)
+  slug         String     @unique @db.VarChar(64)
+  providerType String     @map("provider_type") @db.VarChar(64)
+  description  String?    @db.VarChar(500)
+  baseUrl      String?    @map("base_url") @db.VarChar(512)
+  config       Json       @default("{}")
+  isEnabled    Boolean    @default(true) @map("is_enabled")
+  sortOrder    Int        @default(0) @map("sort_order")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  createdBy    String?    @map("created_by") @db.VarChar(128)
   models       LlmModel[]
 
   @@map("llm_providers")

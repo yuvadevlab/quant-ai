@@ -16,6 +16,7 @@ export interface YahooChartMeta {
   readonly regularMarketDayHigh?: number;
   readonly regularMarketDayLow?: number;
   readonly regularMarketVolume?: number;
+  readonly regularMarketTime?: number;
   readonly currency?: string;
   readonly fullExchangeName?: string;
   readonly instrumentType?: string;

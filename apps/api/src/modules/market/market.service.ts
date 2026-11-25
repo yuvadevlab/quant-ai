@@ -12,6 +12,7 @@ import {
   EventTopic,
   IndexCategory,
   IndexQuote,
+  MarketDataStatus,
   MARKET_INDEX_REGISTRY,
 } from "@quant-ai/shared-types";
 import { type DomainEventEnvelope } from "@yuva-devlab/events";
@@ -20,20 +21,30 @@ import { EventBusService } from "../infrastructure/event-bus.service";
 import { RedisService } from "../infrastructure/redis.service";
 import { LiveMarketFeedService } from "./feed";
 import {
+  loadMarketConfigs,
+  saveMarketConfig,
+  UNAVAILABLE_MARKET_BREADTH,
+} from "./market-config.repository";
+import {
   DEFAULT_BREADTH_CONFIG,
   DEFAULT_SECTOR_CONFIG,
   MarketBreadthConfig,
   SectorMomentumConfig,
   SystemConfigKey,
-  calculateMarketBreadth,
   classifyMomentum,
 } from "./market-config.types";
+
+const CORE_INDEX_SYMBOLS = ["NIFTY 50", "BANKNIFTY", "SENSEX", "INDIA VIX"] as const;
+const BENCHMARK_REFRESH_INTERVAL_MS = 30_000;
 
 interface MarketTickPayload extends Record<string, unknown> {
   symbol?: string;
   price?: number;
   change?: number;
   percentChange?: number;
+  dataSource?: string;
+  dataStatus?: MarketDataStatus;
+  observedAt?: string;
 }
 
 /**
@@ -46,6 +57,8 @@ export class MarketService implements OnModuleInit, OnModuleDestroy {
   private breadthConfig: MarketBreadthConfig = DEFAULT_BREADTH_CONFIG;
   private sectorConfig: SectorMomentumConfig = DEFAULT_SECTOR_CONFIG;
   private unsubscribeFromBus?: () => void;
+  private lastBenchmarkRefreshAt = 0;
+  private benchmarkRefresh?: Promise<void>;
 
   public constructor(
     private readonly liveMarketFeed: LiveMarketFeedService,
@@ -61,6 +74,7 @@ export class MarketService implements OnModuleInit, OnModuleDestroy {
         change: 0,
         changePercent: 0,
         sparkline: [],
+        dataStatus: MarketDataStatus.UNAVAILABLE,
       });
     }
   }
@@ -77,7 +91,7 @@ export class MarketService implements OnModuleInit, OnModuleDestroy {
     }
 
     await this.loadConfigurationsFromDb();
-    await this.hydrateLiveIndices();
+    await this.refreshBenchmarkIndices();
   }
 
   public onModuleDestroy(): void {
@@ -85,12 +99,28 @@ export class MarketService implements OnModuleInit, OnModuleDestroy {
   }
 
   public getBenchmarkIndices(): readonly IndexQuote[] {
-    return Array.from(this.liveIndices.values());
+    return CORE_INDEX_SYMBOLS.flatMap((symbol) => {
+      const quote = this.liveIndices.get(symbol);
+      return quote ? [quote] : [];
+    });
   }
 
   public getIndicesByCategory(category?: IndexCategory): readonly IndexQuote[] {
-    const all = Array.from(this.liveIndices.values());
+    const all = this.getBenchmarkIndices();
     return category ? all.filter((item) => item.category === category) : all;
+  }
+
+  public async refreshBenchmarkIndices(): Promise<void> {
+    if (this.benchmarkRefresh) return this.benchmarkRefresh;
+    if (Date.now() - this.lastBenchmarkRefreshAt < BENCHMARK_REFRESH_INTERVAL_MS) return;
+
+    this.benchmarkRefresh = this.hydrateCoreIndices();
+    try {
+      await this.benchmarkRefresh;
+    } finally {
+      this.lastBenchmarkRefreshAt = Date.now();
+      this.benchmarkRefresh = undefined;
+    }
   }
 
   public getIndexQuote(symbol: string): IndexQuote | undefined {
@@ -98,14 +128,16 @@ export class MarketService implements OnModuleInit, OnModuleDestroy {
   }
 
   public getMarketBreadth() {
-    const changes = Array.from(this.liveIndices.values()).map((idx) => idx.change);
-    const vix = this.liveIndices.get("INDIA VIX")?.price ?? 0;
-    return calculateMarketBreadth(changes, vix, this.breadthConfig);
+    return UNAVAILABLE_MARKET_BREADTH;
   }
 
   public getSectorPerformance() {
     const sectoral = Array.from(this.liveIndices.values()).filter(
-      (idx) => idx.category === IndexCategory.SECTORAL || idx.category === IndexCategory.FINANCIALS,
+      (idx) =>
+        (idx.category === IndexCategory.SECTORAL || idx.category === IndexCategory.FINANCIALS) &&
+        (idx.dataStatus === MarketDataStatus.VERIFIED ||
+          idx.dataStatus === MarketDataStatus.PROVIDER_UNVERIFIED ||
+          idx.dataStatus === MarketDataStatus.MARKET_CLOSED),
     );
 
     return sectoral.map((idx) => {
@@ -133,18 +165,12 @@ export class MarketService implements OnModuleInit, OnModuleDestroy {
     partial: Partial<MarketBreadthConfig>,
   ): Promise<MarketBreadthConfig> {
     this.breadthConfig = { ...this.breadthConfig, ...partial };
-    this.logger.info("[updateBreadthConfig] Updated market breadth runtime configuration");
-    if (this.databaseService) {
-      await this.databaseService.client.systemConfig.upsert({
-        where: { key: SystemConfigKey.MARKET_BREADTH },
-        update: { value: this.breadthConfig as object },
-        create: {
-          key: SystemConfigKey.MARKET_BREADTH,
-          description: "Configurable market breadth and institutional flow parameters",
-          value: this.breadthConfig as object,
-        },
-      });
-    }
+    await saveMarketConfig(
+      this.databaseService,
+      SystemConfigKey.MARKET_BREADTH,
+      "Configurable market breadth and institutional flow parameters",
+      this.breadthConfig,
+    );
     return this.breadthConfig;
   }
 
@@ -152,18 +178,12 @@ export class MarketService implements OnModuleInit, OnModuleDestroy {
     partial: Partial<SectorMomentumConfig>,
   ): Promise<SectorMomentumConfig> {
     this.sectorConfig = { ...this.sectorConfig, ...partial };
-    this.logger.info("[updateSectorConfig] Updated sector momentum runtime configuration");
-    if (this.databaseService) {
-      await this.databaseService.client.systemConfig.upsert({
-        where: { key: SystemConfigKey.SECTOR_MOMENTUM },
-        update: { value: this.sectorConfig as object },
-        create: {
-          key: SystemConfigKey.SECTOR_MOMENTUM,
-          description: "Configurable sector momentum classification percentage thresholds",
-          value: this.sectorConfig as object,
-        },
-      });
-    }
+    await saveMarketConfig(
+      this.databaseService,
+      SystemConfigKey.SECTOR_MOMENTUM,
+      "Configurable sector momentum thresholds",
+      this.sectorConfig,
+    );
     return this.sectorConfig;
   }
 
@@ -181,6 +201,9 @@ export class MarketService implements OnModuleInit, OnModuleDestroy {
       change: tick.change ?? existing.change,
       changePercent: tick.percentChange ?? existing.changePercent,
       sparkline: rollingSparkline,
+      ...(tick.dataSource ? { dataSource: tick.dataSource } : {}),
+      ...(tick.dataStatus ? { dataStatus: tick.dataStatus } : {}),
+      ...(tick.observedAt ? { observedAt: tick.observedAt } : {}),
     };
 
     this.liveIndices.set(tick.symbol, updated);
@@ -188,32 +211,13 @@ export class MarketService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async loadConfigurationsFromDb(): Promise<void> {
-    if (!this.databaseService) return;
-    try {
-      const breadthRecord = await this.databaseService.client.systemConfig.findUnique({
-        where: { key: SystemConfigKey.MARKET_BREADTH },
-      });
-      if (breadthRecord?.value && typeof breadthRecord.value === "object") {
-        this.breadthConfig = { ...DEFAULT_BREADTH_CONFIG, ...(breadthRecord.value as object) };
-      }
-
-      const sectorRecord = await this.databaseService.client.systemConfig.findUnique({
-        where: { key: SystemConfigKey.SECTOR_MOMENTUM },
-      });
-      if (sectorRecord?.value && typeof sectorRecord.value === "object") {
-        this.sectorConfig = { ...DEFAULT_SECTOR_CONFIG, ...(sectorRecord.value as object) };
-      }
-      this.logger.info("[loadConfigurationsFromDb] Market configs loaded from database");
-    } catch (error) {
-      this.logger.warn(
-        `[loadConfigurationsFromDb] Could not load market configs from database: ${String(error)}`,
-      );
-    }
+    const config = await loadMarketConfigs(this.databaseService, this.logger);
+    this.breadthConfig = config.breadth;
+    this.sectorConfig = config.sector;
   }
 
-  private async hydrateLiveIndices(): Promise<void> {
-    const symbols = Array.from(this.liveIndices.keys());
-    for (const symbol of symbols) {
+  private async hydrateCoreIndices(): Promise<void> {
+    for (const symbol of CORE_INDEX_SYMBOLS) {
       try {
         const live = await this.liveMarketFeed.getLiveQuote(symbol);
         const existing = this.liveIndices.get(symbol);
@@ -224,10 +228,15 @@ export class MarketService implements OnModuleInit, OnModuleDestroy {
             change: live.change,
             changePercent: live.percentChange,
             sparkline: live.sparkline.length > 0 ? live.sparkline : [live.price],
+            dataSource: live.source,
+            dataStatus: live.dataStatus,
+            ...(live.observedAt ? { observedAt: live.observedAt } : {}),
           });
         }
-      } catch {
-        this.logger.warn(`[hydrateLiveIndices] Could not hydrate live quote for ${symbol}`);
+      } catch (error) {
+        this.logger.warn(
+          `[hydrateCoreIndices] Could not hydrate live quote for ${symbol}: ${String(error)}`,
+        );
       }
     }
   }

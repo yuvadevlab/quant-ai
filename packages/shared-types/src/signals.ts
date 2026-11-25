@@ -7,6 +7,7 @@ import { z } from "zod";
 import { AgentRole, AgentStance } from "./deliberation.types";
 import {
   AssetClass,
+  MarketDataStatus,
   OptionType,
   SignalDirection,
   SignalRegime,
@@ -67,6 +68,12 @@ export interface Signal {
   readonly trajectory: readonly TrajectoryPoint[];
   readonly agents: readonly AgentDeliberation[];
   readonly optionDetails?: OptionContractDetails;
+  readonly dataSource?: string;
+  readonly dataStatus?: MarketDataStatus;
+  readonly observedAt?: string;
+  readonly outcomePrice?: number;
+  readonly outcomeAt?: string;
+  readonly metricEligible?: boolean;
 }
 
 /**
@@ -96,6 +103,12 @@ export const SignalSchema = z.object({
   riskReward: z.number().positive(),
   catalysts: z.array(z.string()),
   invalidation: z.string(),
+  dataSource: z.string().optional(),
+  dataStatus: z.nativeEnum(MarketDataStatus).optional(),
+  observedAt: z.string().datetime().optional(),
+  outcomePrice: z.number().positive().optional(),
+  outcomeAt: z.string().datetime().optional(),
+  metricEligible: z.boolean().optional(),
   optionDetails: z
     .object({
       underlyingSymbol: z.string(),

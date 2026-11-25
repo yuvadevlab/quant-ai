@@ -9,6 +9,7 @@ import {
   AgentRole,
   AgentStance,
   AssetClass,
+  MarketDataStatus,
   SignalDirection,
   SignalRegime,
   SignalStatus,
@@ -32,6 +33,9 @@ describe("@quant-ai/events Domain Envelopes", () => {
       low: 24300,
       volume: 1500000,
       timestamp: new Date().toISOString(),
+      dataSource: "Test provider",
+      dataStatus: MarketDataStatus.VERIFIED,
+      observedAt: new Date().toISOString(),
     });
 
     expect(envelope.eventId).toBeDefined();

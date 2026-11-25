@@ -1,7 +1,156 @@
 /*
  * QuantAI Platform Stylesheet
  * Standardized pure platform CSS and theme layers.
- * Attribution: yuva.devlab@gmail.com
  */
 
 @import "@quant-ai/ui/styles.css";
+@import "./styles/research-runs.css";
+
+@layer dl-app {
+  .desk-container,
+  .overview-container {
+    width: 100%;
+    min-width: 0;
+    overflow-x: clip;
+  }
+
+  .indices-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  }
+
+  .metric-grid,
+  .portfolio-kpi-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  }
+
+  .monitor-kpi-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  }
+
+  .desk-header,
+  .desk-actions,
+  .predictions-header-actions {
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  .predictions-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .research-form {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .research-symbol-input {
+    width: 15rem;
+    min-width: 11rem;
+    max-width: 100%;
+    min-height: var(--control-height-lg);
+  }
+
+  .research-guidance {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+    border-left: 3px solid var(--primary);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--primary) 6%, var(--bg-card));
+    color: var(--text-secondary);
+  }
+
+  .research-guidance p {
+    margin: 0;
+  }
+
+  .research-message {
+    color: var(--success);
+    font-weight: 600;
+  }
+
+  .research-message.is-error {
+    color: var(--destructive);
+  }
+
+  .market-data-unavailable {
+    margin: 0;
+    padding: 1rem;
+    color: var(--text-muted);
+  }
+
+  .index-data-provenance {
+    min-height: 1.25rem;
+  }
+
+  .ticker-scroll-content {
+    min-width: 0;
+    overflow-x: auto;
+  }
+
+  @media (max-width: 64rem) {
+    .quant-topbar {
+      height: auto;
+      min-height: 3.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding-block: 0.5rem;
+    }
+
+    .topbar-left,
+    .topbar-right {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .market-regime-badge {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .regime-text,
+    .regime-vix,
+    .model-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .topbar-right {
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .model-status-chip {
+      min-width: 0;
+      max-width: 14rem;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .desk-actions,
+    .predictions-header-actions,
+    .research-form {
+      width: 100%;
+    }
+
+    .research-symbol-input {
+      flex: 1 1 12rem;
+      min-width: 0;
+    }
+
+    .research-form button {
+      flex: 1 0 auto;
+    }
+
+    .overview-container,
+    .desk-container {
+      gap: 1rem;
+    }
+  }
+}

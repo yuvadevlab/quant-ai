@@ -6,6 +6,7 @@
  */
 
 import { queryOptions } from "@tanstack/react-query";
+import type { MarketDataStatus } from "@quant-ai/shared-types";
 import { apiFetch } from "@/lib/api-fetcher";
 
 export interface PositionItem {
@@ -15,6 +16,7 @@ export interface PositionItem {
   readonly qty: number;
   readonly entryPrice: number;
   readonly currentPrice: number;
+  readonly dataStatus?: MarketDataStatus;
   readonly pnl: number;
   readonly pnlPercent?: number;
   readonly returnPercent?: number;

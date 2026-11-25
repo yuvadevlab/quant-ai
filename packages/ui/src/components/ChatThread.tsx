@@ -6,8 +6,9 @@
 
 import type { ReactNode } from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { Card } from "@yuva-devlab/ui";
+import { Button, Card } from "@yuva-devlab/ui";
 import type { ChatThreadMessage, TableSignalItem } from "../types";
+import { ChatMarkdown } from "./ChatMarkdown";
 
 /**
  * Props for the ChatThread presentation component.
@@ -75,7 +76,7 @@ export function ChatThread({
               </div>
 
               <div className="msg-text-bubble">
-                <p>{msg.text}</p>
+                {isAssistant ? <ChatMarkdown content={msg.text} /> : <p>{msg.text}</p>}
 
                 {msg.hasSignal &&
                   (msg.signalData || featuredSignal) &&
@@ -112,14 +113,14 @@ export function ChatThread({
                         {renderTrajectoryLink ? (
                           renderTrajectoryLink(activeSignal)
                         ) : (
-                          <button
+                          <Button
                             type="button"
                             onClick={() => onViewTrajectory?.(activeSignal.id)}
                             className="embed-action-btn"
                           >
                             <span>VIEW TRAJECTORY CONE</span>
                             <ArrowRight size={14} />
-                          </button>
+                          </Button>
                         )}
                       </Card>
                     );

@@ -7,6 +7,7 @@
 import { Logger } from "@yuva-devlab/logger";
 import {
   AssetClass,
+  MarketDataStatus,
   Signal,
   SignalDirection,
   SignalRegime,
@@ -21,7 +22,7 @@ import {
   TradePositionSide,
 } from "@quant-ai/quant-core";
 import { DatabaseService } from "../infrastructure/database.service";
-import { LiveMarketFeedService } from "../market/feed";
+import { isUsableMarketDataStatus, LiveMarketFeedService } from "../market/feed";
 
 /**
  * Hydrates multi-strategy predictions dynamically from database records using real-time market prices.
@@ -49,7 +50,9 @@ export async function hydratePredictionsFromDatabase(
     for (const record of records) {
       try {
         const live = await liveMarketFeed.getLiveQuote(record.ticker);
-        const current = live.price;
+        const current = isUsableMarketDataStatus(live.dataStatus)
+          ? live.price
+          : record.currentPrice;
         const side =
           record.direction === "SHORT" ? TradePositionSide.SHORT : TradePositionSide.LONG;
 
@@ -61,8 +64,12 @@ export async function hydratePredictionsFromDatabase(
           id: record.id,
           ticker: record.ticker,
           name: record.name,
-          strategy: TradeStrategy.SWING,
-          assetClass: AssetClass.EQUITY,
+          strategy: Object.values(TradeStrategy).includes(record.strategy as TradeStrategy)
+            ? (record.strategy as TradeStrategy)
+            : TradeStrategy.SWING,
+          assetClass: Object.values(AssetClass).includes(record.assetClass as AssetClass)
+            ? (record.assetClass as AssetClass)
+            : AssetClass.EQUITY,
           direction: record.direction === "SHORT" ? SignalDirection.SHORT : SignalDirection.LONG,
           entry: record.entry,
           current,
@@ -94,6 +101,16 @@ export async function hydratePredictionsFromDatabase(
             confidence: v.confidence,
             summary: v.reasoning,
           })),
+          dataSource: record.dataSource ?? undefined,
+          dataStatus: Object.values(MarketDataStatus).includes(
+            record.dataStatus as MarketDataStatus,
+          )
+            ? (record.dataStatus as MarketDataStatus)
+            : MarketDataStatus.UNAVAILABLE,
+          observedAt: record.observedAt?.toISOString(),
+          outcomePrice: record.outcomePrice ?? undefined,
+          outcomeAt: record.outcomeAt?.toISOString(),
+          metricEligible: record.metricEligible,
         });
       } catch (err) {
         logger.warn(

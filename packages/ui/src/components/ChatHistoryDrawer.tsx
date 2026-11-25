@@ -116,7 +116,7 @@ export function ChatHistoryDrawer({
                       </div>
                     </div>
 
-                    <button
+                    <Button
                       type="button"
                       aria-label="Delete session"
                       onClick={(e) => {
@@ -126,7 +126,7 @@ export function ChatHistoryDrawer({
                       className="history-delete-btn"
                     >
                       <Trash2 size={13} />
-                    </button>
+                    </Button>
                   </div>
                 );
               })}

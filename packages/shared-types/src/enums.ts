@@ -26,6 +26,18 @@ export enum SignalStatus {
 }
 
 /**
+ * Reliability state for market observations used by analysis and outcome tracking.
+ */
+export enum MarketDataStatus {
+  VERIFIED = "VERIFIED",
+  PROVIDER_UNVERIFIED = "PROVIDER_UNVERIFIED",
+  MARKET_CLOSED = "MARKET_CLOSED",
+  STALE = "STALE",
+  SIMULATED = "SIMULATED",
+  UNAVAILABLE = "UNAVAILABLE",
+}
+
+/**
  * Directional bias for signals and predictions.
  */
 export enum SignalDirection {

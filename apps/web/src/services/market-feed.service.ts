@@ -6,7 +6,7 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import type { IndexCategory, IndexQuote } from "@quant-ai/shared-types";
+import { MarketDataStatus, type IndexCategory, type IndexQuote } from "@quant-ai/shared-types";
 import { apiFetch } from "@/lib/api-fetcher";
 
 export interface MarketTick {
@@ -19,17 +19,21 @@ export interface MarketTick {
   readonly dayHigh: string;
   readonly dayLow: string;
   readonly path: string;
+  readonly dataStatus: MarketDataStatus;
+  readonly dataSource?: string;
+  readonly observedAt?: string;
   readonly isVix?: boolean;
   readonly category?: IndexCategory;
 }
 
 export interface MarketBreadth {
-  readonly advances: number;
-  readonly declines: number;
-  readonly unchanged: number;
-  readonly advanceRatio: string;
-  readonly fiiNet: string;
-  readonly diiNet: string;
+  readonly dataAvailable: boolean;
+  readonly advances: number | null;
+  readonly declines: number | null;
+  readonly unchanged: number | null;
+  readonly advanceRatio: string | null;
+  readonly fiiNet: string | null;
+  readonly diiNet: string | null;
   readonly regime: string;
   readonly regimeType: string;
   readonly volatilityEnv: string;
@@ -43,22 +47,30 @@ export interface SectorPerformance {
 }
 
 export const DEFAULT_BREADTH: MarketBreadth = {
-  advances: 1482,
-  declines: 648,
-  unchanged: 84,
-  advanceRatio: "69.5%",
-  fiiNet: "+₹2,145 Cr",
-  diiNet: "+₹1,280 Cr",
-  regime: "Institutional Accumulation",
-  regimeType: "Bullish",
-  volatilityEnv: "Low Volatility (VIX 13.42)",
+  dataAvailable: false,
+  advances: null,
+  declines: null,
+  unchanged: null,
+  advanceRatio: null,
+  fiiNet: null,
+  diiNet: null,
+  regime: "Unavailable",
+  regimeType: "Unavailable",
+  volatilityEnv: "Market breadth source unavailable",
 };
 
 export function mapIndexQuoteToTick(item: IndexQuote): MarketTick {
-  const priceFormatted = item.price.toLocaleString("en-IN", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+  const dataStatus = item.dataStatus ?? MarketDataStatus.UNAVAILABLE;
+  const hasMarketPrice =
+    dataStatus !== MarketDataStatus.SIMULATED &&
+    dataStatus !== MarketDataStatus.UNAVAILABLE &&
+    item.price > 0;
+  const priceFormatted = hasMarketPrice
+    ? item.price.toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    : "—";
   const sign = item.change >= 0 ? "+" : "";
   const pctSign = item.changePercent >= 0 ? "+" : "";
 
@@ -66,20 +78,25 @@ export function mapIndexQuoteToTick(item: IndexQuote): MarketTick {
     name: item.symbol,
     exchange: "NSE",
     price: priceFormatted,
-    change: `${sign}${item.change.toFixed(2)} (${pctSign}${item.changePercent.toFixed(2)}%)`,
+    change: hasMarketPrice
+      ? `${sign}${item.change.toFixed(2)} (${pctSign}${item.changePercent.toFixed(2)}%)`
+      : "—",
     changeValue: item.change,
     positive: item.change >= 0,
-    dayHigh: (item.price * 1.01).toFixed(2),
-    dayLow: (item.price * 0.99).toFixed(2),
+    dayHigh: "—",
+    dayLow: "—",
     path:
-      item.sparkline && item.sparkline.length > 0
+      hasMarketPrice && item.sparkline && item.sparkline.length > 0
         ? item.sparkline
             .map(
               (v, i) =>
                 `${i * 12},${Math.round(20 - ((v - item.price * 0.98) / (item.price * 0.04 || 1)) * 20)}`,
             )
             .join(" ")
-        : "0,14 12,11 24,13 36,5 48,9 60,2",
+        : "",
+    dataStatus,
+    ...(item.dataSource ? { dataSource: item.dataSource } : {}),
+    ...(item.observedAt ? { observedAt: item.observedAt } : {}),
     category: item.category,
     isVix: item.symbol.includes("VIX"),
   };

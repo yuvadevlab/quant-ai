@@ -28,7 +28,6 @@ export * from "./ChartRangeBar";
 export * from "./SignalHeader";
 export * from "./MonitorKpiGrid";
 export * from "./PredictionAccuracyRibbon";
-export * from "./use-live-chart-ticker";
 export * from "./MarketBreadthCard";
 export * from "./SectorPerformanceCard";
 
@@ -61,6 +60,7 @@ export * from "./WorkstationLaunchpad";
 
 // Copilot Chat Desk presentation blocks
 export * from "./ChatHeader";
+export * from "./ChatMarkdown";
 export * from "./ChatThread";
 export * from "./ChatComposer";
 export * from "./ChatSuggestions";

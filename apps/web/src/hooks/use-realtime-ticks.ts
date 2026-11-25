@@ -6,6 +6,7 @@
 import { useEffect, useState, useRef } from "react";
 import { io, type Socket } from "socket.io-client";
 import {
+  MarketDataStatus,
   RealtimeClientEvent,
   RealtimeRoom,
   RealtimeServerEvent,
@@ -19,6 +20,9 @@ export interface LiveTick {
   readonly change: number;
   readonly percentChange: number;
   readonly timestamp: string;
+  readonly dataSource?: string;
+  readonly dataStatus?: MarketDataStatus;
+  readonly observedAt?: string;
 }
 
 interface UseRealtimeTicksReturn {

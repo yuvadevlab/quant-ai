@@ -119,25 +119,27 @@ export function OverviewSpotlight({
               )}
 
               <div className="card-footer-row">
-                <div className="confidence-block">
-                  <span className="conf-label">AGENT CONVICTION</span>
-                  <div className="conf-bar-wrapper">
-                    <div className="conf-bar-fill" style={{ width: signal.confidence ?? "85%" }} />
-                    <span className="conf-val">{signal.confidence ?? "85%"}</span>
+                {signal.confidence && (
+                  <div className="confidence-block">
+                    <span className="conf-label">HEURISTIC SCORE</span>
+                    <div className="conf-bar-wrapper">
+                      <div className="conf-bar-fill" style={{ width: signal.confidence }} />
+                      <span className="conf-val">{signal.confidence}</span>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {renderInspectLink ? (
                   renderInspectLink(signal)
                 ) : (
-                  <button
+                  <Button
                     type="button"
                     onClick={() => onInspect?.(signal.id)}
                     className="btn-inspect-trajectory"
                   >
                     <span>INSPECT TRAJECTORY</span>
                     <ArrowRight size={14} />
-                  </button>
+                  </Button>
                 )}
               </div>
             </Card>

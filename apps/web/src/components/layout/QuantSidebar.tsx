@@ -5,6 +5,7 @@
  */
 
 import { Link, useRouterState } from "@tanstack/react-router";
+import { MarketDataStatus } from "@quant-ai/shared-types";
 import {
   Briefcase,
   LayoutGrid,
@@ -46,7 +47,11 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
   const { data: ticks = [] } = useBenchmarkTicks();
   const { data: breadth = DEFAULT_BREADTH } = useMarketBreadth();
   const vixTick = ticks.find((t) => t.isVix || t.name.includes("VIX"));
-  const vixPrice = vixTick ? vixTick.price : "13.42";
+  const hasVixQuote =
+    vixTick?.dataStatus === MarketDataStatus.VERIFIED ||
+    vixTick?.dataStatus === MarketDataStatus.PROVIDER_UNVERIFIED ||
+    vixTick?.dataStatus === MarketDataStatus.MARKET_CLOSED;
+  const vixPrice = hasVixQuote && vixTick ? vixTick.price : "—";
   const copy = COMMON_COPY.SIDEBAR;
 
   return (
@@ -154,10 +159,12 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
           <div className="footer-status-card">
             <div className="status-live-header">
               <span
-                className={`live-dot ${isConnected ? "is-connected" : ""}`}
+                className={`live-dot ${hasVixQuote ? "is-connected" : ""}`}
                 aria-hidden="true"
               />
-              <span className="live-exchange">{COMMON_COPY.STATUS.LIVE_STREAM}</span>
+              <span className="live-exchange">
+                {hasVixQuote ? copy.MARKET_CLOSE_AVAILABLE : copy.MARKET_DATA_UNAVAILABLE}
+              </span>
             </div>
             <div className="status-caption">{sessionInfo.statusText}</div>
             <div className="status-meta">
@@ -165,7 +172,7 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
                 {copy.VIX_PREFIX} {vixPrice}
               </span>
               <span className="meta-fii">
-                {breadth.fiiNet} {copy.FII_SUFFIX}
+                {breadth.fiiNet ?? "—"} {copy.FII_SUFFIX}
               </span>
             </div>
           </div>

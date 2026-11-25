@@ -47,6 +47,28 @@
   .tick-name {
     font-weight: 600;
     color: var(--text-muted);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+  }
+
+  /* Exchange badge inline after symbol with a mid-dot separator */
+  .tick-exchange {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: var(--text-dim);
+  }
+
+  .tick-exchange::before {
+    content: "·";
+    font-size: 12px;
+    line-height: 1;
+    color: var(--text-dim);
+    opacity: 0.75;
   }
 
   .tick-price {
@@ -105,5 +127,15 @@
     color: var(--text-dim);
     flex-shrink: 0;
     margin-left: auto;
+  }
+
+  /* Data provenance label in the ticker strip */
+  .tick-data-status {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-dim);
+    opacity: 0.6;
+    text-transform: uppercase;
   }
 }

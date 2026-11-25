@@ -82,6 +82,9 @@ export function OverviewIndicesGrid({
             isPositive={index.positive}
             sparklinePoints={index.path}
             isNeutral={Boolean(index.isVix)}
+            dataStatus={index.dataStatus}
+            {...(index.dataSource ? { dataSource: index.dataSource } : {})}
+            {...(index.observedAt ? { observedAt: index.observedAt } : {})}
           />
         ))}
       </section>

@@ -107,7 +107,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="dark" data-brand="quantai" data-theme="quantai-dark">
+    <html lang="en" data-brand="quantai" data-theme="quantai-light">
       <head>
         <HeadContent />
       </head>
@@ -124,7 +124,7 @@ function RootComponent() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const activeTheme = localStorage.getItem(StorageKey.THEME) || "quantai-dark";
+      const activeTheme = localStorage.getItem(StorageKey.THEME) || "quantai-light";
       document.documentElement.setAttribute("data-theme", activeTheme);
       document.documentElement.setAttribute("data-brand", "quantai");
       document.documentElement.classList.toggle("dark", activeTheme.includes("dark"));

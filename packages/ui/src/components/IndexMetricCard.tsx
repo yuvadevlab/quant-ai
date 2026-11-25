@@ -5,7 +5,18 @@
 
 import type { ReactNode } from "react";
 import { cn } from "@yuva-devlab/ui";
+import { MarketDataStatus } from "@quant-ai/shared-types";
+import { UI_COPY_CONSTANTS } from "../constants/ui-copy.constants";
 import { Sparkline } from "./Sparkline";
+
+const DATA_STATUS_LABELS: Readonly<Record<MarketDataStatus, string>> = {
+  [MarketDataStatus.VERIFIED]: UI_COPY_CONSTANTS.MARKET_DATA.VERIFIED,
+  [MarketDataStatus.PROVIDER_UNVERIFIED]: UI_COPY_CONSTANTS.MARKET_DATA.PROVIDER_UNVERIFIED,
+  [MarketDataStatus.MARKET_CLOSED]: UI_COPY_CONSTANTS.MARKET_DATA.MARKET_CLOSED,
+  [MarketDataStatus.STALE]: UI_COPY_CONSTANTS.MARKET_DATA.STALE,
+  [MarketDataStatus.SIMULATED]: UI_COPY_CONSTANTS.MARKET_DATA.SIMULATED,
+  [MarketDataStatus.UNAVAILABLE]: UI_COPY_CONSTANTS.MARKET_DATA.UNAVAILABLE,
+};
 
 /**
  * Props for the IndexMetricCard component.
@@ -25,6 +36,12 @@ export interface IndexMetricCardProps {
   readonly sparklinePoints: string;
   /** Optional secondary subtitle or exchange tag (e.g. 'NSE India') */
   readonly subtitle?: string;
+  /** Market-data provenance status */
+  readonly dataStatus?: MarketDataStatus;
+  /** Provider name that supplied the quote */
+  readonly dataSource?: string;
+  /** Provider observation timestamp */
+  readonly observedAt?: string;
   /** Optional custom change icon */
   readonly changeIcon?: ReactNode;
   /** Custom CSS class names */
@@ -45,10 +62,16 @@ export function IndexMetricCard({
   isNeutral = false,
   sparklinePoints,
   subtitle,
+  dataStatus = MarketDataStatus.UNAVAILABLE,
+  dataSource,
+  observedAt,
   changeIcon,
   className = "",
 }: IndexMetricCardProps) {
   const pillClass = isNeutral ? "pill-amber" : isPositive ? "pill-green" : "pill-red";
+  const observedLabel = observedAt
+    ? `${UI_COPY_CONSTANTS.MARKET_DATA.AS_OF} ${new Date(observedAt).toLocaleString("en-IN")}`
+    : (dataSource ?? "");
 
   return (
     <div className={cn("index-card", className)}>
@@ -65,6 +88,10 @@ export function IndexMetricCard({
       <div className="index-bottom">
         <span className="index-price mono">{price}</span>
         <Sparkline points={sparklinePoints} isPositive={isPositive} isNeutral={isNeutral} />
+      </div>
+      <div className="index-data-provenance">
+        <span className="index-data-status">{DATA_STATUS_LABELS[dataStatus]}</span>
+        {observedLabel && <time dateTime={observedAt}>{observedLabel}</time>}
       </div>
     </div>
   );

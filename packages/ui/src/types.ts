@@ -5,6 +5,8 @@
  * @author yuva.devlab@gmail.com
  */
 
+import type { MarketDataStatus } from "@quant-ai/shared-types";
+
 /**
  * Signal presentation contract for tabular ledgers and spotlight grids.
  */
@@ -17,7 +19,7 @@ export interface TableSignalItem {
   readonly horizon: string;
   readonly entry: string;
   readonly target1: string;
-  readonly target2: string;
+  readonly target2?: string;
   readonly stop: string;
   readonly last: string;
   readonly status: "Active" | "Target hit" | "Stop loss hit" | "Expired" | string;
@@ -30,6 +32,7 @@ export interface TableSignalItem {
   readonly rationale?: string;
   readonly riskReward?: string;
   readonly score?: number;
+  readonly dataProvenance?: string;
 }
 
 /**
@@ -60,6 +63,7 @@ export interface PositionItem {
   readonly qty: number;
   readonly entryPrice: number;
   readonly currentPrice: number;
+  readonly dataStatus?: MarketDataStatus;
   readonly pnl: number;
   readonly pnlPercent?: number;
   readonly stopLoss: number;
@@ -95,6 +99,9 @@ export interface IndexTickItem {
   readonly change: string;
   readonly positive: boolean;
   readonly path: string;
+  readonly dataStatus?: MarketDataStatus;
+  readonly dataSource?: string;
+  readonly observedAt?: string;
   readonly category?: string;
   readonly isVix?: boolean;
 }
@@ -103,11 +110,12 @@ export interface IndexTickItem {
  * Market breadth and institutional flow summary contract.
  */
 export interface MarketBreadthItem {
-  readonly advances: number | string;
-  readonly declines: number | string;
-  readonly advanceRatio: string | number;
-  readonly fiiNet: string;
-  readonly diiNet: string;
+  readonly dataAvailable?: boolean;
+  readonly advances: number | string | null;
+  readonly declines: number | string | null;
+  readonly advanceRatio: string | number | null;
+  readonly fiiNet: string | null;
+  readonly diiNet: string | null;
 }
 
 /**

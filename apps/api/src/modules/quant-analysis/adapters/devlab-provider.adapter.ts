@@ -6,7 +6,12 @@
 
 import { Logger } from "@yuva-devlab/logger";
 import { MessageRole, type ILLMProvider, type AIMessage } from "@yuva-devlab/ai-client";
-import { buildDeliberationSystemPrompt, buildDeliberationUserPrompt } from "@quant-ai/prompts";
+import {
+  buildCopilotChatUserPrompt,
+  buildDeliberationSystemPrompt,
+  buildDeliberationUserPrompt,
+  COPILOT_CHAT_SYSTEM_PROMPT,
+} from "@quant-ai/prompts";
 import { AgentStance } from "@quant-ai/shared-types";
 import type {
   AgentDebateOutput,
@@ -104,20 +109,13 @@ export class DevLabProviderAdapter implements AiModelAdapter {
     symbol?: string;
     marketContext?: string;
   }): Promise<string> {
-    const systemPrompt =
-      `You are QuantAI Copilot, an elite senior quantitative market strategist and algorithmic trade architect for Indian (NSE/BSE) and global markets. ` +
-      `Provide professional, data-grounded market reasoning, options telemetry analysis, and technical trade setups. ` +
-      `Use GitHub-flavored markdown with bullet points and bold levels. Always conclude with disciplined risk parameters.`;
-
-    const userPrompt = input.marketContext
-      ? `Real-Time Market Telemetry:\n${input.marketContext}\n\nTrader Inquiry:\n"${input.query}"\n\nSynthesize institutional analysis:`
-      : `Trader Inquiry:\n"${input.query}"\n\nSynthesize institutional analysis:`;
+    const userPrompt = buildCopilotChatUserPrompt(input.query, input.marketContext);
 
     try {
       const response = await this.client.complete({
         model: this.modelName,
         messages: [
-          { role: MessageRole.SYSTEM, content: systemPrompt },
+          { role: MessageRole.SYSTEM, content: COPILOT_CHAT_SYSTEM_PROMPT },
           { role: MessageRole.USER, content: userPrompt },
         ],
         temperature: 0.3,

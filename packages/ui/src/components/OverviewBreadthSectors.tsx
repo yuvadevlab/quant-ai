@@ -7,6 +7,7 @@
 import type { ReactNode } from "react";
 import { BarChart3, ChevronRight } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, Button } from "@yuva-devlab/ui";
+import { UI_COPY_CONSTANTS } from "../constants/ui-copy.constants";
 import { MarketBreadthCard } from "./MarketBreadthCard";
 import type { MarketBreadthItem, SectorItem } from "../types";
 
@@ -48,6 +49,7 @@ export function OverviewBreadthSectors({
   return (
     <section className="breadth-sector-section">
       <MarketBreadthCard
+        dataAvailable={breadth.dataAvailable}
         advances={breadth.advances}
         declines={breadth.declines}
         advanceRatio={formattedRatio}
@@ -74,27 +76,33 @@ export function OverviewBreadthSectors({
         </CardHeader>
 
         <CardContent className="sector-list">
-          {sectors.map((sec) => (
-            <div className="sector-row" key={sec.name}>
-              <div className="sector-info">
-                <span className="sector-name">{sec.name}</span>
-                <span className={`sector-tag tag-${sec.momentum.toLowerCase()}`}>
-                  {sec.momentum}
-                </span>
+          {sectors.length === 0 ? (
+            <p className="market-data-unavailable">
+              {UI_COPY_CONSTANTS.MARKET_BREADTH.SECTORS_UNAVAILABLE}
+            </p>
+          ) : (
+            sectors.map((sec) => (
+              <div className="sector-row" key={sec.name}>
+                <div className="sector-info">
+                  <span className="sector-name">{sec.name}</span>
+                  <span className={`sector-tag tag-${sec.momentum.toLowerCase()}`}>
+                    {sec.momentum}
+                  </span>
+                </div>
+                <div className="sector-values">
+                  <div
+                    className={`sector-bar ${sec.positive ? "bar-gain" : "bar-loss"}`}
+                    style={{
+                      width: `${Math.min(100, Math.abs(parseFloat(sec.change)) * 35)}%`,
+                    }}
+                  />
+                  <span className={`sector-percent ${sec.positive ? "text-gain" : "text-loss"}`}>
+                    {sec.change}
+                  </span>
+                </div>
               </div>
-              <div className="sector-values">
-                <div
-                  className={`sector-bar ${sec.positive ? "bar-gain" : "bar-loss"}`}
-                  style={{
-                    width: `${Math.min(100, Math.abs(parseFloat(sec.change)) * 35)}%`,
-                  }}
-                />
-                <span className={`sector-percent ${sec.positive ? "text-gain" : "text-loss"}`}>
-                  {sec.change}
-                </span>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </CardContent>
       </Card>
     </section>

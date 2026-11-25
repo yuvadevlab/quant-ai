@@ -5,6 +5,7 @@
  */
 
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { MarketDataStatus } from "@quant-ai/shared-types";
 import { COMMON_COPY } from "../../lib/ui-copy";
 import { useBenchmarkTicks } from "../../services/market-feed.service";
 import { useRealtimeTicks } from "../../hooks/use-realtime-ticks";
@@ -21,7 +22,13 @@ export function MarketTickerStrip() {
 
   const ticks = staticTicks.map((tick) => {
     const live = liveTicks[tick.name];
-    if (!live) return tick;
+    if (
+      !live ||
+      live.dataStatus === MarketDataStatus.SIMULATED ||
+      live.dataStatus === MarketDataStatus.UNAVAILABLE
+    ) {
+      return tick;
+    }
 
     const formattedPrice = live.price.toLocaleString("en-IN", {
       minimumFractionDigits: 2,
@@ -36,8 +43,19 @@ export function MarketTickerStrip() {
       price: formattedPrice,
       change: formattedChange,
       positive: live.change >= 0,
+      dataStatus: live.dataStatus ?? tick.dataStatus,
+      ...(live.observedAt ? { observedAt: live.observedAt } : {}),
     };
   });
+
+  const statusLabels: Readonly<Record<MarketDataStatus, string>> = {
+    [MarketDataStatus.VERIFIED]: COMMON_COPY.TICKER_STRIP.VERIFIED,
+    [MarketDataStatus.PROVIDER_UNVERIFIED]: COMMON_COPY.TICKER_STRIP.PROVIDER_UNVERIFIED,
+    [MarketDataStatus.MARKET_CLOSED]: COMMON_COPY.TICKER_STRIP.MARKET_CLOSED,
+    [MarketDataStatus.STALE]: COMMON_COPY.TICKER_STRIP.STALE,
+    [MarketDataStatus.SIMULATED]: COMMON_COPY.TICKER_STRIP.SIMULATED,
+    [MarketDataStatus.UNAVAILABLE]: COMMON_COPY.TICKER_STRIP.AWAITING_QUOTES,
+  };
 
   return (
     <div className="ticker-strip" aria-label={copy.ARIA_LABEL} role="region">
@@ -46,33 +64,38 @@ export function MarketTickerStrip() {
       </div>
       <div className="ticker-scroll-content">
         {ticks.map((tick) => {
+          const hasMarketPrice = tick.price !== "—";
           const isUp = tick.positive;
           const isNeutral = tick.isVix;
-          const changeClass = isUp ? "is-up" : isNeutral ? "is-neutral" : "is-down";
-          const sparkClass = isUp ? "spark-green" : isNeutral ? "spark-amber" : "spark-red";
+          const changeClass = isNeutral ? "is-neutral" : isUp ? "is-up" : "is-down";
+          const sparkClass = isNeutral ? "spark-amber" : isUp ? "spark-green" : "spark-red";
 
           return (
             <div className="ticker-card" key={tick.name}>
-              <span className="tick-name">{tick.name}</span>
-              <span className="tick-price">{tick.price}</span>
-              <span className={`tick-change ${changeClass}`}>
-                {isUp ? (
-                  <ArrowUpRight size={12} aria-hidden="true" />
-                ) : (
-                  <ArrowDownRight size={12} aria-hidden="true" />
-                )}
-                {tick.change}
+              <span className="tick-name">
+                {tick.name}
+                <span className="tick-exchange">{tick.exchange}</span>
               </span>
-              <svg className="tick-spark" viewBox="0 0 60 17" aria-hidden="true">
-                <polyline points={tick.path} className={`spark-line ${sparkClass}`} />
-              </svg>
+              <span className="tick-price">{tick.price}</span>
+              {hasMarketPrice && (
+                <span className={`tick-change ${changeClass}`}>
+                  {isUp ? (
+                    <ArrowUpRight size={12} aria-hidden="true" />
+                  ) : (
+                    <ArrowDownRight size={12} aria-hidden="true" />
+                  )}
+                  {tick.change}
+                </span>
+              )}
+              <span className="tick-data-status">{statusLabels[tick.dataStatus]}</span>
+              {tick.path && (
+                <svg className="tick-spark" viewBox="0 0 60 17" aria-hidden="true">
+                  <polyline points={tick.path} className={`spark-line ${sparkClass}`} />
+                </svg>
+              )}
             </div>
           );
         })}
-      </div>
-      <div className="ticker-time-badge" aria-label="Session time">
-        <span className="pulse-ping" aria-hidden="true" />
-        {isConnected ? "WS STREAM" : "POLL 1s"}
       </div>
     </div>
   );

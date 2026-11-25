@@ -4,5 +4,6 @@
  * @author yuva.devlab@gmail.com
  */
 
+export * from "./copilot-chat-system.prompt";
 export * from "./deliberation-system.prompt";
 export * from "./regime-system.prompt";

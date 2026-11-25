@@ -35,8 +35,11 @@ export class MarketController {
   @Get(ApiSegment.INDICES)
   @ApiOperation({ summary: SwaggerSummary.BENCHMARK_INDICES })
   @ApiQuery({ name: "category", enum: IndexCategory, required: false })
-  public getIndices(@Query("category") category?: IndexCategory): readonly IndexQuote[] {
+  public async getIndices(
+    @Query("category") category?: IndexCategory,
+  ): Promise<readonly IndexQuote[]> {
     this.logger.info(`[getIndices] Fetching indices (category: ${category ?? "ALL"})`);
+    await this.marketService.refreshBenchmarkIndices();
     return this.marketService.getIndicesByCategory(category);
   }
 

@@ -4,7 +4,12 @@
  */
 
 import { Module } from "@nestjs/common";
-import { LiveMarketFeedService, StochasticMarketSimulator, YahooFinanceHttpClient } from "./feed";
+import {
+  GoogleFinanceHttpClient,
+  LiveMarketFeedService,
+  StochasticMarketSimulator,
+  YahooFinanceHttpClient,
+} from "./feed";
 import { MarketController } from "./market.controller";
 import { MarketService } from "./market.service";
 import { MarketTickService } from "./market-tick.service";
@@ -17,6 +22,7 @@ import { MarketTickService } from "./market-tick.service";
   providers: [
     MarketService,
     MarketTickService,
+    GoogleFinanceHttpClient,
     LiveMarketFeedService,
     StochasticMarketSimulator,
     YahooFinanceHttpClient,
@@ -24,6 +30,7 @@ import { MarketTickService } from "./market-tick.service";
   exports: [
     MarketService,
     MarketTickService,
+    GoogleFinanceHttpClient,
     LiveMarketFeedService,
     StochasticMarketSimulator,
     YahooFinanceHttpClient,

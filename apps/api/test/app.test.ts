@@ -7,6 +7,7 @@ import {
   EventTopic,
   HealthStatus,
   IndexCategory,
+  MarketDataStatus,
   NetworkPort,
   RealtimeRoom,
   RealtimeSubscriptionStatus,
@@ -40,13 +41,10 @@ describe("NestJS Domain Services", () => {
     const service = new MarketService(feed);
     await service.onModuleInit();
     const indices = service.getBenchmarkIndices();
-    expect(indices.length).toBeGreaterThanOrEqual(15);
-    expect(indices.some((i) => i.symbol === "NIFTY NEXT 50")).toBe(true);
-    expect(indices.some((i) => i.symbol === "NIFTY MIDCAP 100")).toBe(true);
-    expect(indices.some((i) => i.symbol === "NIFTY IT")).toBe(true);
+    expect(indices.map((i) => i.symbol)).toEqual(["NIFTY 50", "BANKNIFTY", "SENSEX", "INDIA VIX"]);
 
     const sectoral = service.getIndicesByCategory(IndexCategory.SECTORAL);
-    expect(sectoral.length).toBeGreaterThanOrEqual(5);
+    expect(sectoral).toEqual([]);
     expect(sectoral.every((s) => s.category === IndexCategory.SECTORAL)).toBe(true);
   });
 
@@ -87,8 +85,20 @@ describe("NestJS Domain Services", () => {
     expect(trajectory[0]!.expected).toBe(prediction.entry);
   });
 
-  it("ScreenerService filters volume surges and breakout candidates", async () => {
-    const service = new ScreenerService(feed);
+  it("ScreenerService omits candidates when only simulated quotes are available", async () => {
+    const simulatedFeed = {
+      getLiveQuote: async (symbol: string) => ({
+        symbol,
+        displayName: symbol,
+        price: 2400,
+        change: 0,
+        percentChange: 0,
+        currency: "INR",
+        dataStatus: MarketDataStatus.SIMULATED,
+        sparkline: [2400],
+      }),
+    } as unknown as LiveMarketFeedService;
+    const service = new ScreenerService(simulatedFeed);
     service.registerSymbol("RELIANCE");
     service.registerSymbol("HDFCBANK");
     service.registerSymbol("INFY");
@@ -96,8 +106,7 @@ describe("NestJS Domain Services", () => {
     service.registerSymbol("ICICIBANK");
     await service.onModuleInit();
     const all = service.findAll();
-    expect(all.length).toBeGreaterThanOrEqual(5);
-    expect(all.some((b) => b.symbol === "RELIANCE")).toBe(true);
+    expect(all).toHaveLength(0);
   });
 
   it("TechnicalAnalysisService computes complete technical matrix over candle series", () => {

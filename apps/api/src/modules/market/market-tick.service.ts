@@ -105,7 +105,10 @@ export class MarketTickService implements OnModuleInit, OnModuleDestroy {
       price: live.price,
       change: live.change,
       percentChange: live.percentChange,
-      timestamp: new Date().toISOString(),
+      timestamp: live.timestamp,
+      dataSource: live.source,
+      dataStatus: live.dataStatus,
+      ...(live.observedAt ? { observedAt: live.observedAt } : {}),
     };
 
     this.livePrices.set(symbol, live.price);
@@ -123,7 +126,10 @@ export class MarketTickService implements OnModuleInit, OnModuleDestroy {
       high: live.dayHigh,
       low: live.dayLow,
       volume: live.volume,
-      timestamp: payload.timestamp,
+      timestamp: live.timestamp,
+      dataSource: live.source,
+      dataStatus: live.dataStatus,
+      ...(live.observedAt ? { observedAt: live.observedAt } : {}),
     });
     await this.eventBusService.publish(EventTopic.MARKET_TICKS, envelope);
 

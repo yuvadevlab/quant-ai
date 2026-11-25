@@ -4,8 +4,10 @@
  * @author yuva.devlab@gmail.com
  */
 
+import type { MarketDataStatus } from "@quant-ai/shared-types";
+
 /**
- * Normalized live market quote for any instrument across global exchanges.
+ * Normalized quote and provenance for an instrument.
  */
 export interface LiveMarketQuote {
   readonly symbol: string;
@@ -20,6 +22,9 @@ export interface LiveMarketQuote {
   readonly exchange: string;
   readonly instrumentType: string;
   readonly sparkline: readonly number[];
+  readonly source: string;
+  readonly dataStatus: MarketDataStatus;
+  readonly observedAt?: string;
   readonly timestamp: string;
 }
 

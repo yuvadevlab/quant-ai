@@ -5,6 +5,7 @@
  * @author yuva.devlab@gmail.com
  */
 
+export * from "./guardrails";
 export * from "./personas";
 export * from "./system";
 export * from "./templates";

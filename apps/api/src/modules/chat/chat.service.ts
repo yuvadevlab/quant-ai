@@ -11,7 +11,10 @@ import { LiveMarketFeedService } from "../market/feed";
 import { AiProviderFactory } from "../quant-analysis/ai-provider.factory";
 import { DatabaseService } from "../infrastructure/database.service";
 import { PredictionsService } from "../predictions/predictions.service";
-import { BENCHMARK_INDEX_SYMBOLS, OPTION_CHAIN_KEYWORDS } from "./chat.constants";
+import { fetchUsableChatQuote } from "./chat-market-data";
+import { BENCHMARK_INDEX_SYMBOLS } from "./chat.constants";
+import { evaluateChatGuardrails } from "./chat-guardrails";
+import { extractMentionedSymbol, isOptionChainInquiry } from "./chat-symbol-extractor";
 import { formatOptionChainAdvisory } from "./chat-option-chain";
 import { mapSignalToEmbeddedSetup, resolvePredictionForChat } from "./chat-prediction-bridge";
 import { formatEquityAdvisory, formatGenericAdvisory } from "./chat-advisor";
@@ -52,9 +55,7 @@ export class ChatService {
     return deleteChatSession(id, this.databaseService, this.inMemorySessions);
   }
 
-  /**
-   * Processes a trader's query with live market data injection and multi-agent synthesis.
-   */
+  /** Processes a trader's query with live market data injection and multi-agent synthesis. */
   public async handleUserMessage(
     query: string,
     sessionId?: string,
@@ -65,6 +66,31 @@ export class ChatService {
     const sessionTitle = query.slice(0, 42) || "New Discussion";
     const timestamp = new Date().toISOString();
 
+    const guardrail = evaluateChatGuardrails(query);
+    if (!guardrail.allowed && guardrail.reply) {
+      this.logger.warn(`[handleUserMessage] Blocked chat inquiry [REASON: ${guardrail.reason}]`);
+      await persistChatMessages(
+        activeSessionId,
+        sessionTitle,
+        query,
+        guardrail.reply,
+        this.databaseService,
+        this.inMemorySessions,
+        this.logger,
+      );
+      return {
+        reply: guardrail.reply,
+        sessionId: activeSessionId,
+        agentPerspective: {
+          role: AgentRole.QUANT_RISK_OFFICER,
+          stance: AgentStance.NEUTRAL,
+          conviction: 100,
+        },
+        timestamp,
+      };
+    }
+
+    const safeQuery = guardrail.sanitizedQuery;
     const adapter = this.aiProviderFactory?.getAdapter(
       providerOverride,
       undefined,
@@ -74,19 +100,12 @@ export class ChatService {
       this.logger.debug(`[handleUserMessage] Active LLM backend: ${adapter.constructor.name}`);
     }
 
-    const extractedSymbol = this.extractMentionedSymbol(query);
-    const isOptionQuery = this.isOptionChainInquiry(query);
+    const extractedSymbol = extractMentionedSymbol(safeQuery);
+    const isOptionQuery = isOptionChainInquiry(safeQuery);
 
-    let liveQuote = undefined;
-    if (extractedSymbol) {
-      try {
-        liveQuote = await this.liveMarketFeed.getLiveQuote(extractedSymbol);
-      } catch (err) {
-        this.logger.debug(
-          `[handleUserMessage] Quote resolve failed for ${extractedSymbol}: ${String(err)}`,
-        );
-      }
-    }
+    const liveQuote = extractedSymbol
+      ? await fetchUsableChatQuote(this.liveMarketFeed, extractedSymbol, this.logger)
+      : undefined;
 
     // Benchmark Index or explicit option chain query
     const isIndex =
@@ -168,8 +187,10 @@ export class ChatService {
     }
 
     // Fallback generic quant query
-    const baseGeneric = formatGenericAdvisory(query);
-    const aiReply = await adapter?.generateChatReply?.({ query });
+    const baseGeneric = extractedSymbol
+      ? `Verified market data for ${extractedSymbol} is currently unavailable. No current price, option-chain reading, or trade setup can be provided until a provider-backed quote is available.`
+      : formatGenericAdvisory(query);
+    const aiReply = extractedSymbol ? undefined : await adapter?.generateChatReply?.({ query });
     const reply = aiReply?.trim() ? aiReply : baseGeneric;
 
     await persistChatMessages(
@@ -191,64 +212,5 @@ export class ChatService {
       },
       timestamp,
     };
-  }
-
-  private extractMentionedSymbol(query: string): string | undefined {
-    const upper = query.toUpperCase();
-    for (const sym of BENCHMARK_INDEX_SYMBOLS) {
-      if (upper.includes(sym)) return sym;
-    }
-
-    const commonWords = new Set([
-      "WHAT",
-      "YOUR",
-      "ABOUT",
-      "AFTER",
-      "RECENT",
-      "SETUP",
-      "STOCK",
-      "TRADE",
-      "PRICE",
-      "CALL",
-      "ANALYSIS",
-      "VIEW",
-      "TODAY",
-      "LEVELS",
-      "MARKET",
-      "PLEASE",
-      "ASSESSMENT",
-      "BREAKOUT",
-      "OUTLOOK",
-      "TARGET",
-      "EXPLAIN",
-      "PREDICTION",
-      "PCR",
-      "OPTION",
-      "OPTIONS",
-      "CHAIN",
-      "STRIKE",
-      "EXPIRY",
-      "PUT",
-      "OI",
-      "GREEKS",
-    ]);
-
-    const exactCaps = query.match(/\b[A-Z]{3,12}\b/g);
-    if (exactCaps) {
-      const foundCap = exactCaps.find((w) => !commonWords.has(w));
-      if (foundCap) return foundCap;
-    }
-
-    const words = upper.match(/\b[A-Z]{3,12}\b/g);
-    if (words) {
-      const found = words.find((w) => !commonWords.has(w));
-      if (found) return found;
-    }
-    return undefined;
-  }
-
-  private isOptionChainInquiry(query: string): boolean {
-    const upper = query.toUpperCase();
-    return OPTION_CHAIN_KEYWORDS.some((kw) => upper.includes(kw));
   }
 }
