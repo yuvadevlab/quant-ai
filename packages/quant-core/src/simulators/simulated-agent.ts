@@ -1,7 +1,6 @@
 /**
  * @file packages/finance-engine/src/simulators/simulated-agent.ts
  * @description Calibrated deterministic deliberation formulas for adversarial agents.
- * @author yuva.devlab@gmail.com
  */
 
 import { AgentRole, AgentStance, SignalRegime } from "@quant-ai/shared-types";

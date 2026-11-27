@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/trajectory-math.ts
  * @description Coordinate math and scaling logic for institutional trajectory cone projection.
- * @author yuva.devlab@gmail.com
  */
 
 export interface TrajectoryPoint {

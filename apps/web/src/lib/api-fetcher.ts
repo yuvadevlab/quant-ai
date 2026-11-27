@@ -1,7 +1,6 @@
 /**
  * @file apps/web/src/lib/api-fetcher.ts
  * @description Standard resilient API fetcher with automatic JWT authorization header injection.
- * @author yuva.devlab@gmail.com
  */
 
 import { StorageKey } from "@quant-ai/shared-types";

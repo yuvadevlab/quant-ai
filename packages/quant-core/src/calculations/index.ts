@@ -1,7 +1,6 @@
 /**
  * @file packages/finance-engine/src/calculations/index.ts
  * @description Exports all deterministic finance calculations.
- * @author yuva.devlab@gmail.com
  */
 
 export * from "./rsi.calculation";

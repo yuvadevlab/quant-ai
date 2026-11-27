@@ -20,18 +20,22 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    min-width: 0;
   }
 
   .tab-pill-group {
     display: inline-flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 4px;
     background-color: var(--bg-card-subtle);
     padding: 3px;
     border-radius: var(--radius-md);
     border: 1px solid var(--border-subtle);
-    height: var(--control-height-md, 2.125rem);
+    min-height: var(--control-height-md, 2.125rem);
+    max-width: 100%;
     box-sizing: border-box;
   }
 
@@ -79,11 +83,18 @@
   .search-filter-wrapper {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
+    flex: 1 1 auto;
+    justify-content: flex-end;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .toolbar-search-input {
-    width: clamp(180px, 18vw, 260px);
+    flex: 1 1 180px;
+    min-width: 0;
+    max-width: 260px;
     height: var(--control-height-md, 2.125rem);
   }
 

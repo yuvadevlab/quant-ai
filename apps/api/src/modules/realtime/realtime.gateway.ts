@@ -1,6 +1,5 @@
 /**
  * @fileoverview WebSocket gateway for low-latency market ticks and deliberation streams.
- * @author yuva.devlab@gmail.com
  */
 
 import {

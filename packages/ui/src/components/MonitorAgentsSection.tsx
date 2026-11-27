@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/MonitorAgentsSection.tsx
  * @description Dynamic multi-agent deliberation consensus grid with specialist cards.
- * @author yuva.devlab@gmail.com
  */
 
 import { Bot, Radio, Sparkles } from "lucide-react";
@@ -31,6 +30,8 @@ export interface MonitorAgentsSectionProps {
   readonly subtitle?: string;
   /** Specialists badge text */
   readonly specialistsLabel?: string;
+  /** Empty-state message when no agent responses are available */
+  readonly emptyMessage?: string;
 }
 
 /**
@@ -48,7 +49,8 @@ export function MonitorAgentsSection({
   onTrigger,
   title = "SPECIALIZED AGENT DELIBERATION",
   subtitle = "Independent AI agents debating directional bias, risk limits, and structural options flow.",
-  specialistsLabel = "3 SPECIALISTS CONSENSUS",
+  specialistsLabel,
+  emptyMessage,
 }: MonitorAgentsSectionProps) {
   return (
     <Card className="desk-panel deliberation-panel">
@@ -79,20 +81,22 @@ export function MonitorAgentsSection({
               <span>{isTriggering ? "DELIBERATING..." : "TRIGGER DELIBERATION"}</span>
             </Button>
           )}
-          <span className="panel-status-pill">{specialistsLabel}</span>
+          {specialistsLabel && <span className="panel-status-pill">{specialistsLabel}</span>}
         </div>
       </CardHeader>
 
       <CardContent className="agents-grid">
-        {agents.map((agent) => (
-          <AgentCard
-            key={agent.role}
-            role={agent.role}
-            score={agent.score}
-            scoreClass={agent.scoreClass ?? "text-brand"}
-            verdict={agent.verdict}
-          />
-        ))}
+        {agents.length === 0
+          ? emptyMessage && <p className="agents-empty-state">{emptyMessage}</p>
+          : agents.map((agent) => (
+              <AgentCard
+                key={agent.role}
+                role={agent.role}
+                score={agent.score}
+                scoreClass={agent.scoreClass ?? "text-brand"}
+                verdict={agent.verdict}
+              />
+            ))}
       </CardContent>
     </Card>
   );

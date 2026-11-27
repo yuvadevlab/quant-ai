@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/ChatHistoryDrawer.tsx
  * @description Slide-over drawer presenting historical AI Copilot conversation threads.
- * @author yuva.devlab@gmail.com
  */
 
 import type { MouseEvent } from "react";
@@ -116,7 +115,7 @@ export function ChatHistoryDrawer({
                       </div>
                     </div>
 
-                    <button
+                    <Button
                       type="button"
                       aria-label="Delete session"
                       onClick={(e) => {
@@ -126,7 +125,7 @@ export function ChatHistoryDrawer({
                       className="history-delete-btn"
                     >
                       <Trash2 size={13} />
-                    </button>
+                    </Button>
                   </div>
                 );
               })}

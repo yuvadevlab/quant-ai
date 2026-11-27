@@ -1,6 +1,5 @@
 /**
  * @fileoverview Type definitions for validated environment configurations.
- * @author yuva.devlab@gmail.com
  */
 
 import type { z } from "zod";

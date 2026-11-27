@@ -1,7 +1,6 @@
 /**
  * @file packages/events/src/events.test.ts
  * @description Unit tests for @quant-ai/events envelopes and schema validations.
- * @author yuva.devlab@gmail.com
  */
 
 import { describe, expect, it } from "vitest";
@@ -9,6 +8,7 @@ import {
   AgentRole,
   AgentStance,
   AssetClass,
+  MarketDataStatus,
   SignalDirection,
   SignalRegime,
   SignalStatus,
@@ -32,6 +32,9 @@ describe("@quant-ai/events Domain Envelopes", () => {
       low: 24300,
       volume: 1500000,
       timestamp: new Date().toISOString(),
+      dataSource: "Test provider",
+      dataStatus: MarketDataStatus.VERIFIED,
+      observedAt: new Date().toISOString(),
     });
 
     expect(envelope.eventId).toBeDefined();

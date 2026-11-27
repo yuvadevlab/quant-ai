@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/index.ts
  * @description Central component exports for @quant-ai/ui.
- * @author yuva.devlab@gmail.com
  */
 
 // Core visual primitives & cards
@@ -28,7 +27,6 @@ export * from "./ChartRangeBar";
 export * from "./SignalHeader";
 export * from "./MonitorKpiGrid";
 export * from "./PredictionAccuracyRibbon";
-export * from "./use-live-chart-ticker";
 export * from "./MarketBreadthCard";
 export * from "./SectorPerformanceCard";
 
@@ -61,6 +59,9 @@ export * from "./WorkstationLaunchpad";
 
 // Copilot Chat Desk presentation blocks
 export * from "./ChatHeader";
+export * from "./ChatContextPanel";
+export * from "./ChatExecutionConsole";
+export * from "./ChatMarkdown";
 export * from "./ChatThread";
 export * from "./ChatComposer";
 export * from "./ChatSuggestions";

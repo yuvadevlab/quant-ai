@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/chat/chat.constants.ts
  * @description Centralized constants, symbol universes, and indicators for AI Copilot chat.
- * @author yuva.devlab@gmail.com
  */
 
 /**

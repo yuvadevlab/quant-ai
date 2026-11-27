@@ -1,6 +1,5 @@
 """
 Vectorized Monte Carlo price simulation engine with GBM and GARCH(1,1) volatility clustering.
-Author: yuva.devlab@gmail.com
 """
 
 from typing import TypedDict

@@ -2,7 +2,6 @@
  * @file packages/shared-types/src/query-keys.ts
  * @description Canonical TanStack Query cache keys for QuantAI.
  * Eliminates raw string query key arrays across frontend views.
- * @author yuva.devlab@gmail.com
  */
 
 /**

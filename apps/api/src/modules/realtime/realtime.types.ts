@@ -1,10 +1,9 @@
 /**
  * @fileoverview Type definitions for WebSocket payloads and events.
- * @author yuva.devlab@gmail.com
  */
 
 import type { RealtimeRoom } from "./realtime.enums";
-import type { SignalRegime } from "@quant-ai/shared-types";
+import type { MarketDataStatus, SignalRegime } from "@quant-ai/shared-types";
 
 /**
  * Client channel subscription payload.
@@ -23,6 +22,9 @@ export interface RealtimeTickPayload {
   readonly change: number;
   readonly percentChange: number;
   readonly timestamp: string;
+  readonly dataSource: string;
+  readonly dataStatus: MarketDataStatus;
+  readonly observedAt?: string;
 }
 
 /**

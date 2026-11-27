@@ -1,7 +1,6 @@
 /**
  * @file packages/finance-engine/src/constants/index.ts
  * @description Exports all finance engine constants and enums.
- * @author yuva.devlab@gmail.com
  */
 
 export * from "./technical.constants";

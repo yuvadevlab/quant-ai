@@ -1,7 +1,6 @@
 /**
  * @file packages/prompts/src/templates/prompt-builder.ts
  * @description Dynamic prompt compilation utilities leveraging @yuva-devlab/agent-core.
- * @author yuva.devlab@gmail.com
  */
 
 import { compilePrompt } from "@yuva-devlab/agent-core";

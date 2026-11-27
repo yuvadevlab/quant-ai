@@ -1,32 +1,61 @@
 /**
  * @file src/lib/ui-copy/chat.copy.ts
  * @description Centralized copy for the AI Copilot conversational desk.
- * @author yuva.devlab@gmail.com
  */
 
 export const CHAT_COPY = {
   HEADER: {
-    TITLE: "Quantitative Strategy Copilot",
+    TITLE: "AI Strategist",
     SUBTITLE:
-      "Real-time conversational agent specialized in Indian indices, option chain analysis, factor backtesting, and market regime queries.",
+      "Real-time quantitative strategist specialized in Indian indices, option chain analysis, factor backtesting, and market regime queries.",
   },
   THREAD: {
-    SESSION_TITLE: "Session: Multi-Asset Market Intelligence & Strategy Deliberation",
-    MODEL_BADGE: "Multi-Agent Ensemble (Gemini / Anthropic / Groq)",
-    ASSISTANT_NAME: "QuantAI Copilot",
+    SESSION_TITLE: "Multi-Asset Market Intelligence",
+    MODEL_BADGE: "Multi-Agent Ensemble",
+    ASSISTANT_NAME: "QuantAI Strategist",
     USER_NAME: "You (Trader)",
     EMBEDDED_SETUP: "EMBEDDED PREDICTION SETUP",
     ENTRY_PREFIX: "Entry:",
     TARGET_PREFIX: "T1:",
     VIEW_TRAJECTORY: "View Trajectory in Monitor",
+    FOLLOW_UPS_LABEL: "Suggested follow-ups",
+    THINKING_LABEL: "Synthesizing market telemetry...",
   },
   COMPOSER: {
-    PLACEHOLDER: "Ask QuantAI about a symbol, pattern, options setup, or risk condition...",
-    SHORTCUT_HINT: "Enter to send",
+    PLACEHOLDER: "Ask QuantAI Strategist about a symbol, pattern, options setup, or risk rule...",
+    SHORTCUT_HINT: "Enter to send · Shift+Enter for new line",
     SEND_BUTTON: "Send",
-    SEND_TOOLTIP: "Send query to Copilot",
+    SEND_TOOLTIP: "Send query to AI Strategist",
+    STOP_BUTTON: "Stop generating",
+    JUMP_TO_LATEST: "Jump to latest",
     DISCLAIMER:
       "Autonomous AI committee outputs are mathematical projections, not direct SEBI financial advice.",
+  },
+  ACTIVITY_TIMELINE: {
+    HEADER_TITLE: "Execution & Reasoning",
+    THINKING: "Understanding your question",
+    ANALYZED: "Analysis complete",
+    ISSUES: "Completed with warnings",
+    SHOW_DETAILS: "Show details",
+    HIDE_DETAILS: "Hide details",
+    STEPS_TAB: "Steps",
+    LIVE_CONSOLE_TAB: "Live Console",
+    STREAM_ACTIVE: "Live",
+    COMPLETE: "Complete",
+    EXECUTION_STEPS: "Execution steps",
+    STEP_COUNT: (n: number) => `${n} step${n === 1 ? "" : "s"}`,
+  },
+  LIVE_CONSOLE: {
+    TITLE: "quant-ai strategist · live telemetry",
+    EMPTY: "Waiting for execution telemetry...",
+  },
+  MODES: {
+    AGENT: "Agent mode",
+    ADVISOR: "Advisor mode",
+  },
+  ERRORS: {
+    TITLE: "Stream Interrupted",
+    DESCRIPTION: "Unable to complete real-time synthesis. Check API connectivity and retry.",
   },
   SUGGESTIONS: {
     LABEL: "QUICK PROMPTS:",

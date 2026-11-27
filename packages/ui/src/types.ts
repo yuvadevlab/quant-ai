@@ -2,8 +2,9 @@
  * @file packages/ui/src/types.ts
  * @description Standardized presentation data contracts for QuantAI institutional desk components.
  * Pure UI presentation interfaces decoupled from runtime API implementations and routers.
- * @author yuva.devlab@gmail.com
  */
+
+import type { MarketDataStatus } from "@quant-ai/shared-types";
 
 /**
  * Signal presentation contract for tabular ledgers and spotlight grids.
@@ -17,7 +18,7 @@ export interface TableSignalItem {
   readonly horizon: string;
   readonly entry: string;
   readonly target1: string;
-  readonly target2: string;
+  readonly target2?: string;
   readonly stop: string;
   readonly last: string;
   readonly status: "Active" | "Target hit" | "Stop loss hit" | "Expired" | string;
@@ -30,6 +31,7 @@ export interface TableSignalItem {
   readonly rationale?: string;
   readonly riskReward?: string;
   readonly score?: number;
+  readonly dataProvenance?: string;
 }
 
 /**
@@ -60,6 +62,7 @@ export interface PositionItem {
   readonly qty: number;
   readonly entryPrice: number;
   readonly currentPrice: number;
+  readonly dataStatus?: MarketDataStatus;
   readonly pnl: number;
   readonly pnlPercent?: number;
   readonly stopLoss: number;
@@ -95,6 +98,9 @@ export interface IndexTickItem {
   readonly change: string;
   readonly positive: boolean;
   readonly path: string;
+  readonly dataStatus?: MarketDataStatus;
+  readonly dataSource?: string;
+  readonly observedAt?: string;
   readonly category?: string;
   readonly isVix?: boolean;
 }
@@ -103,11 +109,12 @@ export interface IndexTickItem {
  * Market breadth and institutional flow summary contract.
  */
 export interface MarketBreadthItem {
-  readonly advances: number | string;
-  readonly declines: number | string;
-  readonly advanceRatio: string | number;
-  readonly fiiNet: string;
-  readonly diiNet: string;
+  readonly dataAvailable?: boolean;
+  readonly advances: number | string | null;
+  readonly declines: number | string | null;
+  readonly advanceRatio: string | number | null;
+  readonly fiiNet: string | null;
+  readonly diiNet: string | null;
 }
 
 /**
@@ -123,13 +130,34 @@ export interface SectorItem {
 /**
  * Conversation message contract for Copilot chat thread.
  */
+import type { AgentActivity, AgentMode, AgentRunLogEntry } from "@quant-ai/shared-types";
+
+export interface ChatExecutionLogEntry {
+  readonly id: string;
+  readonly elapsedMs: number;
+  readonly level: string;
+  readonly message: string;
+  readonly detail?: string | undefined;
+}
+
 export interface ChatThreadMessage {
   readonly id: string | number;
   readonly type: "user" | "assistant" | string;
   readonly text: string;
   readonly time: string;
+  readonly mode?: AgentMode | undefined;
+  readonly reasoning?: string | undefined;
+  readonly reasoningStreaming?: boolean | undefined;
+  readonly reasoningStartedAt?: number | undefined;
+  readonly reasoningCompletedAt?: number | undefined;
+  readonly activities?: readonly AgentActivity[] | undefined;
+  readonly error?: string | undefined;
   readonly hasSignal?: boolean | undefined;
   readonly signalData?: TableSignalItem | undefined;
+  readonly followUps?: readonly string[] | undefined;
+  readonly agentRole?: string | undefined;
+  readonly logs?: readonly AgentRunLogEntry[] | undefined;
+  readonly streaming?: boolean | undefined;
 }
 
 /**

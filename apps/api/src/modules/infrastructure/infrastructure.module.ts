@@ -1,6 +1,5 @@
 /**
  * @fileoverview Global Infrastructure Module providing database, cache, event bus, and config services.
- * @author yuva.devlab@gmail.com
  */
 
 import { Module, Global } from "@nestjs/common";

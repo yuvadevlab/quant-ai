@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/screener/screener.module.ts
  * @description Module responsible for quantitative stock screening and anomaly scans.
- * @author yuva.devlab@gmail.com
  */
 
 import { Module } from "@nestjs/common";

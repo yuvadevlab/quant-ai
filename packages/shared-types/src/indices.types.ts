@@ -1,9 +1,8 @@
 /**
  * @fileoverview Type contracts for market indices, metadata, and benchmark telemetry.
- * @author yuva.devlab@gmail.com
  */
 
-import { IndexCategory } from "./enums";
+import { IndexCategory, MarketDataStatus } from "./enums";
 
 /**
  * Metadata descriptor for a financial market index or benchmark asset.
@@ -26,4 +25,7 @@ export interface IndexQuote {
   readonly change: number;
   readonly changePercent: number;
   readonly sparkline: readonly number[];
+  readonly dataSource?: string;
+  readonly dataStatus?: MarketDataStatus;
+  readonly observedAt?: string;
 }

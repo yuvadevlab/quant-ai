@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/chat/chat-advisor.ts
  * @description Formulates institutional quantitative advisory commentary and multi-agent synthesis.
- * @author yuva.devlab@gmail.com
  */
 
 import { Signal, SignalDirection } from "@quant-ai/shared-types";
@@ -57,9 +56,9 @@ export function formatGenericAdvisory(query: string): string {
   return (
     `### 🏛️ QuantAI Institutional Copilot\n\n` +
     `Regarding your inquiry on *"**${query}**"*:\n\n` +
-    `- **Market Regime:** Multi-agent volatility monitors show baseline equity and derivatives conditions remain within standard dispersion bands.\n` +
-    `- **Execution Mandate:** Strict quantitative gates require minimum **1.5x–2.0x Risk:Reward ratio**, structural VWAP trend alignment, and ATR-governed trailing stops.\n` +
-    `- **Options Flow Tip:** For macro market bias, track NIFTY & BANKNIFTY Put-Call Ratio (PCR) alongside India VIX.\n\n` +
-    `*You can ask for real-time analysis on any blue chip equity (e.g. "Analyze RELIANCE", "Setup for TCS") or Indian indices ("NIFTY option chain", "BANKNIFTY outlook").*`
+    `- **Market Regime:** Check current, provider-backed price and volatility data before drawing a directional conclusion.\n` +
+    `- **Execution Planning:** Define an invalidation level and position size before entry; risk/reward alone does not establish an edge.\n` +
+    `- **Options Research:** Put-Call Ratio and India VIX are useful context only when sourced from a current, verified feed.\n\n` +
+    `*Current market analysis requires a provider-backed quote. Educational guidance is not a trade recommendation.*`
   );
 }

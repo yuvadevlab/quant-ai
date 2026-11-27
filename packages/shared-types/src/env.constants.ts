@@ -1,6 +1,5 @@
 /**
  * @fileoverview Canonical environment keys, network ports, hostnames, and default connection strings.
- * @author yuva.devlab@gmail.com
  */
 
 /**
@@ -58,7 +57,7 @@ export enum NetworkPort {
   WEB = 3005,
   API = 4005,
   WS = 4006,
-  QUANT_ENGINE = 8000,
+  QUANT_ENGINE = 8005,
   POSTGRES = 5432,
   REDIS = 6379,
   KAFKA_EXTERNAL = 19092,
@@ -83,7 +82,7 @@ export const DefaultConnectionUrl = {
   DATABASE: "postgresql://quantai:quantai_secret@localhost:5432/quantai_db",
   REDIS: "redis://localhost:6379",
   KAFKA_BROKERS: "localhost:19092",
-  QUANT_ENGINE: "http://localhost:8000",
+  QUANT_ENGINE: "http://localhost:8005",
   API_GATEWAY: "http://localhost:4005/api",
   WS_GATEWAY: "ws://localhost:4006",
   CORS_DEV_WEB: "http://localhost:3005",

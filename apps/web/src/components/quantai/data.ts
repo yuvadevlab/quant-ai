@@ -2,7 +2,6 @@
  * @file apps/web/src/components/quantai/data.ts
  * @description Type definitions, UI enums, and dynamic schema contracts for QuantAI workstation.
  * Data is fetched dynamically from NestJS backend APIs. Zero hardcoded assets stored here.
- * @author yuva.devlab@gmail.com
  */
 
 import { SignalStatus as CoreSignalStatus } from "@quant-ai/shared-types";
@@ -29,6 +28,7 @@ export const UiSignalHorizon = {
   SWING: "Swing",
   OPTIONS: "Options",
   SCALP: "Scalp",
+  INVESTMENT: "Investment",
 } as const;
 
 export type UiSignalHorizon = (typeof UiSignalHorizon)[keyof typeof UiSignalHorizon];
@@ -45,7 +45,7 @@ export interface Signal {
   entryPrice: number;
   currentPrice?: number;
   target1: string;
-  target2: string;
+  target2?: string;
   stop: string;
   last: string;
   change: string;
@@ -57,15 +57,22 @@ export interface Signal {
   riskReward: string;
   rationale?: string;
   catalysts: string[];
-  agents: {
+  agents?: {
     technical: { score: number; verdict: string };
     quant: { score: number; verdict: string };
     optionsFlow: { score: number; verdict: string };
     riskGuardian: { score: number; verdict: string };
   };
+  dataSource?: string;
+  dataStatus?: string;
+  observedAt?: string;
+  outcomePrice?: number;
+  outcomeAt?: string;
+  metricEligible?: boolean;
+  dataProvenance?: string;
   trajectoryPoints?: {
     time: string;
-    actualPrice: number;
+    actualPrice?: number;
     upperCone: number;
     expectedPath: number;
     lowerCone: number;

@@ -1,7 +1,6 @@
 /**
  * @file src/constants/market.constants.ts
  * @description Centralized domain enums and canonical constants for financial markets, UI tabs, and strategies.
- * @author yuva.devlab@gmail.com
  */
 
 export {

@@ -162,9 +162,9 @@
   }
 
   .tag-active {
-    background-color: color-mix(in srgb, #22c55e 16%, transparent) !important;
-    border: 1px solid color-mix(in srgb, #22c55e 32%, transparent) !important;
-    color: #4ade80 !important;
+    background-color: var(--color-gain-bg) !important;
+    border: 1px solid color-mix(in srgb, var(--color-gain) 28%, transparent) !important;
+    color: var(--color-gain) !important;
   }
 
   .provider-desc {

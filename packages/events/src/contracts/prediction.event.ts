@@ -1,7 +1,6 @@
 /**
  * @file packages/events/src/contracts/prediction.event.ts
  * @description Prediction generation event payload and envelope factory using @yuva-devlab/events.
- * @author yuva.devlab@gmail.com
  */
 
 import { z } from "zod";

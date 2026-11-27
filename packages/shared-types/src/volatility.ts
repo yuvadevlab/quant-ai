@@ -1,6 +1,5 @@
 /**
  * @fileoverview Pure, deterministic algorithms for volatility bands, channels, and VWAP.
- * Author: yuva.devlab@gmail.com
  */
 
 import {

@@ -1,12 +1,11 @@
 /**
  * @file packages/events/src/contracts/tick.event.ts
  * @description Real-time market tick event payload and envelope factory using @yuva-devlab/events.
- * @author yuva.devlab@gmail.com
  */
 
 import { z } from "zod";
 import { createEventEnvelope, type DomainEventEnvelope } from "@yuva-devlab/events";
-import { EventTopic } from "@quant-ai/shared-types";
+import { EventTopic, MarketDataStatus } from "@quant-ai/shared-types";
 
 /**
  * Zod validator for high-frequency market tick stream payloads.
@@ -21,6 +20,9 @@ export const MarketTickPayloadSchema = z.object({
   low: z.number().positive(),
   volume: z.number().nonnegative(),
   timestamp: z.string().datetime(),
+  dataSource: z.string(),
+  dataStatus: z.nativeEnum(MarketDataStatus),
+  observedAt: z.string().datetime().optional(),
 });
 
 export type MarketTickPayload = z.infer<typeof MarketTickPayloadSchema>;

@@ -2,14 +2,12 @@
  * @file src/features/settings/components/SettingsPage.tsx
  * @description Master Platform Configuration & Risk Governance page wrapper.
  * Composes workstation shell, header actions, AI engine provider card, risk limits, and SSO identity using @quant-ai/ui.
- * @author yuva.devlab@gmail.com
  */
 
 import { useState } from "react";
 import { QuantShell } from "@/components/layout";
-import { StorageKey } from "@quant-ai/shared-types";
 import { DEVLAB_PORTAL_ROUTES } from "@/lib/portal-routes";
-import { apiFetch } from "@/lib/api-fetcher";
+import { useQuantTheme } from "@/hooks/use-quant-theme";
 import { useAuth } from "@/providers/auth";
 import {
   SettingsHeader,
@@ -31,12 +29,7 @@ export function SettingsPage({ initialData }: SettingsPageProps) {
   const [autoTrailingSL, setAutoTrailingSL] = useState(initialData.autoTrailingSL);
   const [saved, setSaved] = useState(false);
 
-  const [currentTheme, setCurrentTheme] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem(StorageKey.THEME) || "quantai-dark";
-    }
-    return "quantai-dark";
-  });
+  const { theme: currentTheme, toggleTheme } = useQuantTheme(isAuthenticated);
 
   function handleSave() {
     setSaved(true);
@@ -47,24 +40,6 @@ export function SettingsPage({ initialData }: SettingsPageProps) {
     window.location.href = DEVLAB_PORTAL_ROUTES.LOGIN({
       redirectUrl: window.location.href,
     });
-  }
-
-  function toggleTheme(): void {
-    const nextTheme = currentTheme === "quantai-dark" ? "quantai-light" : "quantai-dark";
-    setCurrentTheme(nextTheme);
-
-    if (typeof window !== "undefined") {
-      localStorage.setItem(StorageKey.THEME, nextTheme);
-      document.documentElement.setAttribute("data-theme", nextTheme);
-      document.documentElement.classList.toggle("dark", nextTheme.includes("dark"));
-
-      if (isAuthenticated) {
-        void apiFetch("/api/users/preferences", {
-          method: "PATCH",
-          body: JSON.stringify({ theme: nextTheme }),
-        });
-      }
-    }
   }
 
   return (

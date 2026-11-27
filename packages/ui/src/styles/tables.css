@@ -2,7 +2,6 @@
  * @file packages/ui/src/styles/tables.css
  * @description Modular stylesheet for tables.
  * Architecture: W3C Cascade Layer @layer dl-components
- * @author yuva.devlab@gmail.com
  */
 
 @layer dl-components {
@@ -110,9 +109,9 @@
   }
 
   .badge-buy {
-    background-color: color-mix(in srgb, #22c55e 15%, transparent) !important;
-    color: #4ade80 !important;
-    border: 1px solid color-mix(in srgb, #22c55e 32%, transparent) !important;
+    background-color: var(--color-gain-bg) !important;
+    color: var(--color-gain) !important;
+    border: 1px solid color-mix(in srgb, var(--color-gain) 28%, transparent) !important;
   }
 
   .badge-sell {
@@ -170,9 +169,9 @@
   }
 
   .pill-gain {
-    background-color: color-mix(in srgb, #22c55e 15%, transparent) !important;
-    color: #4ade80 !important;
-    border: 1px solid color-mix(in srgb, #22c55e 30%, transparent) !important;
+    background-color: var(--color-gain-bg) !important;
+    color: var(--color-gain) !important;
+    border: 1px solid color-mix(in srgb, var(--color-gain) 28%, transparent) !important;
   }
 
   .pill-loss {

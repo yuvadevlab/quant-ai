@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/SettingsHeader.tsx
  * @description Header banner and save button for platform configuration.
- * @author yuva.devlab@gmail.com
  */
 
 import { Check, ChevronRight } from "lucide-react";

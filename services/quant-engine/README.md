@@ -23,12 +23,12 @@ cd services/quant-engine
 # Create virtual environment and install dependencies
 uv sync
 
-# Run the FastAPI development server
-uv run uvicorn src.main:app --reload --port 8000
+# Run the FastAPI development server (port resolved from workspace .env)
+uv run python -m src.main
 ```
 
 Verify health:
 
 ```bash
-curl http://localhost:8000/health
+curl http://localhost:8005/health
 ```

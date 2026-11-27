@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/llm-models/llm-models.controller.ts
  * @description REST controller exposing database-driven LLM model provider endpoints.
- * @author yuva.devlab@gmail.com
  */
 
 import {

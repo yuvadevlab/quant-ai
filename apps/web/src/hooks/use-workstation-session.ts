@@ -2,7 +2,6 @@
  * @file src/hooks/use-workstation-session.ts
  * @description Centralized dynamic hook providing authenticated user profile, active AI model,
  * real-time telemetry metrics, and IST market session timing state.
- * @author yuva.devlab@gmail.com
  */
 
 import { useMemo } from "react";

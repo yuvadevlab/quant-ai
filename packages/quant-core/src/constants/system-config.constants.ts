@@ -1,7 +1,6 @@
 /**
  * @file packages/finance-engine/src/constants/system-config.constants.ts
  * @description Centralized keys and default envelopes for runtime system configurations.
- * @author yuva.devlab@gmail.com
  */
 
 /**

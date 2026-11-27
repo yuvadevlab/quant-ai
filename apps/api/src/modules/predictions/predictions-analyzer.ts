@@ -2,7 +2,6 @@
  * @file apps/api/src/modules/predictions/predictions-analyzer.ts
  * @description Real-time quantitative opportunity scanner generating genuine predictions from live market data.
  * Zero hardcoded tickers: dynamically pulls tradable universe from PostgreSQL screener_stocks SSOT.
- * @author yuva.devlab@gmail.com
  */
 
 import { Logger } from "@yuva-devlab/logger";
@@ -13,7 +12,7 @@ import {
   TradePositionSide,
 } from "@quant-ai/quant-core";
 import { DatabaseService } from "../infrastructure/database.service";
-import { LiveMarketFeedService } from "../market/feed";
+import { isUsableMarketDataStatus, LiveMarketFeedService } from "../market/feed";
 import { buildSignal, persistPredictionToDb } from "./predictions-factory";
 
 export interface AnalysisFilterOptions {
@@ -91,6 +90,13 @@ export async function executeRealMarketAnalysis(
   for (const item of universe) {
     try {
       const quote = await liveMarketFeed.getLiveQuote(item.symbol);
+      if (!isUsableMarketDataStatus(quote.dataStatus)) {
+        logger.warn(
+          `[executeRealMarketAnalysis] Skipped ${item.symbol}: quote status is ${quote.dataStatus}`,
+        );
+        continue;
+      }
+
       const current = quote.price;
       const rsi = calculateRsiFromSparkline(quote.sparkline);
       const dayRange = Math.abs(quote.dayHigh - quote.dayLow);
@@ -100,9 +106,7 @@ export async function executeRealMarketAnalysis(
       const direction = isBullish ? SignalDirection.LONG : SignalDirection.SHORT;
       const side = isBullish ? TradePositionSide.LONG : TradePositionSide.SHORT;
 
-      const isExplicitTarget = Boolean(options?.symbols && options.symbols.length > 0);
       const hasQuantEdge =
-        isExplicitTarget ||
         (isBullish && rsi >= 50 && quote.percentChange > 0.02) ||
         (!isBullish && rsi <= 50 && quote.percentChange < -0.02) ||
         Math.abs(quote.percentChange) >= 0.4;
@@ -146,6 +150,9 @@ export async function executeRealMarketAnalysis(
         direction,
         side,
         confidence,
+        dataSource: quote.source,
+        dataStatus: quote.dataStatus,
+        observedAt: quote.observedAt,
       });
 
       await persistPredictionToDb(databaseService, signal, logger);

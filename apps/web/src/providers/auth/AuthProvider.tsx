@@ -1,7 +1,6 @@
 /**
  * @file apps/web/src/providers/auth/AuthProvider.tsx
  * @description Centralized authentication provider wrapping @yuva-devlab/auth-client.
- * @author yuva.devlab@gmail.com
  */
 
 import React, { useCallback, useMemo, useState } from "react";

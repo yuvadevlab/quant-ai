@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/quant-analysis/deliberation-session.types.ts
  * @description Type definitions for multi-agent deliberation sessions and expectancy setups.
- * @author yuva.devlab@gmail.com
  */
 
 import { AgentDeliberationItem, AgentStance, SignalRegime } from "@quant-ai/shared-types";

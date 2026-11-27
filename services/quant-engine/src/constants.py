@@ -1,6 +1,5 @@
 """
 QuantAI Quantitative Engine — Global Constants & Model Defaults.
-Author: yuva.devlab@gmail.com
 """
 
 from enum import Enum

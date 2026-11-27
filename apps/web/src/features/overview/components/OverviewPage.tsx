@@ -2,12 +2,12 @@
  * @file src/features/overview/components/OverviewPage.tsx
  * @description Master Executive Market Desk page wrapper.
  * Composes layout shell, live market ticks, breadth matrix, active signal spotlights, and launchpad using @quant-ai/ui.
- * @author yuva.devlab@gmail.com
  */
 
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ChevronRight, Sparkles, Filter, LineChart, Bot } from "lucide-react";
+import { MarketDataStatus } from "@quant-ai/shared-types";
 import { QuantShell } from "@/components/layout";
 import { AppRoute } from "@/constants/routes.constants";
 import { IndexCategoryFilter } from "@/constants/market.constants";
@@ -32,7 +32,14 @@ export function OverviewPage({ initialData }: OverviewPageProps) {
 
   const hydratedTicks = initialData.ticks.map((tick) => {
     const live = liveTicks[tick.name];
-    if (!live) return tick;
+    if (
+      !live ||
+      live.dataStatus === undefined ||
+      live.dataStatus === MarketDataStatus.SIMULATED ||
+      live.dataStatus === MarketDataStatus.UNAVAILABLE
+    ) {
+      return tick;
+    }
 
     const formattedPrice = live.price.toLocaleString("en-IN", {
       minimumFractionDigits: 2,
@@ -47,6 +54,8 @@ export function OverviewPage({ initialData }: OverviewPageProps) {
       price: formattedPrice,
       change: formattedChange,
       positive: live.change >= 0,
+      dataStatus: live.dataStatus,
+      ...(live.observedAt ? { observedAt: live.observedAt } : {}),
     };
   });
 
@@ -54,6 +63,9 @@ export function OverviewPage({ initialData }: OverviewPageProps) {
     <QuantShell>
       <div className="overview-container">
         <OverviewHero
+          badgeText={OVERVIEW_COPY.HEADER.BADGE}
+          title={OVERVIEW_COPY.HEADER.TITLE}
+          subtitle={OVERVIEW_COPY.HEADER.SUBTITLE}
           copilotActionSlot={
             <Link to={AppRoute.CHAT} className="btn-hero-copilot">
               <Sparkles size={16} />

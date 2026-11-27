@@ -2,7 +2,6 @@
  * @fileoverview Main entry point for @quant-ai/shared-types.
  * Exports domain enums, prediction contracts, quantitative indicators, deliberation engines,
  * network registries, API routes, telemetry metadata, and real-time event definitions.
- * @author yuva.devlab@gmail.com
  */
 
 export * from "./enums";
@@ -31,3 +30,5 @@ export * from "./query-keys";
 export * from "./auth.constants";
 export * from "./auth.types";
 export * from "./universe.constants";
+export * from "./agent-stream.enums";
+export * from "./agent-stream.types";

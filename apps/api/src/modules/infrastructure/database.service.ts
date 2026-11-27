@@ -1,6 +1,5 @@
 /**
  * @fileoverview Database connectivity and Prisma persistence service.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";

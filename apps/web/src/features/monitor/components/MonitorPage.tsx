@@ -2,7 +2,6 @@
  * @file src/features/monitor/components/MonitorPage.tsx
  * @description Master Predictive Trajectory Monitor page wrapper with live WebSocket deliberation and pricing streams.
  * Composes workstation shell, KPI summary, and pure @quant-ai/ui presentation blocks with hook logic.
- * @author yuva.devlab@gmail.com
  */
 
 import { useState } from "react";
@@ -14,13 +13,12 @@ import {
   MonitorConeSection,
   MonitorAgentsSection,
 } from "@quant-ai/ui";
-import { AgentRole, AgentStance } from "@quant-ai/shared-types";
+import { AgentStance } from "@quant-ai/shared-types";
 import { ArrowLeft, ChevronRight, Sparkles } from "lucide-react";
 import { QuantShell } from "@/components/layout";
 import { AppRoute } from "@/constants/routes.constants";
 import { UiSignalStatus } from "@/components/quantai/data";
 import { useRealtimeDeliberation } from "@/hooks/use-realtime-deliberation";
-import { useRealtimeTicks } from "@/hooks/use-realtime-ticks";
 import { MONITOR_COPY } from "@/lib/ui-copy/monitor.copy";
 import { triggerDeliberation } from "../api/triggerDeliberation";
 import type { MonitorData } from "../api/getMonitorData";
@@ -33,31 +31,19 @@ export interface MonitorPageProps {
 export function MonitorPage({ initialData }: MonitorPageProps) {
   const { signal } = initialData;
   const { agentSpeeches, latestSignalUpdate, isConnected } = useRealtimeDeliberation(signal.id);
-  const { ticks } = useRealtimeTicks();
-
-  const [timeframe, setTimeframe] = useState("1m");
   const [isTriggering, setIsTriggering] = useState(false);
 
-  const liveTick = ticks[signal.symbol];
-  const currentPrice = liveTick?.price ? `₹${liveTick.price.toLocaleString("en-IN")}` : signal.last;
-  const currentPriceNum =
-    (liveTick?.price ??
-      signal.currentPrice ??
-      parseFloat(String(signal.last).replace(/[^0-9.-]/g, ""))) ||
-    (typeof signal.entryPrice === "number"
-      ? signal.entryPrice
-      : parseFloat(String(signal.entryPrice).replace(/[^0-9.-]/g, "")) || 1000);
-  const currentChange = liveTick
-    ? `${liveTick.percentChange >= 0 ? "+" : ""}${liveTick.percentChange.toFixed(2)}%`
-    : signal.change;
   const currentStatus = (latestSignalUpdate?.status as Signal["status"]) ?? signal.status;
   const isActive = currentStatus === UiSignalStatus.ACTIVE;
   const copy = MONITOR_COPY;
 
-  const liveMomentum = agentSpeeches[AgentRole.MOMENTUM_ANALYST];
-  const liveSkeptic = agentSpeeches[AgentRole.RED_TEAM_SKEPTIC];
-  const liveRisk = agentSpeeches[AgentRole.QUANT_RISK_OFFICER];
-  const hasLiveUpdates = Boolean(liveMomentum || liveSkeptic || liveRisk);
+  const agentsList = Object.values(agentSpeeches).map((speech) => ({
+    role: speech.agentName,
+    score: speech.confidence,
+    scoreClass: speech.stance === AgentStance.BEARISH ? "text-loss" : "text-brand",
+    verdict: speech.reasoning,
+  }));
+  const hasLiveUpdates = agentsList.length > 0;
 
   const handleTrigger = async () => {
     if (isTriggering) return;
@@ -68,36 +54,6 @@ export function MonitorPage({ initialData }: MonitorPageProps) {
       setTimeout(() => setIsTriggering(false), 2000);
     }
   };
-
-  const agentsList = [
-    {
-      role: AgentRole.MOMENTUM_ANALYST,
-      score: liveMomentum ? liveMomentum.confidence : (signal.agents?.quant?.score ?? 88),
-      scoreClass: "text-gain",
-      verdict: liveMomentum
-        ? liveMomentum.reasoning
-        : (signal.agents?.quant?.verdict ??
-          "Bullish continuation breakout validated across volume expansion."),
-    },
-    {
-      role: AgentRole.RED_TEAM_SKEPTIC,
-      score: liveSkeptic ? liveSkeptic.confidence : (signal.agents?.optionsFlow?.score ?? 78),
-      scoreClass: liveSkeptic?.stance === AgentStance.BEARISH ? "text-loss" : "text-brand",
-      verdict: liveSkeptic
-        ? liveSkeptic.reasoning
-        : (signal.agents?.optionsFlow?.verdict ??
-          "Auditing overhead resistance and liquidity exhaustion sweeps."),
-    },
-    {
-      role: AgentRole.QUANT_RISK_OFFICER,
-      score: liveRisk ? liveRisk.confidence : (signal.agents?.riskGuardian?.score ?? 92),
-      scoreClass: "text-brand",
-      verdict: liveRisk
-        ? liveRisk.reasoning
-        : (signal.agents?.riskGuardian?.verdict ??
-          "Trade expectancy verified: Kelly-optimal capital allocation approved."),
-    },
-  ];
 
   return (
     <QuantShell>
@@ -122,34 +78,20 @@ export function MonitorPage({ initialData }: MonitorPageProps) {
           isActive={isActive}
         />
 
+        <p className="panel-subtext">{signal.dataProvenance ?? copy.DATA_PROVENANCE_UNAVAILABLE}</p>
+
         <MonitorKpiGrid
           entry={signal.entry}
           entryPrice={signal.entryPrice}
-          last={currentPrice}
-          change={currentChange}
-          direction={signal.direction}
+          last={signal.last}
           target1={signal.target1}
-          target2={signal.target2}
+          {...(signal.target2 ? { target2: signal.target2 } : {})}
           stop={signal.stop}
           confidence={signal.confidence}
           riskReward={signal.riskReward}
         />
 
-        <MonitorConeSection
-          signal={signal}
-          isActive={isActive}
-          timeframe={timeframe}
-          onTimeframeChange={setTimeframe}
-          currentPrice={currentPriceNum}
-          samples={[]}
-          trajectory={signal.trajectoryPoints?.map((t, idx, arr) => ({
-            time: t.time,
-            expected: t.expectedPath,
-            actual: idx === arr.length - 1 && liveTick?.price ? liveTick.price : t.actualPrice,
-            upper: t.upperCone,
-            lower: t.lowerCone,
-          }))}
-        />
+        <MonitorConeSection signal={signal} />
 
         <MonitorAgentsSection
           agents={agentsList}
@@ -158,6 +100,14 @@ export function MonitorPage({ initialData }: MonitorPageProps) {
           hasLiveUpdates={hasLiveUpdates}
           canTrigger={true}
           onTrigger={handleTrigger}
+          title={copy.DELIBERATION.TITLE}
+          subtitle={copy.DELIBERATION.SUBTITLE}
+          specialistsLabel={
+            agentsList.length > 0
+              ? `${agentsList.length} ${copy.DELIBERATION.RESPONSES_RECORDED}`
+              : copy.DELIBERATION.NO_RESPONSES
+          }
+          emptyMessage={copy.DELIBERATION.EMPTY}
         />
 
         <InvalidationCard

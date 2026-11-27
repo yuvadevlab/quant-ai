@@ -1,7 +1,6 @@
 /**
  * @file apps/api/test/auth.test.ts
  * @description Unit tests for DevLab SSO authentication, JIT provisioning, and user endpoints.
- * @author yuva.devlab@gmail.com
  */
 
 import { describe, expect, it, vi } from "vitest";

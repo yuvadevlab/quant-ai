@@ -1,7 +1,6 @@
 /**
  * @file packages/finance-engine/src/constants/market-symbols.constants.ts
  * @description Centralized enums for multi-asset exchanges, currencies, suffixes, and instruments.
- * @author yuva.devlab@gmail.com
  */
 
 /**

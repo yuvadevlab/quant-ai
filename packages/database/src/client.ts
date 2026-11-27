@@ -1,7 +1,6 @@
 /**
  * @file packages/database/src/client.ts
  * @description Prisma client factory using PostgreSQL driver adapter or Accelerate URL.
- * @author yuva.devlab@gmail.com
  */
 
 import { PrismaClient } from "@prisma/client";

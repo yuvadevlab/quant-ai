@@ -1,12 +1,12 @@
 /**
  * @file packages/ui/src/components/ScreenerTable.tsx
  * @description Screener results table with RSI meters, EMA status, options OI tags using DevLab UI Table primitives.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ReactNode } from "react";
 import { ArrowDownRight, ArrowUpRight, Sparkles } from "lucide-react";
 import {
+  Button,
   Table,
   TableHeader,
   TableBody,
@@ -139,7 +139,7 @@ export function ScreenerTable({
                     {renderAnalyzeLink ? (
                       renderAnalyzeLink(item)
                     ) : (
-                      <button
+                      <Button
                         type="button"
                         onClick={() => onAnalyze?.(item.symbol)}
                         className="btn-table-action"
@@ -147,7 +147,7 @@ export function ScreenerTable({
                       >
                         <Sparkles size={14} />
                         <span>{analyzeLabel}</span>
-                      </button>
+                      </Button>
                     )}
                   </TableCell>
                 </TableRow>

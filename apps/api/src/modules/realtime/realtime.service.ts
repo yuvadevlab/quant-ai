@@ -1,6 +1,5 @@
 /**
  * @fileoverview Service providing high-level broadcasting methods for real-time workstation updates.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable } from "@nestjs/common";

@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/auth/index.ts
  * @description Public exports for authentication module.
- * @author yuva.devlab@gmail.com
  */
 
 export * from "./auth.module";

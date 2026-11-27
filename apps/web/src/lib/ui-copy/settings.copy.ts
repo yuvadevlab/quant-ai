@@ -1,7 +1,6 @@
 /**
  * @file src/lib/ui-copy/settings.copy.ts
  * @description Centralized copy for the System Settings & Algorithm Tuning Desk.
- * @author yuva.devlab@gmail.com
  */
 
 export const SETTINGS_COPY = {

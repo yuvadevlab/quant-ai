@@ -2,10 +2,15 @@
  * @file packages/ui/src/styles/monitor-cone.css
  * @description High-contrast institutional stylesheet for benchmark notes and visual indicators.
  * Architecture: W3C Cascade Layer @layer dl-components
- * @author yuva.devlab@gmail.com
  */
 
 @layer dl-components {
+  .chart-unavailable-note {
+    padding: 2rem;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+
   /* ==========================================================================
      Trajectory Monitor (High-Contrast Benchmark Notes & Visual Indicators)
      ========================================================================== */

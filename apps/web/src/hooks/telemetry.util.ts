@@ -1,11 +1,11 @@
 /**
  * @file src/hooks/telemetry.util.ts
  * @description Pure mathematical calculation engine for signal hit rates, excursions, and telemetry.
- * @author yuva.devlab@gmail.com
  */
 
 import type { Signal } from "@/components/quantai/data";
 import { UiSignalStatus } from "@/components/quantai/data";
+import { PREDICTIONS_COPY } from "@/lib/ui-copy/predictions.copy";
 
 export interface WorkstationTelemetry {
   readonly totalSignals: number;
@@ -28,11 +28,22 @@ export function calculateSignalsTelemetry(
   allSignals: readonly Signal[] = [],
 ): WorkstationTelemetry {
   const activeCount = allSignals.filter((s) => s.status === UiSignalStatus.ACTIVE).length;
-  const targetHitCount = allSignals.filter((s) => s.status === UiSignalStatus.TARGET_HIT).length;
-  const stopHitCount = allSignals.filter((s) => s.status === UiSignalStatus.STOP_HIT).length;
-  const settled = targetHitCount + stopHitCount;
-  const winRateNumber = settled > 0 ? (targetHitCount / settled) * 100 : 0;
+  const eligible = allSignals.filter(
+    (signal) =>
+      signal.metricEligible === true &&
+      (signal.status === UiSignalStatus.TARGET_HIT || signal.status === UiSignalStatus.STOP_HIT) &&
+      typeof signal.outcomePrice === "number" &&
+      signal.entryPrice > 0,
+  );
+  const eligibleWins = eligible.filter((s) => s.status === UiSignalStatus.TARGET_HIT).length;
+  const eligibleLosses = eligible.filter((s) => s.status === UiSignalStatus.STOP_HIT).length;
+  const eligibleSettled = eligibleWins + eligibleLosses;
+  const targetHitCount = eligibleWins;
+  const stopHitCount = eligibleLosses;
+  const winRateNumber = eligibleSettled > 0 ? (eligibleWins / eligibleSettled) * 100 : 0;
 
+  let grossGainPct = 0;
+  let grossLossPct = 0;
   let totalGainPct = 0;
   let gainCount = 0;
   let totalLossPct = 0;
@@ -40,19 +51,26 @@ export function calculateSignalsTelemetry(
   let totalRR = 0;
   let rrCount = 0;
 
+  for (const s of eligible) {
+    const pnlPct =
+      (((s.outcomePrice ?? s.entryPrice) - s.entryPrice) / s.entryPrice) *
+      (s.direction === "BUY" ? 1 : -1) *
+      100;
+    if (pnlPct > 0) {
+      grossGainPct += pnlPct;
+      totalGainPct += pnlPct;
+      gainCount++;
+    } else if (pnlPct < 0) {
+      grossLossPct += Math.abs(pnlPct);
+      totalLossPct += Math.abs(pnlPct);
+      lossCount++;
+    }
+  }
+
   for (const s of allSignals) {
     const entry = s.entryPrice || parseFloat(String(s.entry).replace(/[^0-9.-]/g, ""));
     const t1 = parseFloat(String(s.target1).replace(/[^0-9.-]/g, ""));
     const sl = parseFloat(String(s.stop).replace(/[^0-9.-]/g, ""));
-
-    if (entry > 0 && t1 > 0) {
-      totalGainPct += ((t1 - entry) / entry) * 100;
-      gainCount++;
-    }
-    if (entry > 0 && sl > 0) {
-      totalLossPct += Math.abs((entry - sl) / entry) * 100;
-      lossCount++;
-    }
 
     const reward = Math.abs(t1 - entry);
     const risk = Math.max(0.01, Math.abs(entry - sl));
@@ -62,26 +80,23 @@ export function calculateSignalsTelemetry(
     }
   }
 
-  const avgGain = gainCount > 0 ? (totalGainPct / gainCount).toFixed(1) : "0.0";
-  const avgLoss = lossCount > 0 ? (totalLossPct / lossCount).toFixed(1) : "0.0";
-
-  // Dynamic profit factor calculation: Gross Profits / Gross Losses
-  let profitFactor = "0.00";
-  if (lossCount === 0 && gainCount > 0) {
-    profitFactor = (totalGainPct / gainCount).toFixed(2);
-  } else if (totalLossPct > 0) {
-    profitFactor = (totalGainPct / totalLossPct).toFixed(2);
-  }
-
-  // Dynamic Risk-Reward ratio
-  const avgRR = rrCount > 0 ? (totalRR / rrCount).toFixed(2) : "2.50";
-
-  // Dynamic Win Rate Badge (alpha or momentum relative to 50% baseline)
-  let winRateBadge = "+0.0% THIS MONTH";
-  if (settled > 0) {
-    const delta = winRateNumber - 50;
-    winRateBadge = `${delta >= 0 ? "+" : "−"}${Math.abs(delta).toFixed(1)}% THIS MONTH`;
-  }
+  const avgGain =
+    gainCount > 0
+      ? `+${(totalGainPct / gainCount).toFixed(1)}% avg gain`
+      : PREDICTIONS_COPY.KPIS.DEFAULT_AVG_GAIN;
+  const avgLoss =
+    lossCount > 0
+      ? `−${(totalLossPct / lossCount).toFixed(1)}% avg loss`
+      : PREDICTIONS_COPY.KPIS.DEFAULT_AVG_LOSS;
+  const profitFactor =
+    grossLossPct > 0
+      ? (grossGainPct / grossLossPct).toFixed(2)
+      : grossGainPct > 0
+        ? "∞"
+        : PREDICTIONS_COPY.KPIS.NOT_AVAILABLE;
+  const avgRR =
+    rrCount > 0 ? `1 : ${(totalRR / rrCount).toFixed(2)}` : PREDICTIONS_COPY.KPIS.NOT_AVAILABLE;
+  const winRateBadge = `${eligibleSettled} ${PREDICTIONS_COPY.KPIS.ELIGIBLE_SAMPLE_SUFFIX}`;
 
   // Dynamic holding / horizon hint derived from actual signal distribution
   const intradayCount = allSignals.filter((s) => s.horizon === "Intraday").length;
@@ -99,12 +114,13 @@ export function calculateSignalsTelemetry(
     activeCount,
     targetHitCount,
     stopHitCount,
-    winRatePercent: `${winRateNumber.toFixed(1)}%`,
+    winRatePercent:
+      eligibleSettled > 0 ? `${winRateNumber.toFixed(1)}%` : PREDICTIONS_COPY.KPIS.NOT_AVAILABLE,
     winRateBadge,
     profitFactor,
-    riskReward: `1 : ${avgRR}`,
-    avgGainText: `+${avgGain}% avg gain`,
-    avgLossText: `−${avgLoss}% avg loss`,
+    riskReward: avgRR,
+    avgGainText: avgGain,
+    avgLossText: avgLoss,
     holdingHint,
   };
 }

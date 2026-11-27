@@ -1,12 +1,13 @@
 /**
  * @file apps/api/src/modules/predictions/predictions-factory.ts
  * @description Signal builder and database persistence for quantitative predictions.
- * @author yuva.devlab@gmail.com
  */
 
 import { Logger } from "@yuva-devlab/logger";
+import { randomUUID } from "node:crypto";
 import {
   AssetClass,
+  MarketDataStatus,
   Signal,
   SignalDirection,
   SignalRegime,
@@ -36,38 +37,39 @@ export interface SignalBuildParams {
   readonly direction: SignalDirection;
   readonly side: TradePositionSide;
   readonly confidence: number;
+  readonly dataSource: string;
+  readonly dataStatus: MarketDataStatus;
+  readonly observedAt?: string;
 }
 
+/**
+ * Builds a projected path without inventing realized prices for future observations.
+ */
 export function buildSignalTrajectory(current: number, target: number, atr: number) {
   const range = target - current;
-  const interimActual = Number((current + range * 0.12).toFixed(2));
   return [
     { time: "Entry", expected: current, actual: current, upper: current, lower: current },
     {
       time: "T+15m",
       expected: Number((current + range * 0.25).toFixed(2)),
-      actual: interimActual,
       upper: Number((current + atr * 0.5).toFixed(2)),
       lower: Number((current - atr * 0.3).toFixed(2)),
     },
     {
       time: "Now",
       expected: Number((current + range * 0.45).toFixed(2)),
-      actual: current,
       upper: Number((current + atr * 0.8).toFixed(2)),
       lower: Number((current - atr * 0.5).toFixed(2)),
     },
     {
       time: "T+1h",
       expected: Number((current + range * 0.75).toFixed(2)),
-      actual: null as unknown as number,
       upper: Number((current + range * 0.75 + atr * 0.8).toFixed(2)),
       lower: Number((current + range * 0.75 - atr * 0.6).toFixed(2)),
     },
     {
       time: "Target",
       expected: target,
-      actual: null as unknown as number,
       upper: Number((target + atr * 0.5).toFixed(2)),
       lower: Number((target - atr * 0.5).toFixed(2)),
     },
@@ -90,8 +92,11 @@ export function buildSignal(params: SignalBuildParams): Signal {
     direction,
     side,
     confidence,
+    dataSource,
+    dataStatus,
+    observedAt,
   } = params;
-  const predictionId = `PRED-${symbol.toUpperCase()}`;
+  const predictionId = `PRED-${symbol.toUpperCase()}-${randomUUID()}`;
   const summary = `Algorithmic ${direction} setup identified for ${name}: Current LTP ₹${current.toLocaleString("en-IN")}, RSI ${rsi.toFixed(1)}, intraday momentum ${percentChange >= 0 ? "+" : ""}${percentChange.toFixed(2)}%, ATR volatility ₹${atr.toFixed(2)}.`;
 
   const trajectory = buildSignalTrajectory(current, target, atr);
@@ -131,6 +136,10 @@ export function buildSignal(params: SignalBuildParams): Signal {
     ],
     invalidation: `Close beyond stop-loss level of ₹${stopLoss} invalidates thesis.`,
     trajectory,
+    dataSource,
+    dataStatus,
+    observedAt,
+    metricEligible: false,
     agents: [
       {
         role: "Technical Analyst" as never,
@@ -155,12 +164,6 @@ export async function persistPredictionToDb(
 ): Promise<void> {
   if (!databaseService) return;
   try {
-    await databaseService.client.prediction.deleteMany({
-      where: {
-        OR: [{ id: signal.id }, { ticker: signal.ticker }],
-      },
-    });
-
     await databaseService.client.prediction.create({
       data: {
         id: signal.id,
@@ -174,10 +177,37 @@ export async function persistPredictionToDb(
         currentPrice: signal.current,
         confidence: signal.confidence,
         riskReward: signal.riskReward,
+        strategy: signal.strategy ?? TradeStrategy.SWING,
+        assetClass: signal.assetClass ?? AssetClass.EQUITY,
         timeHorizon: signal.horizon,
         regime: signal.regime,
         summary: signal.thesis,
+        dataSource: signal.dataSource ?? null,
+        dataStatus: signal.dataStatus ?? MarketDataStatus.UNAVAILABLE,
+        observedAt: signal.observedAt ? new Date(signal.observedAt) : null,
+        metricEligible: false,
         expiresAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+        researchRuns: {
+          create: {
+            ticker: signal.ticker,
+            serviceMode: signal.strategy ?? TradeStrategy.SWING,
+            timeHorizon: signal.horizon,
+            result: "PREDICTION",
+            dataSource: signal.dataSource ?? null,
+            dataStatus: signal.dataStatus ?? MarketDataStatus.UNAVAILABLE,
+            observedAt: signal.observedAt ? new Date(signal.observedAt) : null,
+            referencePrice: signal.current,
+            snapshot: {
+              direction: signal.direction,
+              entry: signal.entry,
+              target: signal.target,
+              stopLoss: signal.stopLoss,
+              confidence: signal.confidence,
+              riskReward: signal.riskReward,
+              thesis: signal.thesis,
+            },
+          },
+        },
         verdicts: {
           create: (signal.agents ?? []).map((v) => ({
             agentRole: v.role,

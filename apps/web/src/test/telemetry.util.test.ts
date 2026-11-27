@@ -1,7 +1,6 @@
 /**
  * @file src/test/telemetry.util.test.ts
  * @description Unit tests for dynamic mathematical telemetry and signal ledger calculations.
- * @author yuva.devlab@gmail.com
  */
 
 import { describe, it, expect } from "vitest";
@@ -48,10 +47,10 @@ describe("calculateSignalsTelemetry", () => {
     expect(result.activeCount).toBe(0);
     expect(result.targetHitCount).toBe(0);
     expect(result.stopHitCount).toBe(0);
-    expect(result.winRatePercent).toBe("0.0%");
-    expect(result.winRateBadge).toBe("+0.0% THIS MONTH");
-    expect(result.profitFactor).toBe("0.00");
-    expect(result.riskReward).toBe("1 : 2.50");
+    expect(result.winRatePercent).toBe("—");
+    expect(result.winRateBadge).toBe("0 settled");
+    expect(result.profitFactor).toBe("—");
+    expect(result.riskReward).toBe("—");
     expect(result.avgGainText).toBe("+0.0% avg gain");
     expect(result.avgLossText).toBe("−0.0% avg loss");
     expect(result.holdingHint).toBe("Horizon: Intraday · Swing");
@@ -62,6 +61,9 @@ describe("calculateSignalsTelemetry", () => {
       createMockSignal({
         id: "SIG-1",
         status: UiSignalStatus.TARGET_HIT,
+        metricEligible: true,
+        outcomePrice: 110,
+        entryPrice: 100,
         horizon: "Intraday",
         entry: "₹100",
         target1: "₹110",
@@ -70,6 +72,9 @@ describe("calculateSignalsTelemetry", () => {
       createMockSignal({
         id: "SIG-2",
         status: UiSignalStatus.TARGET_HIT,
+        metricEligible: true,
+        outcomePrice: 2625,
+        entryPrice: 2500,
         horizon: "Intraday",
         entry: "₹2,500",
         target1: "₹2,625",
@@ -78,8 +83,10 @@ describe("calculateSignalsTelemetry", () => {
       createMockSignal({
         id: "SIG-3",
         status: UiSignalStatus.STOP_HIT,
-        horizon: "Swing",
+        metricEligible: true,
+        outcomePrice: 190,
         entryPrice: 200,
+        horizon: "Swing",
         target1: "220",
         stop: "190",
       }),
@@ -100,13 +107,28 @@ describe("calculateSignalsTelemetry", () => {
     expect(telemetry.targetHitCount).toBe(2);
     expect(telemetry.stopHitCount).toBe(1);
 
-    // 2 hits out of 3 settled = 66.7%
+    // Two eligible target outcomes out of three completed outcomes.
     expect(telemetry.winRatePercent).toBe("66.7%");
-    // Win rate badge delta vs 50% baseline = +16.7% THIS MONTH
-    expect(telemetry.winRateBadge).toBe("+16.7% THIS MONTH");
+    expect(telemetry.winRateBadge).toBe("3 settled");
 
     // Dynamic holding hint reflecting actual active distributions
     expect(telemetry.holdingHint).toBe("Active: 2 Intraday · 1 Swing · 1 Options");
-    expect(telemetry.profitFactor).not.toBe("0.00");
+    expect(telemetry.profitFactor).toBe("3.00");
+  });
+
+  it("excludes unverified outcomes from performance calculations", () => {
+    const telemetry = calculateSignalsTelemetry([
+      createMockSignal({
+        status: UiSignalStatus.TARGET_HIT,
+        outcomePrice: 110,
+        metricEligible: false,
+      }),
+    ]);
+
+    expect(telemetry.winRatePercent).toBe("—");
+    expect(telemetry.winRateBadge).toBe("0 settled");
+    expect(telemetry.profitFactor).toBe("—");
+    expect(telemetry.targetHitCount).toBe(0);
+    expect(telemetry.stopHitCount).toBe(0);
   });
 });

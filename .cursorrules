@@ -1,7 +1,5 @@
 # QuantAI — Cursor IDE Invariants & Agent Rules
 
-# Author: yuva.devlab@gmail.com
-
 # Canonical Guide: AGENTS.md
 
 - Pure platform CSS only using `@layer dl-*` and `@yuva-devlab/tokens`. Never use or introduce utility-first CSS frameworks.

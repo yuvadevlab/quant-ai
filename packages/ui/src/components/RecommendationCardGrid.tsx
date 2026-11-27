@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/RecommendationCardGrid.tsx
  * @description Responsive spacious grid container rendering institutional RecommendationCards.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ReactNode } from "react";

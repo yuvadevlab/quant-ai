@@ -1,7 +1,6 @@
 /**
  * @file packages/database/src/seed-llm.ts
  * @description Database seeder function registering AI model providers and LLM models with deprecation history.
- * @author yuva.devlab@gmail.com
  */
 
 import type { PrismaClient } from "@prisma/client";

@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/use-live-chart-ticker.ts
  * @description High-frequency streaming market ticker and micro-walk hook for Lightweight Charts.
- * @author yuva.devlab@gmail.com
  */
 
 import { useEffect, type MutableRefObject, type Dispatch, type SetStateAction } from "react";

@@ -1,23 +1,27 @@
 /**
  * @file src/components/layout/QuantSidebar.tsx
  * @description Collapsible terminal sidebar navigation for QuantAI workstation.
- * @author yuva.devlab@gmail.com
  */
 
 import { Link, useRouterState } from "@tanstack/react-router";
+import { MarketDataStatus } from "@quant-ai/shared-types";
 import {
   Briefcase,
   LayoutGrid,
+  Moon,
   PanelLeftClose,
   PanelLeftOpen,
   ScanLine,
   Settings2,
   Sparkles,
+  Sun,
   TrendingUp,
 } from "lucide-react";
 import { Button } from "@quant-ai/ui";
 import { AppRoute } from "../../constants";
 import { COMMON_COPY } from "../../lib/ui-copy";
+import { useQuantTheme } from "../../hooks/use-quant-theme";
+import { useAuth } from "../../providers/auth";
 import { useWorkstationSession } from "../../hooks/use-workstation-session";
 import {
   useBenchmarkTicks,
@@ -42,11 +46,17 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
   const location = useRouterState({
     select: (state) => state.location.pathname,
   });
+  const { isAuthenticated } = useAuth();
   const { sessionInfo, telemetry, isConnected } = useWorkstationSession();
+  const { isDark, toggleTheme } = useQuantTheme(isAuthenticated);
   const { data: ticks = [] } = useBenchmarkTicks();
   const { data: breadth = DEFAULT_BREADTH } = useMarketBreadth();
   const vixTick = ticks.find((t) => t.isVix || t.name.includes("VIX"));
-  const vixPrice = vixTick ? vixTick.price : "13.42";
+  const hasVixQuote =
+    vixTick?.dataStatus === MarketDataStatus.VERIFIED ||
+    vixTick?.dataStatus === MarketDataStatus.PROVIDER_UNVERIFIED ||
+    vixTick?.dataStatus === MarketDataStatus.MARKET_CLOSED;
+  const vixPrice = hasVixQuote && vixTick ? vixTick.price : "—";
   const copy = COMMON_COPY.SIDEBAR;
 
   return (
@@ -66,17 +76,6 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
             </div>
           )}
         </Link>
-        <Button
-          variant="ghost"
-          size="icon"
-          type="button"
-          className="sidebar-collapse-btn"
-          aria-label={isCollapsed ? copy.EXPAND : copy.COLLAPSE}
-          onClick={onToggleCollapse}
-          title={isCollapsed ? copy.EXPAND : copy.COLLAPSE}
-        >
-          {isCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
-        </Button>
       </div>
 
       <nav className="sidebar-nav" aria-label={copy.MAIN_NAV_ARIA}>
@@ -135,7 +134,7 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
           className={`nav-item ${location.startsWith(AppRoute.CHAT) ? "active" : ""}`}
           title={COMMON_COPY.NAV.CHAT}
         >
-          <Sparkles size={18} className="nav-icon copilot-icon" aria-hidden="true" />
+          <Sparkles size={18} className="nav-icon" aria-hidden="true" />
           {!isCollapsed && <span className="nav-label">{COMMON_COPY.NAV.CHAT}</span>}
         </Link>
 
@@ -154,10 +153,12 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
           <div className="footer-status-card">
             <div className="status-live-header">
               <span
-                className={`live-dot ${isConnected ? "is-connected" : ""}`}
+                className={`live-dot ${hasVixQuote ? "is-connected" : ""}`}
                 aria-hidden="true"
               />
-              <span className="live-exchange">{COMMON_COPY.STATUS.LIVE_STREAM}</span>
+              <span className="live-exchange">
+                {hasVixQuote ? copy.MARKET_CLOSE_AVAILABLE : copy.MARKET_DATA_UNAVAILABLE}
+              </span>
             </div>
             <div className="status-caption">{sessionInfo.statusText}</div>
             <div className="status-meta">
@@ -165,7 +166,7 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
                 {copy.VIX_PREFIX} {vixPrice}
               </span>
               <span className="meta-fii">
-                {breadth.fiiNet} {copy.FII_SUFFIX}
+                {breadth.fiiNet ?? "—"} {copy.FII_SUFFIX}
               </span>
             </div>
           </div>
@@ -177,6 +178,53 @@ export function QuantSidebar({ isCollapsed, onToggleCollapse }: QuantSidebarProp
             <span className={`live-dot ${isConnected ? "is-connected" : ""}`} aria-hidden="true" />
           </div>
         )}
+        <div className="sidebar-footer-actions">
+          <Button
+            variant="ghost"
+            size={isCollapsed ? "icon" : "sm"}
+            type="button"
+            className="sidebar-collapse-btn"
+            aria-label={copy.THEME_TOGGLE_ARIA}
+            onClick={toggleTheme}
+            title={isDark ? copy.THEME_LIGHT : copy.THEME_DARK}
+          >
+            {isDark ? (
+              isCollapsed ? (
+                <Sun size={16} />
+              ) : (
+                <>
+                  <Sun size={15} />
+                  <span>{copy.THEME_LIGHT}</span>
+                </>
+              )
+            ) : isCollapsed ? (
+              <Moon size={16} />
+            ) : (
+              <>
+                <Moon size={15} />
+                <span>{copy.THEME_DARK}</span>
+              </>
+            )}
+          </Button>
+          <Button
+            variant="ghost"
+            size={isCollapsed ? "icon" : "sm"}
+            type="button"
+            className="sidebar-collapse-btn"
+            aria-label={isCollapsed ? copy.EXPAND : copy.COLLAPSE}
+            onClick={onToggleCollapse}
+            title={isCollapsed ? copy.EXPAND : copy.COLLAPSE}
+          >
+            {isCollapsed ? (
+              <PanelLeftOpen size={16} />
+            ) : (
+              <>
+                <PanelLeftClose size={15} />
+                <span>{copy.COLLAPSE}</span>
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </aside>
   );

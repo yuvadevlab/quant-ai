@@ -1,26 +1,25 @@
 /**
  * @file src/lib/ui-copy/predictions.copy.ts
  * @description Centralized copy for the Predictions Lab, performance metrics, and signal ledger.
- * @author yuva.devlab@gmail.com
  */
 
 export const PREDICTIONS_COPY = {
   HEADER: {
     BREADCRUMB_INTELLIGENCE: "INTELLIGENCE",
-    TITLE: "Predictions Lab & Accuracy Ledger",
+    TITLE: "Research ideas",
     SUBTITLE:
-      "Transparent algorithmic signal ledger with live trajectory comparison, hit-rate validation, and multi-agent confidence tracking.",
-    IN_FLIGHT_SUFFIX: "IN-FLIGHT SIGNALS",
+      "Review rule-based market setups, check their source and timestamp, and track outcomes over time. This is research—not a promise of profit.",
+    IN_FLIGHT_SUFFIX: "active ideas",
     EXPORT_AUDIT: "Export Audit",
-    RUN_ANALYSIS: "Run Quant Analysis",
-    ANALYZING: "Analyzing Market...",
+    RUN_ANALYSIS: "Research symbol",
+    ANALYZING: "Checking market data...",
   },
   KPIS: {
-    TOTAL_GENERATED: "TOTAL GENERATED",
+    TOTAL_GENERATED: "IDEAS RESEARCHED",
     ALL_TIME_BADGE: "ALL TIME",
     ACTIVE_SUFFIX: "active",
-    SETTLED_SUFFIX: "settled",
-    WIN_RATE: "CALIBRATED WIN RATE",
+    SETTLED_SUFFIX: "completed",
+    WIN_RATE: "VERIFIED WIN RATE",
     DEFAULT_WIN_RATE_BADGE: "+0.0% THIS MONTH",
     TARGETS_HIT_SUFFIX: "targets hit",
     STOPS_SUFFIX: "stops",
@@ -31,6 +30,40 @@ export const PREDICTIONS_COPY = {
     AVG_RR: "AVG RISK-REWARD",
     POSITIVE_EXPECTANCY: "POSITIVE EXPECTANCY",
     DEFAULT_HOLDING_HINT: "Horizon: Intraday · Swing",
+    NOT_AVAILABLE: "—",
+    ELIGIBLE_SAMPLE_SUFFIX: "settled",
+  },
+  DATA_STATUS: {
+    UNKNOWN_SOURCE: "Source unavailable",
+    OBSERVATION_TIME_UNAVAILABLE: "Observation time unavailable",
+    VERIFIED: "Verified provider data",
+    UNVERIFIED: "Provider data not independently verified",
+    MARKET_CLOSED: "Latest session close",
+    STALE: "Stale data",
+    SIMULATED: "Simulated data",
+    UNAVAILABLE: "Data unavailable",
+  },
+  RESEARCH_RUNS: {
+    TITLE: "Recent research runs",
+    DESCRIPTION: "Saved analysis requests and their data status; these are not execution records.",
+    EMPTY: "No analysis runs have been recorded.",
+    NO_PREDICTION: "No prediction generated",
+    PREDICTION: "Prediction recorded",
+    UNKNOWN_MODE: "Analysis mode",
+    SCALP: "Scalp",
+    SWING: "Swing",
+    OPTIONS: "Options chain",
+    INVESTMENT: "Investment research",
+    HORIZONS: {
+      M5_SCALP: "5-minute",
+      M15_SCALP: "15-minute",
+      INTRADAY: "Intraday",
+      EXPIRY_ZERO_DTE: "Expiry day",
+      EXPIRY_WEEKLY: "Weekly expiry",
+      SWING_DAYS: "Swing · days",
+      SWING_WEEKS: "Swing · weeks",
+      POSITIONAL_MONTHS: "Months",
+    },
   },
   TOOLBAR: {
     TAB_ALL: "All calls",
@@ -58,8 +91,23 @@ export const PREDICTIONS_COPY = {
     INSPECT_ACTION: "Inspect",
   },
   EMPTY: {
-    TITLE: "No Active Predictions",
+    TITLE: "No research ideas yet",
     DESCRIPTION:
-      "Search for any stock symbol above or run a market scan to discover real-time setups and predictive trajectory cones.",
+      "No setups currently meet the research rules. Enter a symbol above to request a review; a no-trade result is valid.",
+  },
+  RESEARCH: {
+    FORM_LABEL: "Research a stock or index",
+    SYMBOL_PLACEHOLDER: "Try RELIANCE or NIFTY 50",
+    RUN: "Research symbol",
+    RUNNING: "Checking market data...",
+    REQUIRED: "Enter a stock or index symbol to begin.",
+    SERVICE_ERROR: "The research service could not be reached. Please try again.",
+    NO_SETUP:
+      "No setup passed the current research rules. Check data status in Recent research runs; no trade is a valid result.",
+    SUCCESS: "Research completed. Review the saved run and its data source below.",
+    GUIDANCE:
+      "Enter a symbol, check the quote timestamp and source, then review the setup and its risk before making any decision.",
+    MARKET_DATA_NOTE:
+      "Quotes may be delayed or unavailable. Sample data is never presented as a live market price.",
   },
 } as const;

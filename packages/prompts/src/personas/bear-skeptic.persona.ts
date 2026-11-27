@@ -1,7 +1,6 @@
 /**
  * @file packages/prompts/src/personas/bear-skeptic.persona.ts
  * @description Adversarial red-team persona auditing trade setups for failure modes and bull traps.
- * @author yuva.devlab@gmail.com
  */
 
 /**

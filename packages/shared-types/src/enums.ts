@@ -1,6 +1,5 @@
 /**
  * @fileoverview Canonical financial market, strategy, asset class, and prediction state enums.
- * @author yuva.devlab@gmail.com
  */
 
 /**
@@ -23,6 +22,18 @@ export enum SignalStatus {
   STOP_HIT = "Stop hit",
   EXPIRED = "Expired",
   INVALIDATED = "Invalidated",
+}
+
+/**
+ * Reliability state for market observations used by analysis and outcome tracking.
+ */
+export enum MarketDataStatus {
+  VERIFIED = "VERIFIED",
+  PROVIDER_UNVERIFIED = "PROVIDER_UNVERIFIED",
+  MARKET_CLOSED = "MARKET_CLOSED",
+  STALE = "STALE",
+  SIMULATED = "SIMULATED",
+  UNAVAILABLE = "UNAVAILABLE",
 }
 
 /**

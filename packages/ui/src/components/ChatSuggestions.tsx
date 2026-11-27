@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/ChatSuggestions.tsx
  * @description Quick prompt starters bar for trader inquiries.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ComponentType } from "react";

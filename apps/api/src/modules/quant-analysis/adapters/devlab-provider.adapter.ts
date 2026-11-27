@@ -1,16 +1,21 @@
 /**
  * @file apps/api/src/modules/quant-analysis/adapters/devlab-provider.adapter.ts
  * @description Universal AI model adapter backed by canonical @yuva-devlab/ai-client provider layer.
- * @author yuva.devlab@gmail.com
  */
 
 import { Logger } from "@yuva-devlab/logger";
 import { MessageRole, type ILLMProvider, type AIMessage } from "@yuva-devlab/ai-client";
-import { buildDeliberationSystemPrompt, buildDeliberationUserPrompt } from "@quant-ai/prompts";
+import {
+  buildCopilotChatUserPrompt,
+  buildDeliberationSystemPrompt,
+  buildDeliberationUserPrompt,
+  COPILOT_CHAT_SYSTEM_PROMPT,
+} from "@quant-ai/prompts";
 import { AgentStance } from "@quant-ai/shared-types";
 import type {
   AgentDebateOutput,
   AiModelAdapter,
+  ChatCompletionInput,
   GenerateDeliberationInput,
 } from "../ai-provider.types";
 import { SimulatedModelAdapter } from "./simulated.adapter";
@@ -99,25 +104,19 @@ export class DevLabProviderAdapter implements AiModelAdapter {
   /**
    * Generates conversational AI synthesis using the configured LLM provider.
    */
-  public async generateChatReply(input: {
-    query: string;
-    symbol?: string;
-    marketContext?: string;
-  }): Promise<string> {
-    const systemPrompt =
-      `You are QuantAI Copilot, an elite senior quantitative market strategist and algorithmic trade architect for Indian (NSE/BSE) and global markets. ` +
-      `Provide professional, data-grounded market reasoning, options telemetry analysis, and technical trade setups. ` +
-      `Use GitHub-flavored markdown with bullet points and bold levels. Always conclude with disciplined risk parameters.`;
-
-    const userPrompt = input.marketContext
-      ? `Real-Time Market Telemetry:\n${input.marketContext}\n\nTrader Inquiry:\n"${input.query}"\n\nSynthesize institutional analysis:`
-      : `Trader Inquiry:\n"${input.query}"\n\nSynthesize institutional analysis:`;
+  public async generateChatReply(input: ChatCompletionInput): Promise<string> {
+    const userPrompt = buildCopilotChatUserPrompt(input.query, input.marketContext);
+    const historyMessages: AIMessage[] = (input.history ?? []).slice(-6).map((turn) => ({
+      role: turn.role === "assistant" ? MessageRole.ASSISTANT : MessageRole.USER,
+      content: turn.content,
+    }));
 
     try {
       const response = await this.client.complete({
         model: this.modelName,
         messages: [
-          { role: MessageRole.SYSTEM, content: systemPrompt },
+          { role: MessageRole.SYSTEM, content: input.systemPrompt ?? COPILOT_CHAT_SYSTEM_PROMPT },
+          ...historyMessages,
           { role: MessageRole.USER, content: userPrompt },
         ],
         temperature: 0.3,

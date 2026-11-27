@@ -1,12 +1,12 @@
 /**
  * @file packages/ui/src/components/PredictionsTable.tsx
  * @description Tabular signal audit ledger using DevLab UI Table primitives.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 import {
+  Button,
   Table,
   TableHeader,
   TableBody,
@@ -105,6 +105,9 @@ export function PredictionsTable({
                       <div className="instrument-cell">
                         <span className="symbol-strong">{signal.symbol}</span>
                         <span className="instrument-sub">{signal.instrument}</span>
+                        {signal.dataProvenance && (
+                          <span className="instrument-sub">{signal.dataProvenance}</span>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -116,7 +119,7 @@ export function PredictionsTable({
                     <TableCell>
                       <div className="targets-cell mono">
                         <span className="text-gain">T1: {signal.target1}</span>
-                        <span className="text-muted">T2: {signal.target2}</span>
+                        {signal.target2 && <span className="text-muted">T2: {signal.target2}</span>}
                       </div>
                     </TableCell>
                     <TableCell className="mono text-loss">{signal.stop}</TableCell>
@@ -137,14 +140,14 @@ export function PredictionsTable({
                       {renderInspectLink ? (
                         renderInspectLink(signal)
                       ) : (
-                        <button
+                        <Button
                           type="button"
                           onClick={() => onInspect?.(signal.id)}
                           className="btn-table-action"
                         >
                           <span>{inspectLabel}</span>
                           <ArrowRight size={13} />
-                        </button>
+                        </Button>
                       )}
                     </TableCell>
                   </TableRow>

@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/SettingsAiEngine.tsx
  * @description Dynamic database-backed AI model catalog card using DevLab UI primitives.
- * @author yuva.devlab@gmail.com
  */
 
 import { Cpu, History } from "lucide-react";

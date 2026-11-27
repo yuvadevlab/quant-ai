@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/chat/chat-sessions.ts
  * @description Manages persistence and retrieval of Copilot conversation threads.
- * @author yuva.devlab@gmail.com
  */
 
 import { Logger } from "@yuva-devlab/logger";

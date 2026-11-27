@@ -2,7 +2,6 @@
  * @file apps/api/src/modules/auth/auth.service.ts
  * @description Authentication and user resolution service.
  * Identity lifecycle and credentials are delegated exclusively to DevLab Portal SSO.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable, NotFoundException } from "@nestjs/common";

@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/market/feed/market-feed.constants.ts
  * @description Centralized constants and mapping rules for global and regional market feeds.
- * @author yuva.devlab@gmail.com
  */
 
 export const GLOBAL_FEED_SYMBOL_MAP: Readonly<Record<string, string>> = Object.freeze({

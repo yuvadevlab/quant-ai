@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/lightweight-chart-utils.ts
  * @description Data transformers, EMA calculators and series converters for Kite/TradingView chart.
- * @author yuva.devlab@gmail.com
  */
 
 import type {

@@ -2,7 +2,6 @@
  * @file packages/shared-types/src/universe.constants.ts
  * @description Canonical Indian market equity universe reference registry (NSE constituents).
  * Represents market instrument master data, NOT prediction outcomes or trade seeds.
- * @author yuva.devlab@gmail.com
  */
 
 export interface MarketEquityDefinition {

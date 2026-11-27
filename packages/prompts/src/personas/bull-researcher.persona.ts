@@ -1,7 +1,6 @@
 /**
  * @file packages/prompts/src/personas/bull-researcher.persona.ts
  * @description Quantitative persona specializing in momentum expansion, volume breakouts, and trend persistence.
- * @author yuva.devlab@gmail.com
  */
 
 /**

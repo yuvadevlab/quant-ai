@@ -1,7 +1,6 @@
 /**
  * @file packages/finance-engine/src/calculations/expectancy.calculation.ts
  * @description Risk-to-reward ratio and mathematical trade expectancy formulas.
- * @author yuva.devlab@gmail.com
  */
 
 import {

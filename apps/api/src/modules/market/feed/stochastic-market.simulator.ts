@@ -2,10 +2,10 @@
  * @file apps/api/src/modules/market/feed/stochastic-market.simulator.ts
  * @description Stochastic market tick generator using Geometric Brownian Motion (GBM).
  * Computes dynamic baseline prices dynamically from symbol entropy without static price tables.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable } from "@nestjs/common";
+import { MarketDataStatus } from "@quant-ai/shared-types";
 import type { LiveMarketQuote } from "./market-feed.types";
 
 /**
@@ -58,6 +58,8 @@ export class StochasticMarketSimulator {
       exchange: this.inferExchange(symbol),
       instrumentType: this.inferInstrumentType(symbol),
       sparkline,
+      source: "Synthetic simulator",
+      dataStatus: MarketDataStatus.SIMULATED,
       timestamp: new Date().toISOString(),
     };
   }

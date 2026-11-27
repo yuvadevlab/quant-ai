@@ -1,7 +1,6 @@
 /**
  * @file packages/finance-engine/src/calculations/portfolio.calculation.ts
  * @description Equity marks, margin calculations, and cash reserve formulas.
- * @author yuva.devlab@gmail.com
  */
 
 import { DEFAULT_CURRENCY_DECIMAL_PLACES } from "../constants/technical.constants";

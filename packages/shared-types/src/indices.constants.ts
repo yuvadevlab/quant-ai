@@ -1,6 +1,5 @@
 /**
  * @fileoverview Seed registry of financial market benchmark index metadata.
- * @author yuva.devlab@gmail.com
  */
 
 import { IndexCategory } from "./enums";

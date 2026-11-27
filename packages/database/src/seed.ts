@@ -1,6 +1,5 @@
 /**
  * @fileoverview Database seeding script populating initial Indian benchmark indices and configurations.
- * @author yuva.devlab@gmail.com
  */
 
 import { DefaultConnectionUrl } from "@quant-ai/shared-types";

@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/auth/jwks.util.ts
  * @description In-memory cached JWKS public key resolver for DevLab SSO RS256 JWT verification.
- * @author yuva.devlab@gmail.com
  */
 
 import crypto from "node:crypto";

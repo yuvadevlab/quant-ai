@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/ChartOhlcLegend.tsx
  * @description Floating TradingView / Zerodha Kite OHLC and multi-indicator crosshair legend.
- * @author yuva.devlab@gmail.com
  */
 
 import type { OhlcData } from "./lightweight-chart-utils";

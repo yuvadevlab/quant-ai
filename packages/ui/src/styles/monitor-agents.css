@@ -123,6 +123,12 @@
     line-height: 1.5;
   }
 
+  .agents-empty-state {
+    grid-column: 1 / -1;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+
   /* Invalidation Warning Card */
   .invalidation-card {
     background-color: color-mix(in srgb, var(--warning) 6%, transparent);

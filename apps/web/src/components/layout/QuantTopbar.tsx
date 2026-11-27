@@ -1,7 +1,6 @@
 /**
  * @file src/components/layout/QuantTopbar.tsx
  * @description Workstation topbar featuring market regime telemetry, calibrated win-rate KPI, and model indicator.
- * @author yuva.devlab@gmail.com
  */
 
 import { COMMON_COPY } from "../../lib/ui-copy";

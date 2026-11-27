@@ -2,12 +2,11 @@
  * @file apps/api/src/modules/market/feed/live-market-feed.service.ts
  * @description Dynamic multi-asset market data feed service resolving live quotes globally.
  * Implements Singleflight request coalescing, Last Known Good (LKG) caching, and automatic symbol mapping.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable, Optional } from "@nestjs/common";
 import { Logger } from "@yuva-devlab/logger";
-import { CachePrefix } from "@quant-ai/shared-types";
+import { CachePrefix, MarketDataStatus } from "@quant-ai/shared-types";
 import {
   CurrencyCode,
   ExchangeCode,
@@ -18,6 +17,8 @@ import { RedisService } from "../../infrastructure/redis.service";
 import type { LiveMarketQuote } from "./market-feed.types";
 import { GLOBAL_FEED_SYMBOL_MAP } from "./market-feed.constants";
 import { YahooFinanceHttpClient } from "./yahoo-finance-http.client";
+import { GoogleFinanceHttpClient } from "./google-finance-http.client";
+import { classifyMarketDataStatus } from "./market-data-status";
 
 @Injectable()
 export class LiveMarketFeedService {
@@ -26,31 +27,50 @@ export class LiveMarketFeedService {
   private readonly lastKnownQuotes = new Map<string, LiveMarketQuote>();
   private readonly inFlightRequests = new Map<string, Promise<LiveMarketQuote>>();
   private readonly simulator = new StochasticPriceSimulator();
+  private readonly googleHttpClient: GoogleFinanceHttpClient;
+  private readonly yahooHttpClient: YahooFinanceHttpClient;
 
   public constructor(
     @Optional()
-    private readonly yahooHttpClient: YahooFinanceHttpClient = new YahooFinanceHttpClient(),
+    googleOrYahooClient?: GoogleFinanceHttpClient | YahooFinanceHttpClient,
+    @Optional()
+    yahooOrRedisClient?: YahooFinanceHttpClient | RedisService,
     @Optional() private readonly redisService?: RedisService,
   ) {
+    if (googleOrYahooClient instanceof YahooFinanceHttpClient) {
+      this.googleHttpClient = new GoogleFinanceHttpClient();
+      this.yahooHttpClient = googleOrYahooClient;
+      if (yahooOrRedisClient instanceof RedisService) {
+        this.redisService = yahooOrRedisClient;
+      }
+    } else {
+      this.googleHttpClient = googleOrYahooClient ?? new GoogleFinanceHttpClient();
+      this.yahooHttpClient =
+        yahooOrRedisClient instanceof YahooFinanceHttpClient
+          ? yahooOrRedisClient
+          : new YahooFinanceHttpClient();
+    }
     this.seedBaselineQuotes();
   }
 
   private seedBaselineQuotes(): void {
     for (const symbol of Object.keys(GLOBAL_FEED_SYMBOL_MAP)) {
-      const simulated = this.simulator.generateNextTick(symbol);
+      const sim = this.simulator.generateNextTick(symbol);
       this.lastKnownQuotes.set(symbol, {
         symbol,
         displayName: symbol,
-        price: simulated.price,
-        change: simulated.change,
-        percentChange: simulated.percentChange,
-        dayHigh: simulated.dayHigh,
-        dayLow: simulated.dayLow,
-        volume: simulated.volume,
-        currency: simulated.currency,
-        exchange: simulated.exchange,
-        instrumentType: simulated.instrumentType,
-        sparkline: simulated.sparkline,
+        price: sim.price,
+        change: sim.change,
+        percentChange: sim.percentChange,
+        dayHigh: sim.dayHigh,
+        dayLow: sim.dayLow,
+        volume: sim.volume,
+        currency: sim.currency,
+        exchange: sim.exchange,
+        instrumentType: sim.instrumentType,
+        sparkline: sim.sparkline,
+        source: "Synthetic simulator",
+        dataStatus: MarketDataStatus.SIMULATED,
         timestamp: new Date().toISOString(),
       });
     }
@@ -90,24 +110,22 @@ export class LiveMarketFeedService {
   public resolveFeedTicker(symbol: string): string {
     const trimmed = symbol.trim().toUpperCase();
     const mapped = GLOBAL_FEED_SYMBOL_MAP[trimmed];
-    if (mapped) {
-      return mapped;
-    }
-
-    if (
-      trimmed.startsWith("^") ||
-      trimmed.includes(".NS") ||
-      trimmed.includes(".BO") ||
-      trimmed.includes("-") ||
-      trimmed.includes("=")
-    ) {
-      return trimmed;
-    }
-
-    return `${trimmed}.NS`;
+    if (mapped) return mapped;
+    return /[\^.=-]/.test(trimmed) ? trimmed : `${trimmed}.NS`;
   }
 
   private async fetchFromExchangeOrFallback(symbol: string): Promise<LiveMarketQuote> {
+    try {
+      const googleQuote = await this.googleHttpClient.fetchQuote(symbol);
+      if (googleQuote) {
+        this.lastKnownQuotes.set(symbol, googleQuote);
+        this.cacheQuote(symbol, googleQuote, 15000);
+        return googleQuote;
+      }
+    } catch (gErr) {
+      this.logger.debug(`[getLiveQuote] Google Finance failed for ${symbol}: ${String(gErr)}`);
+    }
+
     try {
       const feedTicker = this.resolveFeedTicker(symbol);
       const result = await this.yahooHttpClient.fetchChart(feedTicker);
@@ -126,6 +144,13 @@ export class LiveMarketFeedService {
       const sparkline = rawCloses
         .filter((c): c is number => typeof c === "number" && !isNaN(c))
         .slice(-20);
+      const observedAt =
+        typeof meta.regularMarketTime === "number"
+          ? new Date(meta.regularMarketTime * 1000).toISOString()
+          : undefined;
+      const dataStatus = observedAt
+        ? classifyMarketDataStatus(new Date(observedAt))
+        : MarketDataStatus.UNAVAILABLE;
 
       const quote: LiveMarketQuote = {
         symbol,
@@ -140,7 +165,10 @@ export class LiveMarketFeedService {
         exchange: meta.fullExchangeName ?? ExchangeCode.NSE,
         instrumentType: meta.instrumentType ?? InstrumentTypeCode.EQUITY,
         sparkline: sparkline.length >= 2 ? sparkline : [prevClose, price],
-        timestamp: new Date().toISOString(),
+        source: "Yahoo Finance",
+        dataStatus,
+        ...(observedAt ? { observedAt } : {}),
+        timestamp: observedAt ?? new Date().toISOString(),
       };
 
       this.lastKnownQuotes.set(symbol, quote);
@@ -152,25 +180,38 @@ export class LiveMarketFeedService {
       // 1. Return Last Known Good quote if available
       const lastKnown = this.lastKnownQuotes.get(symbol);
       if (lastKnown) {
-        return { ...lastKnown, timestamp: new Date().toISOString() };
+        const isExpired =
+          !lastKnown.observedAt ||
+          Date.now() - new Date(lastKnown.observedAt).getTime() > 15 * 60 * 1000;
+        return {
+          ...lastKnown,
+          dataStatus:
+            lastKnown.dataStatus === MarketDataStatus.SIMULATED
+              ? MarketDataStatus.SIMULATED
+              : isExpired
+                ? MarketDataStatus.STALE
+                : lastKnown.dataStatus,
+        };
       }
 
       // 2. Calibrated stochastic fallback ensures zero stream interruption
-      const simulated = this.simulator.generateNextTick(symbol);
+      const sim = this.simulator.generateNextTick(symbol);
       const fallbackQuote: LiveMarketQuote = {
         symbol,
         displayName: symbol,
-        price: simulated.price,
-        change: simulated.change,
-        percentChange: simulated.percentChange,
-        dayHigh: simulated.dayHigh,
-        dayLow: simulated.dayLow,
-        volume: simulated.volume,
-        currency: simulated.currency,
-        exchange: simulated.exchange,
-        instrumentType: simulated.instrumentType,
-        sparkline: simulated.sparkline,
-        timestamp: simulated.timestamp,
+        price: sim.price,
+        change: sim.change,
+        percentChange: sim.percentChange,
+        dayHigh: sim.dayHigh,
+        dayLow: sim.dayLow,
+        volume: sim.volume,
+        currency: sim.currency,
+        exchange: sim.exchange,
+        instrumentType: sim.instrumentType,
+        sparkline: sim.sparkline,
+        source: "Synthetic simulator",
+        dataStatus: MarketDataStatus.SIMULATED,
+        timestamp: sim.timestamp,
       };
       this.lastKnownQuotes.set(symbol, fallbackQuote);
       this.cacheQuote(symbol, fallbackQuote, 5000);
@@ -180,10 +221,7 @@ export class LiveMarketFeedService {
 
   private getCachedQuote(symbol: string): LiveMarketQuote | undefined {
     const entry = this.memoryCache.get(symbol);
-    if (entry && entry.expiresAt > Date.now()) {
-      return entry.quote;
-    }
-    return undefined;
+    return entry && entry.expiresAt > Date.now() ? entry.quote : undefined;
   }
 
   private cacheQuote(symbol: string, quote: LiveMarketQuote, ttlMs = 10000): void {

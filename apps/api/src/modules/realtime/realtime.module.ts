@@ -1,6 +1,5 @@
 /**
  * @fileoverview NestJS Module encapsulating WebSocket gateway and real-time dispatch service.
- * @author yuva.devlab@gmail.com
  */
 
 import { Module, Global } from "@nestjs/common";

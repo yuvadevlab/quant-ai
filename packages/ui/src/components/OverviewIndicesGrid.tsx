@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/OverviewIndicesGrid.tsx
  * @description Benchmark indices metric cards grid with category filtering.
- * @author yuva.devlab@gmail.com
  */
 
 import { Button } from "@yuva-devlab/ui";
@@ -82,6 +81,9 @@ export function OverviewIndicesGrid({
             isPositive={index.positive}
             sparklinePoints={index.path}
             isNeutral={Boolean(index.isVix)}
+            dataStatus={index.dataStatus}
+            {...(index.dataSource ? { dataSource: index.dataSource } : {})}
+            {...(index.observedAt ? { observedAt: index.observedAt } : {})}
           />
         ))}
       </section>

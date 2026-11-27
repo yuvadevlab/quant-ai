@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/chart-series-builder.ts
  * @description Series mounting, indicators attachment and price milestone overlays for TradingView chart.
- * @author yuva.devlab@gmail.com
  */
 
 import {

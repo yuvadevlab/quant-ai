@@ -1,12 +1,11 @@
 /**
  * @file apps/api/src/modules/portfolio/portfolio.service.ts
  * @description Dynamic paper portfolio service marking active simulated positions to live market prices.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable, OnModuleInit, OnModuleDestroy, Optional } from "@nestjs/common";
 import { Logger } from "@yuva-devlab/logger";
-import { EventTopic } from "@quant-ai/shared-types";
+import { EventTopic, MarketDataStatus } from "@quant-ai/shared-types";
 import {
   calculatePortfolioValuations,
   calculateReturnPercent,
@@ -17,7 +16,7 @@ import {
 import { type DomainEventEnvelope } from "@yuva-devlab/events";
 import { EventBusService } from "../infrastructure/event-bus.service";
 import { DatabaseService } from "../infrastructure/database.service";
-import { LiveMarketFeedService } from "../market/feed";
+import { isUsableMarketDataStatus, LiveMarketFeedService } from "../market/feed";
 import {
   type PaperExecution,
   type PaperPosition,
@@ -28,6 +27,7 @@ import {
 interface TickEventPayload extends Record<string, unknown> {
   symbol?: string;
   price?: number;
+  dataStatus?: MarketDataStatus;
 }
 
 /**
@@ -126,7 +126,14 @@ export class PortfolioService implements OnModuleInit, OnModuleDestroy {
    */
   public handleIncomingTick(envelope: DomainEventEnvelope<TickEventPayload>): void {
     const tick = envelope?.payload;
-    if (!tick?.symbol || typeof tick.price !== "number") return;
+    if (
+      !tick?.symbol ||
+      typeof tick.price !== "number" ||
+      !tick.dataStatus ||
+      !isUsableMarketDataStatus(tick.dataStatus)
+    ) {
+      return;
+    }
 
     const existing = this.positions.get(tick.symbol);
     if (!existing) return;
@@ -140,6 +147,7 @@ export class PortfolioService implements OnModuleInit, OnModuleDestroy {
     this.positions.set(tick.symbol, {
       ...existing,
       currentPrice,
+      dataStatus: tick.dataStatus,
       pnl,
       returnPercent,
     });
@@ -152,11 +160,17 @@ export class PortfolioService implements OnModuleInit, OnModuleDestroy {
       const dbPositions = await this.databaseService.client.paperPosition.findMany();
       for (const pos of dbPositions) {
         let currentPrice = pos.entryPrice;
+        let dataStatus = MarketDataStatus.UNAVAILABLE;
         try {
           const live = await this.liveMarketFeed.getLiveQuote(pos.symbol);
-          currentPrice = live.price;
-        } catch {
-          // Keep entry price if exchange feed fails
+          if (isUsableMarketDataStatus(live.dataStatus)) {
+            currentPrice = live.price;
+            dataStatus = live.dataStatus;
+          }
+        } catch (error) {
+          this.logger.debug(
+            `[loadPortfolioFromDb] Quote unavailable for ${pos.symbol}: ${error instanceof Error ? error.message : String(error)}`,
+          );
         }
 
         const side = pos.side === "LONG" ? TradePositionSide.LONG : TradePositionSide.SHORT;
@@ -170,6 +184,7 @@ export class PortfolioService implements OnModuleInit, OnModuleDestroy {
           qty: pos.qty,
           entryPrice: pos.entryPrice,
           currentPrice,
+          dataStatus,
           pnl,
           returnPercent,
           stopLoss: pos.stopLoss,

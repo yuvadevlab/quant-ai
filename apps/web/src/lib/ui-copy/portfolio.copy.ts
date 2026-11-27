@@ -1,7 +1,6 @@
 /**
  * @file src/lib/ui-copy/portfolio.copy.ts
  * @description Centralized copy for the Paper Portfolio & Risk Desk.
- * @author yuva.devlab@gmail.com
  */
 
 export const PORTFOLIO_COPY = {

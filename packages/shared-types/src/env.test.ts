@@ -1,6 +1,5 @@
 /**
  * @fileoverview Unit tests for environment parsing and Zod schemas.
- * @author yuva.devlab@gmail.com
  */
 
 import { describe, it, expect } from "vitest";

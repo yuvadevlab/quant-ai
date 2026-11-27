@@ -1,7 +1,6 @@
 /**
  * @file packages/prompts/src/system/regime-system.prompt.ts
  * @description System prompt template for quantitative market regime classification.
- * @author yuva.devlab@gmail.com
  */
 
 /**

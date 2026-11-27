@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/WorkstationLaunchpad.tsx
  * @description Quick action workstation launchpad cards.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ReactNode } from "react";

@@ -1,7 +1,6 @@
 /**
  * @file packages/prompts/src/personas/constitution.persona.ts
  * @description Master institutional constitution, security guardrails, and anti-hallucination directives for QuantAI.
- * @author yuva.devlab@gmail.com
  */
 
 /**

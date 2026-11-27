@@ -47,6 +47,9 @@
     gap: 20px;
   }
 
+  /* --------------------------------------------------------------------------
+   IndexMetricCard layout
+   -------------------------------------------------------------------------- */
   .index-card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-subtle);
@@ -54,7 +57,7 @@
     padding: 22px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
     transition:
       transform 0.15s,
       border-color 0.15s;
@@ -65,24 +68,114 @@
     transform: translateY(-2px);
   }
 
-  .index-card-header {
+  /* Top row: name + change pill */
+  .index-top {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+    gap: 8px;
   }
 
-  .index-exchange {
+  /* Name & exchange inline with clear separator */
+  .index-name-box {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 2px 6px;
+  }
+
+  .index-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--foreground);
+    line-height: 1.2;
+  }
+
+  /* Exchange badge: "· NSE" separator style */
+  .index-country {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.8px;
     color: var(--text-dim);
   }
 
-  .index-name {
-    font-size: 16px;
+  .index-country::before {
+    content: "·";
+    font-size: 13px;
+    line-height: 1;
+    color: var(--text-dim);
+    opacity: 0.75;
+  }
+
+  /* Change pill with green / red / amber fill */
+  .index-change-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
     font-weight: 700;
+    font-family: var(--font-mono);
+    padding: 3px 9px;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .index-change-pill.pill-green {
+    background-color: var(--color-gain-bg);
+    color: var(--color-gain);
+  }
+
+  .index-change-pill.pill-red {
+    background-color: var(--color-loss-bg);
+    color: var(--color-loss);
+  }
+
+  .index-change-pill.pill-amber {
+    background-color: oklch(from var(--warning, #f59e0b) l c h / 12%);
+    color: var(--color-amber);
+  }
+
+  /* Bottom row: price + sparkline */
+  .index-bottom {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  /* mono class applied by IndexMetricCard to the price span */
+  .index-price.mono,
+  span.mono {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 800;
     color: var(--foreground);
-    margin-top: 2px;
+  }
+
+  /* Data provenance footer */
+  .index-data-provenance {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    align-items: center;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+  }
+
+  .index-data-status {
+    font-weight: 700;
+  }
+
+  /* Legacy classes kept for backward-compat */
+  .index-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
   }
 
   .index-change-badge {
@@ -117,11 +210,6 @@
     font-weight: 800;
     font-family: var(--font-mono);
     color: var(--foreground);
-  }
-
-  .index-sparkline {
-    width: 70px;
-    height: 20px;
   }
 
   .index-range-bar {

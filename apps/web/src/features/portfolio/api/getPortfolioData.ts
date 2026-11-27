@@ -2,10 +2,10 @@
  * @file src/features/portfolio/api/getPortfolioData.ts
  * @description Dynamic data provider for the Paper Portfolio & Risk Desk.
  * Fetches simulated positions and executions from the backend API.
- * @author yuva.devlab@gmail.com
  */
 
 import { queryOptions } from "@tanstack/react-query";
+import type { MarketDataStatus } from "@quant-ai/shared-types";
 import { apiFetch } from "@/lib/api-fetcher";
 
 export interface PositionItem {
@@ -15,6 +15,7 @@ export interface PositionItem {
   readonly qty: number;
   readonly entryPrice: number;
   readonly currentPrice: number;
+  readonly dataStatus?: MarketDataStatus;
   readonly pnl: number;
   readonly pnlPercent?: number;
   readonly returnPercent?: number;

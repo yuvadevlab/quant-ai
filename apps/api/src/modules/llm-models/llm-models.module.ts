@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/llm-models/llm-models.module.ts
  * @description NestJS module configuring LLM model database registry.
- * @author yuva.devlab@gmail.com
  */
 
 import { Module } from "@nestjs/common";

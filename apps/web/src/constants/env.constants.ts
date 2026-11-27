@@ -1,6 +1,5 @@
 /**
  * @fileoverview Strongly-typed web workstation environment parsed via @quant-ai/shared-types.
- * @author yuva.devlab@gmail.com
  */
 
 import { parseWebEnv, type WebEnvironment } from "@quant-ai/shared-types";

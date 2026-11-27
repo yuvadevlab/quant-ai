@@ -1,7 +1,6 @@
 /**
  * @file src/lib/ui-copy/common.copy.ts
  * @description Universal actions, badge labels, navigation copy, and regulatory disclaimer.
- * @author yuva.devlab@gmail.com
  */
 
 export const COMMON_COPY = {
@@ -35,7 +34,7 @@ export const COMMON_COPY = {
     PREDICTIONS: "Predictions Lab",
     SCREENER: "Quant Screener",
     PORTFOLIO: "Portfolio & Risk",
-    CHAT: "AI Copilot",
+    CHAT: "AI Strategist",
     SETTINGS: "System Settings",
   },
   STATUS: {
@@ -57,11 +56,16 @@ export const COMMON_COPY = {
     GROUP_INTELLIGENCE: "INTELLIGENCE",
     EXPAND: "Expand sidebar",
     COLLAPSE: "Collapse sidebar",
+    THEME_LIGHT: "Light theme",
+    THEME_DARK: "Dark theme",
+    THEME_TOGGLE_ARIA: "Toggle color theme",
     LIVE_BADGE_SUFFIX: "Live",
     FII_SUFFIX: "FII",
     VIX_PREFIX: "VIX",
-    FEED_CONNECTED: "NSE Live Feed Connected",
-    FEED_DISCONNECTED: "Local Feed (Reconnecting)",
+    FEED_CONNECTED: "Market stream connected",
+    FEED_DISCONNECTED: "Market stream disconnected",
+    MARKET_DATA_UNAVAILABLE: "Provider quote unavailable",
+    MARKET_CLOSE_AVAILABLE: "Latest session close",
     NAV_ARIA: "Workstation Navigation",
     MAIN_NAV_ARIA: "Main Navigation",
     HOME_ARIA: "QuantAI Home",
@@ -75,13 +79,19 @@ export const COMMON_COPY = {
   },
   TICKER_STRIP: {
     ARIA_LABEL: "Real-time Indian Benchmark Ticker",
-    CONNECTED_BADGE: "LIVE WS",
-    DESK_BADGE: "LIVE DESK",
+    CONNECTED_BADGE: "STREAM CONNECTED",
+    DESK_BADGE: "STREAM OFFLINE",
+    AWAITING_QUOTES: "Quotes unavailable",
+    PROVIDER_UNVERIFIED: "Provider · unverified",
+    MARKET_CLOSED: "Latest close",
+    STALE: "Stale quote",
+    SIMULATED: "Sample data hidden",
+    VERIFIED: "Verified",
   },
   REGULATORY_DISCLAIMER: {
     HEADING: "REGULATORY & EDUCATIONAL NOTICE",
     CONTENT:
       "QuantAI is an advanced quantitative research, mathematical modeling, and algorithmic intelligence environment built strictly for educational, informational, and paper-tracking purposes. QuantAI is NOT a registered financial advisory, SEBI-registered research analyst, or portfolio manager. All predictive trajectories, confidence intervals, and multi-agent deliberations represent machine learning mathematical probabilities and do NOT constitute direct financial advice, investment recommendations, or buy/sell orders. Past prediction accuracy does not guarantee future market performance. Derivatives, equities, and options trading involve substantial risk of capital loss. Please consult a SEBI-registered financial advisor before undertaking any trading decisions.",
-    COPYRIGHT: "© 2026 Yuva DevLab · Attribution: yuva.devlab@gmail.com",
+    COPYRIGHT: "© 2026 Yuva DevLab",
   },
 } as const;

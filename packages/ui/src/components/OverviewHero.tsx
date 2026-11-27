@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/OverviewHero.tsx
  * @description Header hero section for the Executive Market Overview Desk.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ReactNode } from "react";

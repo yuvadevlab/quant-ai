@@ -1,7 +1,6 @@
 /**
  * @file packages/prompts/src/templates/deliberation-template.ts
  * @description Dynamic user prompt templates for adversarial trade deliberation.
- * @author yuva.devlab@gmail.com
  */
 
 /**

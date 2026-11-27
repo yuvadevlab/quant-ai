@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/PortfolioHeader.tsx
  * @description Header banner for the Paper Portfolio & Risk Desk.
- * @author yuva.devlab@gmail.com
  */
 
 import { ChevronRight, ShieldCheck } from "lucide-react";

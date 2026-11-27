@@ -8,8 +8,6 @@ import type { UserConfig } from "@commitlint/types";
  *
  * Format:
  *   <type>(<scope>): <subject>
- *
- * Author: yuva.devlab@gmail.com
  */
 
 const config: UserConfig = {

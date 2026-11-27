@@ -1,6 +1,5 @@
 /**
  * @fileoverview Controller exposing Prediction Lab query endpoints.
- * @author yuva.devlab@gmail.com
  */
 
 import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from "@nestjs/common";
@@ -14,6 +13,7 @@ import {
   TrajectoryPoint,
 } from "@quant-ai/shared-types";
 import { PredictionsService } from "./predictions.service";
+import type { ResearchRunSummary } from "./research-runs.repository";
 
 /**
  * Controller exposing Prediction Lab query endpoints.
@@ -35,6 +35,16 @@ export class PredictionsController {
   public findAll(): readonly Signal[] {
     this.logger.info("[findAll] Fetching all predictions from ledger");
     return this.predictionsService.findAll();
+  }
+
+  /**
+   * Retrieves recent immutable analysis-run records, including scans without a prediction.
+   *
+   * @returns Recent research runs.
+   */
+  @Get("research-runs")
+  public findResearchRuns(): Promise<readonly ResearchRunSummary[]> {
+    return this.predictionsService.findResearchRuns();
   }
 
   /**

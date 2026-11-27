@@ -1,10 +1,10 @@
 /**
  * @file src/lib/ui-copy/monitor.copy.ts
  * @description Centralized copy for the Live Trajectory Monitor Desk.
- * @author yuva.devlab@gmail.com
  */
 
 export const MONITOR_COPY = {
+  DATA_PROVENANCE_UNAVAILABLE: "Data provenance unavailable",
   HEADER: {
     BREADCRUMB_BACK: "Prediction Ledger",
     SPECIALISTS_COUNT: "3 Specialized Agents",
@@ -17,7 +17,10 @@ export const MONITOR_COPY = {
   DELIBERATION: {
     TITLE: "Multi-Agent Deliberation Breakdown",
     SUBTITLE:
-      "Real-time adversarial debate committee. Institutional LLM specialists evaluate momentum, tail risks, and Kelly expectancy.",
+      "Recorded on-demand agent responses for this prediction. No responses are shown until an analysis is run.",
+    RESPONSES_RECORDED: "responses recorded",
+    NO_RESPONSES: "No deliberation recorded",
+    EMPTY: "Run an on-demand analysis to record agent responses for this prediction.",
   },
   CONE: {
     TITLE: "Real-time Predictive Trajectory Cone",

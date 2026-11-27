@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/ChartToolsSidebar.tsx
  * @description TradingView-style left drawing and analysis tool strip for canvas interaction.
- * @author yuva.devlab@gmail.com
  */
 
 import { useState } from "react";

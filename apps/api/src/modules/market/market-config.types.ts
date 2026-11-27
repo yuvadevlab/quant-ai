@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/market/market-config.types.ts
  * @description Dynamic runtime configuration interfaces for the market engine backed by @quant-ai/quant-core.
- * @author yuva.devlab@gmail.com
  */
 
 import {

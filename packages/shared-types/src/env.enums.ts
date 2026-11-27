@@ -1,6 +1,5 @@
 /**
  * @fileoverview Environment, database driver, and message broker enums.
- * @author yuva.devlab@gmail.com
  */
 
 /**

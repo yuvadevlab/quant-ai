@@ -1,6 +1,5 @@
 /**
  * @fileoverview Strongly-typed configuration service validated against @quant-ai/shared-types.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable } from "@nestjs/common";

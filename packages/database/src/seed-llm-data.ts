@@ -1,7 +1,6 @@
 /**
  * @file packages/database/src/seed-llm-data.ts
  * @description Master catalog of AI providers and models with deprecation metadata for seeding.
- * @author yuva.devlab@gmail.com
  */
 
 export interface SeedModelDef {

@@ -2,7 +2,6 @@
  * @file src/features/portfolio/components/PortfolioPage.tsx
  * @description Master Paper Portfolio & Risk Desk page wrapper.
  * Composes workstation shell, balance KPIs, active simulated positions, and execution order logs using @quant-ai/ui.
- * @author yuva.devlab@gmail.com
  */
 
 import { QuantShell } from "@/components/layout";

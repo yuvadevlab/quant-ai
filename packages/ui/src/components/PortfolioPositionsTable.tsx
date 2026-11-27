@@ -1,11 +1,11 @@
 /**
  * @file packages/ui/src/components/PortfolioPositionsTable.tsx
  * @description Active simulated positions table with real-time P&L using DevLab UI Table primitives.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ReactNode } from "react";
 import { ArrowDownRight, ArrowUpRight, Briefcase } from "lucide-react";
+import { MarketDataStatus } from "@quant-ai/shared-types";
 import {
   Table,
   TableHeader,
@@ -78,6 +78,10 @@ export function PortfolioPositionsTable({
           </TableHeader>
           <TableBody>
             {positions.map((pos) => {
+              const hasMarketPrice =
+                pos.dataStatus === MarketDataStatus.VERIFIED ||
+                pos.dataStatus === MarketDataStatus.PROVIDER_UNVERIFIED ||
+                pos.dataStatus === MarketDataStatus.MARKET_CLOSED;
               const pnlPct =
                 pos.pnlPercent ??
                 (pos.entryPrice
@@ -104,19 +108,27 @@ export function PortfolioPositionsTable({
                   <TableCell className="mono">{pos.qty}</TableCell>
                   <TableCell className="mono">₹{pos.entryPrice.toLocaleString("en-IN")}</TableCell>
                   <TableCell className="mono highlight">
-                    ₹{pos.currentPrice.toLocaleString("en-IN")}
+                    {hasMarketPrice ? `₹${pos.currentPrice.toLocaleString("en-IN")}` : "—"}
                   </TableCell>
                   <TableCell>
                     <span className={`pnl-val mono ${pos.pnl >= 0 ? "text-gain" : "text-loss"}`}>
-                      {pos.pnl >= 0
-                        ? `+₹${pos.pnl.toLocaleString("en-IN")}`
-                        : `−₹${Math.abs(pos.pnl).toLocaleString("en-IN")}`}
+                      {hasMarketPrice
+                        ? pos.pnl >= 0
+                          ? `+₹${pos.pnl.toLocaleString("en-IN")}`
+                          : `−₹${Math.abs(pos.pnl).toLocaleString("en-IN")}`
+                        : "—"}
                     </span>
                   </TableCell>
                   <TableCell>
                     <span className={`change-pill ${pnlPct >= 0 ? "pill-gain" : "pill-loss"}`}>
-                      {pnlPct >= 0 ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                      {pnlPct >= 0 ? `+${pnlPct}%` : `${pnlPct}%`}
+                      {hasMarketPrice ? (
+                        <>
+                          {pnlPct >= 0 ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                          {pnlPct >= 0 ? `+${pnlPct}%` : `${pnlPct}%`}
+                        </>
+                      ) : (
+                        "—"
+                      )}
                     </span>
                   </TableCell>
                   <TableCell className="mono text-loss">

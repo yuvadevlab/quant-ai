@@ -85,7 +85,7 @@ services:
       - REDIS_URL=redis://redis:6379
       - KAFKA_BROKERS=redpanda:9092
       - EVENT_BROKER=redpanda
-      - QUANT_ENGINE_URL=http://quant-engine:8000
+      - QUANT_ENGINE_URL=http://quant-engine:${QUANT_ENGINE_PORT:-8005}
     depends_on:
       postgres:
         condition: service_healthy
@@ -105,10 +105,11 @@ services:
     container_name: quantai-engine
     restart: unless-stopped
     ports:
-      - "${QUANT_ENGINE_PORT:-8000}:8000"
+      - "${QUANT_ENGINE_PORT:-8005}:${QUANT_ENGINE_PORT:-8005}"
     environment:
       - PYTHONUNBUFFERED=1
-      - PORT=8000
+      - PORT=${QUANT_ENGINE_PORT:-8005}
+      - QUANT_ENGINE_PORT=${QUANT_ENGINE_PORT:-8005}
       - POSTGRES_URL=postgresql://${POSTGRES_USER:-quantai}:${POSTGRES_PASSWORD:-quantai_secret}@postgres:5432/${POSTGRES_DB:-quantai_db}
       - REDIS_URL=redis://redis:6379
       - KAFKA_BROKERS=redpanda:9092

@@ -1,12 +1,12 @@
 /**
  * @file apps/api/test/realtime-reactive.test.ts
  * @description Integration tests for dynamic real-time market updates across multi-asset setups.
- * @author yuva.devlab@gmail.com
  */
 
 import { describe, expect, it } from "vitest";
 import {
   AssetClass,
+  MarketDataStatus,
   SignalDirection,
   SignalRegime,
   SignalStatus,
@@ -18,25 +18,48 @@ import { EventBusService } from "../src/modules/infrastructure/event-bus.service
 import { RedisService } from "../src/modules/infrastructure/redis.service";
 import { RealtimeGateway } from "../src/modules/realtime/realtime.gateway";
 import { RealtimeService } from "../src/modules/realtime/realtime.service";
-import { LiveMarketFeedService, YahooFinanceHttpClient } from "../src/modules/market/feed";
+import { LiveMarketFeedService } from "../src/modules/market/feed";
 import { MarketTickService } from "../src/modules/market/market-tick.service";
 import { MarketService } from "../src/modules/market/market.service";
 import { ScreenerService } from "../src/modules/screener/screener.service";
 import { PredictionsService } from "../src/modules/predictions/predictions.service";
 
 describe("Real-time Reactive Market Hub", () => {
-  it("dynamically updates indices, screener, and predictions on live market ticks", async () => {
+  it("updates market views without settling predictions from unverified ticks", async () => {
     const config = new ConfigService();
     const redis = new RedisService(config);
     const bus = new EventBusService(config);
     const gateway = new RealtimeGateway();
     const realtime = new RealtimeService(gateway);
-    const feed = new LiveMarketFeedService(new YahooFinanceHttpClient(), redis);
+    const simulatedFeed = {
+      getLiveQuote: async (symbol: string) => ({
+        symbol,
+        displayName: symbol,
+        price: 2420,
+        change: 20,
+        percentChange: 0.83,
+        dayHigh: 2440,
+        dayLow: 2390,
+        volume: 1000000,
+        currency: "INR",
+        exchange: "NSE",
+        sparkline: [2400, 2410, 2420],
+        timestamp: new Date().toISOString(),
+        source: "SIMULATOR" as const,
+        dataStatus: MarketDataStatus.SIMULATED,
+      }),
+      getIndexQuote: (symbol: string) => ({
+        symbol,
+        price: 2420,
+        sparkline: [2400, 2410, 2420],
+      }),
+      onModuleInit: async () => {},
+    } as unknown as LiveMarketFeedService;
 
-    const tickService = new MarketTickService(config, redis, bus, realtime, feed);
-    const marketService = new MarketService(feed, bus, redis);
-    const screenerService = new ScreenerService(feed, bus);
-    const predictionsService = new PredictionsService(feed, bus, realtime);
+    const tickService = new MarketTickService(config, redis, bus, realtime, simulatedFeed);
+    const marketService = new MarketService(simulatedFeed, bus, redis);
+    const screenerService = new ScreenerService(simulatedFeed, bus);
+    const predictionsService = new PredictionsService(simulatedFeed, bus, realtime);
 
     screenerService.registerSymbol("RELIANCE");
     predictionsService.registerSignal({
@@ -78,10 +101,12 @@ describe("Real-time Reactive Market Hub", () => {
     // 2. Publish tick for RELIANCE (updates screener and prediction PRED-8942)
     const relianceTick = await tickService.generateAndPublishTick("RELIANCE");
     const screenedReliance = screenerService.findAll().find((s) => s.symbol === "RELIANCE");
-    expect(screenedReliance?.price).toBe(relianceTick.price);
+    expect(relianceTick.dataStatus).toBe(MarketDataStatus.SIMULATED);
+    expect(screenedReliance).toBeUndefined();
 
     const reliancePred = predictionsService.findById("PRED-8942");
-    expect(reliancePred.current).toBe(relianceTick.price);
+    expect(reliancePred.current).toBe(2420);
+    expect(reliancePred.metricEligible).not.toBe(true);
     expect(reliancePred.pnlPercent).toBeDefined();
 
     marketService.onModuleDestroy();

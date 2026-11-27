@@ -2,7 +2,6 @@
  * @file src/lib/ui-copy/index.ts
  * @description Centralized export catalog for all QuantAI user-facing copy strings.
  * Enforces Yuva DevLab Zero Hardcoded Strings Rule (Matching fin-ai architecture).
- * @author yuva.devlab@gmail.com
  */
 
 import { COMMON_COPY } from "./common.copy";

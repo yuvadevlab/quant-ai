@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/quant-analysis/ai-provider.types.ts
  * @description Type contracts and payload schemas for multi-provider AI model routing.
- * @author yuva.devlab@gmail.com
  */
 
 import { AgentRole, AgentStance, SignalRegime } from "@quant-ai/shared-types";
@@ -36,14 +35,20 @@ export interface AgentDebateOutput {
   readonly keyRisk?: string;
 }
 
+export interface ChatHistoryTurn {
+  readonly role: "user" | "assistant";
+  readonly content: string;
+}
+
 /**
- * Input context for interactive Copilot chat generation.
+ * Input context for interactive Strategist chat generation.
  */
 export interface ChatCompletionInput {
   readonly query: string;
   readonly symbol?: string;
   readonly marketContext?: string;
   readonly systemPrompt?: string;
+  readonly history?: readonly ChatHistoryTurn[];
 }
 
 /**

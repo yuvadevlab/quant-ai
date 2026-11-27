@@ -1,11 +1,10 @@
 /**
  * @file apps/api/test/dynamic-features.test.ts
  * @description Unit tests for Chat Copilot, Paper Portfolio, and On-Demand Deliberation.
- * @author yuva.devlab@gmail.com
  */
 
 import { describe, expect, it } from "vitest";
-import { AgentRole } from "@quant-ai/shared-types";
+import { AgentRole, MarketDataStatus } from "@quant-ai/shared-types";
 import { LiveMarketFeedService } from "../src/modules/market/feed";
 import { MarketService } from "../src/modules/market/market.service";
 import { MarketController } from "../src/modules/market/market.controller";
@@ -22,8 +21,35 @@ import { AiProviderFactory } from "../src/modules/quant-analysis/ai-provider.fac
 import { ConfigService } from "../src/modules/infrastructure/config.service";
 import { EventBusService } from "../src/modules/infrastructure/event-bus.service";
 
+/**
+ * Deterministic feed stub: always returns SIMULATED status so unit tests
+ * do not depend on live market hours or external provider availability.
+ */
+function makeSimulatedFeed(): LiveMarketFeedService {
+  return {
+    getLiveQuote: async (symbol: string) => ({
+      symbol,
+      displayName: symbol,
+      price: 2400,
+      change: 0,
+      percentChange: 0,
+      dayHigh: 2420,
+      dayLow: 2380,
+      volume: 1_000_000,
+      currency: "INR",
+      exchange: "NSE",
+      sparkline: [2380, 2390, 2400],
+      timestamp: new Date().toISOString(),
+      source: "SIMULATOR" as const,
+      dataStatus: MarketDataStatus.SIMULATED,
+    }),
+    getIndexQuote: (symbol: string) => ({ symbol, price: 2400, sparkline: [2400] }),
+    onModuleInit: async () => {},
+  } as unknown as LiveMarketFeedService;
+}
+
 describe("Dynamic Workstation Features", () => {
-  const feed = new LiveMarketFeedService();
+  const feed = makeSimulatedFeed();
   const config = new ConfigService();
   const bus = new EventBusService(config);
   const gateway = new RealtimeGateway();
@@ -39,10 +65,9 @@ describe("Dynamic Workstation Features", () => {
       });
 
       expect(response).toBeDefined();
-      expect(response.reply).toContain("Quantitative consensus");
-      expect(response.referencedSymbol).toBe("RELIANCE");
-      expect(typeof response.livePrice).toBe("number");
-      expect(response.livePrice).toBeGreaterThan(0);
+      expect(response.reply).toContain("Verified market data");
+      expect(response.referencedSymbol).toBeUndefined();
+      expect(response.livePrice).toBeUndefined();
       expect(response.timestamp).toBeDefined();
     });
 
@@ -52,10 +77,10 @@ describe("Dynamic Workstation Features", () => {
       });
 
       expect(response).toBeDefined();
-      expect(response.reply).toContain("Option Chain");
-      expect(response.reply).toContain("Put-Call Ratio (PCR)");
-      expect(response.referencedSymbol).toBe("NIFTY");
-      expect(response.agentPerspective?.role).toBe(AgentRole.MACRO_ANALYST);
+      expect(response.reply).toContain("option-chain reading");
+      expect(response.reply).not.toContain("Put-Call Ratio (PCR)");
+      expect(response.referencedSymbol).toBeUndefined();
+      expect(response.agentPerspective?.role).not.toBe(AgentRole.MACRO_ANALYST);
     });
 
     it("handles generic market questions gracefully without crashing", async () => {
@@ -171,27 +196,23 @@ describe("Dynamic Workstation Features", () => {
   });
 
   describe("Market Breadth & Runtime Configuration Engine", () => {
-    const marketService = new MarketService(feed, bus);
+    const simulatedMarketFeed = makeSimulatedFeed();
+    const marketService = new MarketService(simulatedMarketFeed, bus);
     const marketController = new MarketController(marketService);
 
     it("dynamically returns breadth and sector momentum", async () => {
       await marketService.onModuleInit();
       const breadth = marketController.getBreadth();
       expect(breadth).toBeDefined();
-      expect(typeof breadth.advances).toBe("number");
-      expect(typeof breadth.declines).toBe("number");
-      expect(breadth.advanceRatio).toContain("%");
-      expect(breadth.fiiNet).toBeDefined();
-      expect(breadth.diiNet).toBeDefined();
+      expect(breadth.dataAvailable).toBe(false);
+      expect(breadth.advances).toBeNull();
+      expect(breadth.declines).toBeNull();
+      expect(breadth.advanceRatio).toBeNull();
+      expect(breadth.fiiNet).toBeNull();
+      expect(breadth.diiNet).toBeNull();
 
       const sectors = marketController.getSectors();
-      expect(sectors).toBeDefined();
-      expect(sectors.length).toBeGreaterThan(0);
-      for (const sec of sectors) {
-        expect(sec.name).toBeDefined();
-        expect(sec.change).toBeDefined();
-        expect(["Strong", "Moderate", "Neutral", "Weak"]).toContain(sec.momentum);
-      }
+      expect(sectors).toEqual([]);
     });
 
     it("allows runtime configuration updates without redeployments", async () => {
@@ -207,9 +228,9 @@ describe("Dynamic Workstation Features", () => {
       expect(updated.breadth.fiiNetCr).toBe(3500.5);
       expect(updated.sector.strongThreshold).toBe(2.0);
 
-      // Verify that market breadth reflects new configuration
+      // Configurable parameters are retained without implying unavailable flows are measured.
       const breadthAfter = marketController.getBreadth();
-      expect(breadthAfter.fiiNet).toContain("3,500.5");
+      expect(breadthAfter.fiiNet).toBeNull();
     });
   });
 });

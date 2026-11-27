@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/auth/jwt-auth.guard.ts
  * @description NestJS Passport JWT authentication guard.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable, ExecutionContext, UnauthorizedException } from "@nestjs/common";
