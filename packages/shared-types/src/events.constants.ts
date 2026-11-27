@@ -1,6 +1,5 @@
 /**
  * @fileoverview Event topics, cache keys, and real-time WebSocket protocol contracts.
- * @author yuva.devlab@gmail.com
  */
 
 /**

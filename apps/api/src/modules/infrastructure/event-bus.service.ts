@@ -1,6 +1,5 @@
 /**
  * @fileoverview Resilient event streaming bus supporting Kafka/Redpanda and local dispatch.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable } from "@nestjs/common";

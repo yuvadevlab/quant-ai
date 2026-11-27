@@ -1,7 +1,6 @@
 /**
  * @file packages/finance-engine/src/constants/technical.constants.ts
  * @description Named mathematical constants for technical indicator algorithms.
- * @author yuva.devlab@gmail.com
  */
 
 /** Standard Wilder smoothing period for Relative Strength Index (RSI). */

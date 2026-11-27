@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/predictions/predictions-hydrator.ts
  * @description Dynamic database-backed opportunity discovery and multi-strategy ledger hydration.
- * @author yuva.devlab@gmail.com
  */
 
 import { Logger } from "@yuva-devlab/logger";

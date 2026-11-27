@@ -1,7 +1,6 @@
 /**
  * @file apps/api/test/chat-guardrails.test.ts
  * @description Unit tests for QuantAI Copilot prompt-injection defense and financial-domain guardrails.
- * @author yuva.devlab@gmail.com
  */
 
 import { describe, expect, it } from "vitest";

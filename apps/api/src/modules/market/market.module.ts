@@ -1,6 +1,5 @@
 /**
  * @fileoverview Module responsible for market benchmarks and high-frequency streams.
- * @author yuva.devlab@gmail.com
  */
 
 import { Module } from "@nestjs/common";

@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/RecommendationCard.tsx
  * @description Spacious, breathable recommendation card with plain-English conviction and mini trajectory preview.
- * @author yuva.devlab@gmail.com
  */
 
 import { ArrowUpRight, ArrowDownRight, Clock, ShieldCheck } from "lucide-react";

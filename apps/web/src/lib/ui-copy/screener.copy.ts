@@ -1,7 +1,6 @@
 /**
  * @file src/lib/ui-copy/screener.copy.ts
  * @description Centralized copy for the Quantitative Screener Desk.
- * @author yuva.devlab@gmail.com
  */
 
 export const SCREENER_COPY = {

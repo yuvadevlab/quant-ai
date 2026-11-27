@@ -2,7 +2,6 @@
  * @file apps/api/src/modules/market/market.service.ts
  * @description Dynamic reactive market service maintaining real-time benchmark states via live feed.
  * All thresholds, labels, and parameters are database-configurable without redeployments.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable, OnModuleInit, OnModuleDestroy, Optional } from "@nestjs/common";

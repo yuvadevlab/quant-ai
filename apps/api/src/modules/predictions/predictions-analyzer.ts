@@ -2,7 +2,6 @@
  * @file apps/api/src/modules/predictions/predictions-analyzer.ts
  * @description Real-time quantitative opportunity scanner generating genuine predictions from live market data.
  * Zero hardcoded tickers: dynamically pulls tradable universe from PostgreSQL screener_stocks SSOT.
- * @author yuva.devlab@gmail.com
  */
 
 import { Logger } from "@yuva-devlab/logger";

@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/MonitorAgentsSection.tsx
  * @description Dynamic multi-agent deliberation consensus grid with specialist cards.
- * @author yuva.devlab@gmail.com
  */
 
 import { Bot, Radio, Sparkles } from "lucide-react";

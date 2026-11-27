@@ -1,7 +1,6 @@
 /**
  * @file src/lib/ui-copy/monitor.copy.ts
  * @description Centralized copy for the Live Trajectory Monitor Desk.
- * @author yuva.devlab@gmail.com
  */
 
 export const MONITOR_COPY = {

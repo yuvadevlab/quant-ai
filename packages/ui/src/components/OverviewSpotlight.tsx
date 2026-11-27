@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/OverviewSpotlight.tsx
  * @description Active high-conviction signals spotlight section.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ReactNode } from "react";

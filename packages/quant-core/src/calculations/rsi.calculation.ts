@@ -1,7 +1,6 @@
 /**
  * @file packages/finance-engine/src/calculations/rsi.calculation.ts
  * @description Relative Strength Index (RSI) momentum calculation using Wilder smoothing.
- * @author yuva.devlab@gmail.com
  */
 
 import {

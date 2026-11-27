@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/quant-analysis/multi-agent-deliberation.service.ts
  * @description Service orchestrating the 3-agent adversarial deliberation and institutional risk gate.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable, Optional } from "@nestjs/common";

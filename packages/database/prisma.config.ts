@@ -1,7 +1,6 @@
 /**
  * @file packages/database/prisma.config.ts
  * @description Prisma 7 configuration file for database migrations and schema tooling.
- * @author yuva.devlab@gmail.com
  */
 
 import dotenv from "dotenv";

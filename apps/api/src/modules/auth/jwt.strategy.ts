@@ -4,7 +4,6 @@
  * 1. RS256 SSO tokens issued by DevLab Gateway with JWKS verification.
  * 2. HS256 tokens issued locally with symmetric secret verification.
  * Performs Just-In-Time (JIT) shadow provisioning for DevLab Portal SSO users.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable, UnauthorizedException } from "@nestjs/common";

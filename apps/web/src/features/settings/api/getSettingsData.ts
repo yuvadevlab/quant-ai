@@ -1,7 +1,6 @@
 /**
  * @file src/features/settings/api/getSettingsData.ts
  * @description Dynamic database-backed data provider for AI model registry and risk settings.
- * @author yuva.devlab@gmail.com
  */
 
 export interface ProviderOption {

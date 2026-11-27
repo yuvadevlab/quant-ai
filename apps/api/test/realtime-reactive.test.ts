@@ -1,7 +1,6 @@
 /**
  * @file apps/api/test/realtime-reactive.test.ts
  * @description Integration tests for dynamic real-time market updates across multi-asset setups.
- * @author yuva.devlab@gmail.com
  */
 
 import { describe, expect, it } from "vitest";

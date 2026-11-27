@@ -2,7 +2,6 @@
  * @file packages/finance-engine/src/simulators/stochastic-price.simulator.ts
  * @description Stochastic price simulator using Geometric Brownian Motion (GBM) with Box-Muller transform.
  * For offline testing, Monte Carlo risk simulation, and local development.
- * @author yuva.devlab@gmail.com
  */
 
 import {

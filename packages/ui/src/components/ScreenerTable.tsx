@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/ScreenerTable.tsx
  * @description Screener results table with RSI meters, EMA status, options OI tags using DevLab UI Table primitives.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ReactNode } from "react";

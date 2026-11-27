@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/TrajectoryConeChart.tsx
  * @description Chart placeholder until verified market history is available.
- * @author yuva.devlab@gmail.com
  */
 
 import { UI_COPY_CONSTANTS } from "../constants/ui-copy.constants";

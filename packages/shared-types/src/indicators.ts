@@ -1,7 +1,6 @@
 /**
  * @fileoverview Pure, deterministic, configurable quantitative indicator algorithms.
  * Every algorithm accepts dynamic configuration overrides, adhering to zero hardcoding rules.
- * Author: yuva.devlab@gmail.com
  */
 
 import { DEFAULT_ATR_CONFIG, DEFAULT_RSI_CONFIG } from "./indicators.constants";

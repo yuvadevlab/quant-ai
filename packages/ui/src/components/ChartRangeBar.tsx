@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/ChartRangeBar.tsx
  * @description TradingView / Zerodha Kite institutional bottom date range selector (1D, 5D, 1M, 6M, 1Y, ALL).
- * @author yuva.devlab@gmail.com
  */
 
 import { Button } from "@yuva-devlab/ui";

@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/chat/chat-guardrails.ts
  * @description Prompt-injection defense and financial-domain boundary guardrails for QuantAI Copilot.
- * @author yuva.devlab@gmail.com
  */
 
 import {

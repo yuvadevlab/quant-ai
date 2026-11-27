@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/ChatEmptyState.tsx
  * @description Clean landing state for empty AI Copilot conversations with starter prompt triggers.
- * @author yuva.devlab@gmail.com
  */
 
 import { ArrowRight, Sparkles, TrendingUp, ShieldAlert, LineChart, Cpu } from "lucide-react";
@@ -60,7 +59,7 @@ function renderStarterIcon(type: ChatQuickPrompt["iconName"]) {
  */
 export function ChatEmptyState({
   onSelectPrompt,
-  title = "AI Financial Copilot",
+  title = "AI Strategist",
   subtitle = "Interactive quantitative market intelligence, multi-agent thesis cross-examination, and real-time trade evaluation.",
 }: ChatEmptyStateProps) {
   return (

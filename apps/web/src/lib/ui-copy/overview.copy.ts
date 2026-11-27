@@ -1,7 +1,6 @@
 /**
  * @file src/lib/ui-copy/overview.copy.ts
  * @description Centralized copy for the Overview Desk and Market Intelligence radar.
- * @author yuva.devlab@gmail.com
  */
 
 export const OVERVIEW_COPY = {

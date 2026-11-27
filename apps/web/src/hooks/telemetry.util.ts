@@ -1,7 +1,6 @@
 /**
  * @file src/hooks/telemetry.util.ts
  * @description Pure mathematical calculation engine for signal hit rates, excursions, and telemetry.
- * @author yuva.devlab@gmail.com
  */
 
 import type { Signal } from "@/components/quantai/data";

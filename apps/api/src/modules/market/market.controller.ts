@@ -1,6 +1,5 @@
 /**
  * @fileoverview Controller exposing real-time and snapshot market intelligence endpoints.
- * @author yuva.devlab@gmail.com
  */
 
 import { Body, Controller, Get, Patch, Query } from "@nestjs/common";

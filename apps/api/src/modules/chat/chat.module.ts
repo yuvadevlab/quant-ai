@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/chat/chat.module.ts
  * @description NestJS module for AI Quant Copilot services and endpoints.
- * @author yuva.devlab@gmail.com
  */
 
 import { Module } from "@nestjs/common";

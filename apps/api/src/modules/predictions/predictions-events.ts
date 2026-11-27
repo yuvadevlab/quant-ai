@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/predictions/predictions-events.ts
  * @description Real-time market tick and deliberation outcome event handlers for Predictions.
- * @author yuva.devlab@gmail.com
  */
 
 import {

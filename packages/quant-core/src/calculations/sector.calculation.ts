@@ -1,7 +1,6 @@
 /**
  * @file packages/finance-engine/src/calculations/sector.calculation.ts
  * @description Sector momentum strength classification based on benchmark percentage performance.
- * @author yuva.devlab@gmail.com
  */
 
 import { SectorMomentumConfigEnvelope } from "../constants/system-config.constants";

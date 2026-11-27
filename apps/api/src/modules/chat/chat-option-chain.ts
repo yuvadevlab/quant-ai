@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/chat/chat-option-chain.ts
  * @description Institutional options chain analytics and quantitative derivatives synthesis for Indian indices.
- * @author yuva.devlab@gmail.com
  */
 
 import type { LiveMarketQuote } from "../market/feed";

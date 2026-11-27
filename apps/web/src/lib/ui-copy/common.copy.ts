@@ -1,7 +1,6 @@
 /**
  * @file src/lib/ui-copy/common.copy.ts
  * @description Universal actions, badge labels, navigation copy, and regulatory disclaimer.
- * @author yuva.devlab@gmail.com
  */
 
 export const COMMON_COPY = {
@@ -35,7 +34,7 @@ export const COMMON_COPY = {
     PREDICTIONS: "Predictions Lab",
     SCREENER: "Quant Screener",
     PORTFOLIO: "Portfolio & Risk",
-    CHAT: "AI Copilot",
+    CHAT: "AI Strategist",
     SETTINGS: "System Settings",
   },
   STATUS: {

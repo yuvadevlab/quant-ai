@@ -1,7 +1,6 @@
 /**
  * @file apps/web/src/hooks/use-realtime-deliberation.ts
  * @description React 19 hook subscribing to real-time multi-agent deliberation streams and live signal updates.
- * @author yuva.devlab@gmail.com
  */
 
 import { useEffect, useState, useRef } from "react";

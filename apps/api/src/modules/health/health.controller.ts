@@ -1,6 +1,5 @@
 /**
  * @fileoverview Health and operational readiness controller.
- * @author yuva.devlab@gmail.com
  */
 
 import { Controller, Get } from "@nestjs/common";

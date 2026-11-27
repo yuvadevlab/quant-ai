@@ -1,166 +1,74 @@
 /**
  * @file packages/ui/src/styles/chat-composer.css
- * @description Modular stylesheet for chat-composer.
+ * @description Semantic component styles for AI Strategist auto-expanding composer (aligned with FinAI).
  * Architecture: W3C Cascade Layer @layer dl-components
  */
 
 @layer dl-components {
-  .embedded-signal-box {
-    margin-top: 14px;
+  .advisor-composer {
+    border-top: 1px solid var(--border-subtle);
     background-color: var(--bg-card);
-    border: 1px solid var(--border-active);
-    border-radius: var(--radius-md);
-    padding: 16px;
+    padding: 12px 16px;
+  }
+
+  .advisor-composer-form {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .embedded-signal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-
-  .embedded-symbol {
-    font-size: 16px;
-    font-weight: 800;
-    color: var(--foreground);
-    margin-left: 8px;
-  }
-
-  .embedded-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 10px;
-    border-top: 1px solid var(--border-subtle);
-  }
-
-  .conviction-text {
-    font-size: 12px;
-    color: var(--text-muted);
-  }
-
-  .quick-prompts-bar {
-    padding: 10px 24px;
-    background-color: var(--bg-card-subtle);
-    border-top: 1px solid var(--border-subtle);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .prompts-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    color: var(--text-dim);
-    flex-shrink: 0;
-  }
-
-  .prompts-scroll {
-    display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 8px;
-    overflow-x: auto;
-  }
-
-  .quick-prompt-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11.5px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    background-color: color-mix(in srgb, var(--foreground) 4%, transparent);
+    border-radius: var(--radius-lg);
     border: 1px solid var(--border-subtle);
-    padding: 5px 12px;
-    border-radius: var(--radius-full);
-    white-space: nowrap;
-    transition: all 0.15s;
-  }
-
-  .quick-prompt-btn:hover {
-    background-color: color-mix(in srgb, var(--foreground) 8%, transparent);
-    border-color: color-mix(in srgb, var(--foreground) 15%, transparent);
-    color: var(--foreground);
-  }
-
-  .chat-input-bar {
-    padding: 16px 24px;
-    background-color: var(--bg-card);
-    border-top: 1px solid var(--border-subtle);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .input-field-wrap {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    height: 42px;
-    background-color: var(--bg-input);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 0 12px 0 14px;
+    background-color: var(--bg-card-subtle);
+    padding: 6px 8px 6px 12px;
     transition:
-      border-color 0.15s,
-      box-shadow 0.15s;
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
   }
 
-  .input-field-wrap:focus-within {
-    border-color: var(--border-focus);
+  .advisor-composer-form:focus-within,
+  .advisor-composer-form.is-focused {
+    border-color: var(--primary);
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 18%, transparent);
   }
 
-  .input-field-wrap .chat-prompt-input,
-  .input-field-wrap .chat-prompt-input:focus,
-  .input-field-wrap .chat-prompt-input:focus-visible {
+  .advisor-composer-form .advisor-composer-textarea,
+  .advisor-composer-form .advisor-composer-textarea:focus,
+  .advisor-composer-form .advisor-composer-textarea:focus-visible {
     flex: 1;
     min-width: 0;
-    height: 40px;
-    padding: 0;
+    min-height: 24px;
+    max-height: 128px;
+    resize: none;
     background: transparent;
     border: none;
     box-shadow: none;
-    color: var(--foreground);
-    font-size: 14px;
     outline: none;
+    padding: 6px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--foreground);
   }
 
-  .chat-prompt-input::placeholder {
+  .advisor-composer-textarea::placeholder {
     color: var(--text-dim);
   }
 
-  .kbd-shortcut {
-    font-size: 10.5px;
-    color: var(--text-dim);
-    background-color: color-mix(in srgb, var(--foreground) 6%, transparent);
-    padding: 2px 6px;
-    border-radius: var(--radius-sm);
+  .advisor-composer-btn {
+    width: 36px;
+    height: 36px;
     flex-shrink: 0;
-  }
-
-  .btn-chat-send {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    height: 42px;
+    border-radius: var(--radius-md);
     background: linear-gradient(135deg, var(--primary), var(--chart-actual));
     color: var(--primary-foreground);
-    font-weight: 600;
-    font-size: 13.5px;
-    padding: 0 18px;
-    border-radius: var(--radius-md);
-    transition: opacity 0.15s;
-    flex-shrink: 0;
   }
 
-  .btn-chat-send:hover {
-    opacity: 0.9;
+  .advisor-composer-btn:disabled {
+    opacity: 0.4;
+  }
+
+  .advisor-composer-hint {
+    margin: 6px 0 0;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-dim);
   }
 }

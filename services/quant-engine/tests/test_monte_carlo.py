@@ -1,6 +1,5 @@
 """
 Unit tests for vectorized Monte Carlo simulation with GBM and GARCH(1,1).
-Author: yuva.devlab@gmail.com
 """
 
 import numpy as np

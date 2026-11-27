@@ -1,6 +1,5 @@
 /**
  * @fileoverview Application bootstrap entry point for QuantAI API Gateway.
- * @author yuva.devlab@gmail.com
  */
 
 import "reflect-metadata";

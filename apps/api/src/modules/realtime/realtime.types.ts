@@ -1,6 +1,5 @@
 /**
  * @fileoverview Type definitions for WebSocket payloads and events.
- * @author yuva.devlab@gmail.com
  */
 
 import type { RealtimeRoom } from "./realtime.enums";

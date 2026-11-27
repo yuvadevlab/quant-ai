@@ -51,7 +51,7 @@
 ```
 quant-ai/
 ├── pnpm-workspace.yaml            # Targets apps/* and packages/*
-├── docker-compose.yml             # Local dev orchestrator (workstation:3005, quant-engine:8000)
+├── docker-compose.yml             # Local dev orchestrator (workstation:3005, quant-engine:8005)
 │
 ├── apps/
 │   ├── web/                       # @quant-ai/web (TanStack Start / React 19 UI & SSR)

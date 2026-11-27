@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/predictions/predictions-factory.ts
  * @description Signal builder and database persistence for quantitative predictions.
- * @author yuva.devlab@gmail.com
  */
 
 import { Logger } from "@yuva-devlab/logger";

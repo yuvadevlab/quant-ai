@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/portfolio/portfolio.types.ts
  * @description Type definitions for simulated paper trading portfolio and risk ledgers.
- * @author yuva.devlab@gmail.com
  */
 
 import type { MarketDataStatus } from "@quant-ai/shared-types";

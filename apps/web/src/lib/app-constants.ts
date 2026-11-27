@@ -1,7 +1,6 @@
 /**
  * @file apps/web/src/lib/app-constants.ts
  * @description Centralized client application constants, SSO endpoints, and platform identifiers.
- * @author yuva.devlab@gmail.com
  */
 
 import { DEVLAB_CONFIG } from "@quant-ai/shared-types";

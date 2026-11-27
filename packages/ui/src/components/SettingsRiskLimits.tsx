@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/SettingsRiskLimits.tsx
  * @description Hardcoded deterministic risk limits panel using DevLab UI primitives.
- * @author yuva.devlab@gmail.com
  */
 
 import { ShieldCheck } from "lucide-react";

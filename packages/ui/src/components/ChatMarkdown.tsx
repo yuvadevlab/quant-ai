@@ -2,7 +2,6 @@
  * @file packages/ui/src/components/ChatMarkdown.tsx
  * @description Lightweight React Markdown renderer for AI Copilot responses.
  * Supports headings, bold, italic, inline code, code blocks, lists, blockquotes, rules, and tables.
- * @author yuva.devlab@gmail.com
  */
 
 import { Fragment, type ReactNode } from "react";
@@ -10,7 +9,11 @@ import { Fragment, type ReactNode } from "react";
 export interface ChatMarkdownProps {
   /** Raw GitHub-flavored markdown text */
   readonly content: string;
+  /** Strip trailing `### Follow-up Suggestions:` section when rendered separately as chips */
+  readonly stripSuggestions?: boolean;
 }
+
+const FOLLOW_UP_SECTION_REGEX = /(?:^|\n)#{2,4}\s*Follow-up Suggestions\s*:?\s*\n([\s\S]*)$/i;
 
 function renderInline(text: string): ReactNode[] {
   const tokens: ReactNode[] = [];
@@ -56,8 +59,11 @@ function isTableSeparator(line: string): boolean {
 /**
  * Renders markdown content inside AI Copilot message bubbles.
  */
-export function ChatMarkdown({ content }: ChatMarkdownProps) {
-  const lines = content.replace(/\r\n/g, "\n").split("\n");
+export function ChatMarkdown({ content, stripSuggestions = true }: ChatMarkdownProps) {
+  const normalized = stripSuggestions
+    ? content.replace(FOLLOW_UP_SECTION_REGEX, "").trim()
+    : content;
+  const lines = normalized.replace(/\r\n/g, "\n").split("\n");
   const blocks: ReactNode[] = [];
   let i = 0;
   let blockKey = 0;

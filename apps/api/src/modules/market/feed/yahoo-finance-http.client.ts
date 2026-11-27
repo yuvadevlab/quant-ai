@@ -2,7 +2,6 @@
  * @file apps/api/src/modules/market/feed/yahoo-finance-http.client.ts
  * @description Dedicated HTTP client service for querying real-time market data from Yahoo Finance API.
  * Implements intelligent request throttling, 429 exponential backoff, and modern browser headers.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable, Optional } from "@nestjs/common";

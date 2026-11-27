@@ -1,7 +1,6 @@
 /**
  * @file src/features/settings/components/index.ts
  * @description Exports for settings feature. Presentation blocks are imported from @quant-ai/ui.
- * @author yuva.devlab@gmail.com
  */
 
 export * from "./SettingsPage";

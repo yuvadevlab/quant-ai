@@ -1,7 +1,6 @@
 /**
  * @file packages/prompts/src/personas/risk-officer.persona.ts
  * @description Chief Risk Officer and Macro Strategist persona enforcing mathematical trade expectancy.
- * @author yuva.devlab@gmail.com
  */
 
 /**

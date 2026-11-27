@@ -1,7 +1,6 @@
 /**
  * @file packages/prompts/src/system/deliberation-system.prompt.ts
  * @description System prompt template for multi-agent quantitative deliberation.
- * @author yuva.devlab@gmail.com
  */
 
 /**

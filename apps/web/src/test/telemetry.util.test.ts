@@ -1,7 +1,6 @@
 /**
  * @file src/test/telemetry.util.test.ts
  * @description Unit tests for dynamic mathematical telemetry and signal ledger calculations.
- * @author yuva.devlab@gmail.com
  */
 
 import { describe, it, expect } from "vitest";

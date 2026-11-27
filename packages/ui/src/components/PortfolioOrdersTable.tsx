@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/PortfolioOrdersTable.tsx
  * @description Historical completed orders audit log using DevLab UI Table primitives.
- * @author yuva.devlab@gmail.com
  */
 
 import { ShieldCheck } from "lucide-react";

@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/PredictionsHeader.tsx
  * @description Header banner and action controls for the Prediction Lab & Signal Audit Ledger.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ReactNode } from "react";

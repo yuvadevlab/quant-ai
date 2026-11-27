@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/portfolio/portfolio.controller.ts
  * @description Controller exposing paper portfolio and simulated risk ledger endpoints.
- * @author yuva.devlab@gmail.com
  */
 
 import { Controller, Get } from "@nestjs/common";

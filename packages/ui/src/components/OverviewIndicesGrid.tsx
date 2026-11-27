@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/OverviewIndicesGrid.tsx
  * @description Benchmark indices metric cards grid with category filtering.
- * @author yuva.devlab@gmail.com
  */
 
 import { Button } from "@yuva-devlab/ui";

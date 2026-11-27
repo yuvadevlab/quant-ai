@@ -1,7 +1,6 @@
 /**
  * @file packages/finance-engine/src/calculations/pnl.calculation.ts
  * @description Deterministic profit and loss (PnL), returns, and performance metrics.
- * @author yuva.devlab@gmail.com
  */
 
 import {

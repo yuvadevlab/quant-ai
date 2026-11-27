@@ -2,7 +2,6 @@
  * @file apps/api/src/modules/auth/auth.controller.ts
  * @description Authentication endpoints for DevLab Portal SSO handshake and user profile resolution.
  * Local registration/signup is strictly disabled; identity belongs exclusively to DevLab Portal.
- * @author yuva.devlab@gmail.com
  */
 
 import { Controller, Get, Req, UseGuards } from "@nestjs/common";

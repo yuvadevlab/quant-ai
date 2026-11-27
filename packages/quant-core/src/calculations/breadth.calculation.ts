@@ -1,7 +1,6 @@
 /**
  * @file packages/finance-engine/src/calculations/breadth.calculation.ts
  * @description Market breadth ratios, institutional flow formatting, and volatility environment classification.
- * @author yuva.devlab@gmail.com
  */
 
 import { MarketBreadthConfigEnvelope } from "../constants/system-config.constants";

@@ -1,6 +1,5 @@
 """
 QuantAI Quantitative Engine — FastAPI Vectorized Simulation Service.
-Author: yuva.devlab@gmail.com
 """
 
 from fastapi import FastAPI, HTTPException
@@ -106,3 +105,14 @@ async def run_monte_carlo(payload: MonteCarloRequest) -> list[TrajectoryBound]:
         )
     except (ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        "src.main:app",
+        host=settings.host,
+        port=settings.port,
+        reload=settings.environment == "development",
+    )

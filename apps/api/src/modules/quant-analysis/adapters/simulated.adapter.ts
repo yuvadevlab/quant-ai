@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/quant-analysis/adapters/simulated.adapter.ts
  * @description Calibrated deterministic model adapter backed by canonical @quant-ai/quant-core formulas.
- * @author yuva.devlab@gmail.com
  */
 
 import { generateDeterministicAgentVerdict } from "@quant-ai/quant-core";

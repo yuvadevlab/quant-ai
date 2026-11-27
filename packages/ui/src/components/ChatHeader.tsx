@@ -1,10 +1,9 @@
 /**
  * @file packages/ui/src/components/ChatHeader.tsx
  * @description Header banner for the AI Financial Copilot desk.
- * @author yuva.devlab@gmail.com
  */
 
-import { Bot, ChevronRight, History, Plus } from "lucide-react";
+import { History, MessageSquarePlus, Sparkles } from "lucide-react";
 import { Button } from "@yuva-devlab/ui";
 
 /**
@@ -25,51 +24,37 @@ export interface ChatHeaderProps {
   readonly historyCount?: number;
   /** Optional handler to initiate a new clean chat session */
   readonly onNewChat?: () => void;
+  /** Whether active messages exist (controls New Chat disabled state) */
+  readonly hasMessages?: boolean;
 }
 
 /**
- * Institutional header banner for the AI Financial Copilot conversation desk.
- *
- * @param props - ChatHeaderProps containing titles, badge, and navigation actions.
- * @returns Rendered JSX ChatHeader element.
+ * Compact header for the AI Strategist conversation desk (aligned with FinAI AdvisorHeader).
  */
 export function ChatHeader({
-  title = "AI FINANCIAL COPILOT",
-  subtitle = "Interactive market intelligence, multi-agent thesis cross-examination, and real-time setup generation.",
-  breadcrumbLabel = "INTELLIGENCE",
-  badgeText = "MULTI-AGENT CONSENSUS MODE",
+  title = "AI Strategist",
+  badgeText = "MULTI-AGENT CONSENSUS",
   onToggleHistory,
   historyCount,
   onNewChat,
+  hasMessages = true,
 }: ChatHeaderProps) {
   return (
-    <div className="desk-header">
-      <div>
-        <div className="desk-breadcrumb">
-          <span>{breadcrumbLabel}</span>
-          <ChevronRight size={14} />
-          <span className="current">{title.toUpperCase()}</span>
+    <div className="advisor-header">
+      <div className="advisor-header-brand">
+        <div className="advisor-header-icon-box">
+          <Sparkles size={18} aria-hidden="true" />
         </div>
-        <h1 className="desk-title">{title}</h1>
-        <p className="desk-subtitle">{subtitle}</p>
+        <div className="advisor-header-titles">
+          <h1 className="advisor-header-title">{title}</h1>
+          <p className="advisor-header-badge">{badgeText}</p>
+        </div>
       </div>
-      <div className="desk-actions">
-        {onNewChat && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onNewChat}
-            className="chat-action-btn"
-          >
-            <Plus size={14} />
-            <span>New Chat</span>
-          </Button>
-        )}
+      <div className="advisor-header-actions">
         {onToggleHistory && (
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             size="sm"
             onClick={onToggleHistory}
             className="chat-action-btn"
@@ -81,10 +66,19 @@ export function ChatHeader({
             )}
           </Button>
         )}
-        <span className="paper-trading-tag">
-          <Bot size={15} />
-          <span>{badgeText}</span>
-        </span>
+        {onNewChat && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onNewChat}
+            disabled={!hasMessages}
+            className="chat-action-btn"
+          >
+            <MessageSquarePlus size={14} />
+            <span>New Chat</span>
+          </Button>
+        )}
       </div>
     </div>
   );

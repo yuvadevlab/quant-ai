@@ -1,6 +1,5 @@
 /**
  * @fileoverview Signal and prediction data transfer contracts.
- * @author yuva.devlab@gmail.com
  */
 
 import { z } from "zod";

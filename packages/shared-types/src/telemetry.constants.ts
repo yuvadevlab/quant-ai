@@ -1,6 +1,5 @@
 /**
  * @fileoverview Service identity, health probes, and OpenAPI documentation constants.
- * @author yuva.devlab@gmail.com
  */
 
 /**

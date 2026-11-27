@@ -2,7 +2,6 @@
  * @file apps/web/src/components/quantai/data.ts
  * @description Type definitions, UI enums, and dynamic schema contracts for QuantAI workstation.
  * Data is fetched dynamically from NestJS backend APIs. Zero hardcoded assets stored here.
- * @author yuva.devlab@gmail.com
  */
 
 import { SignalStatus as CoreSignalStatus } from "@quant-ai/shared-types";

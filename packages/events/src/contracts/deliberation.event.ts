@@ -1,7 +1,6 @@
 /**
  * @file packages/events/src/contracts/deliberation.event.ts
  * @description Multi-agent deliberation consensus event payload and envelope factory.
- * @author yuva.devlab@gmail.com
  */
 
 import { z } from "zod";

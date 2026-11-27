@@ -1,7 +1,6 @@
 /**
  * @file apps/web/src/lib/portal-routes.ts
  * @description DevLab Central Portal SSO route builders and canonical destinations.
- * @author yuva.devlab@gmail.com
  */
 
 import { AuthPrompt, AuthQueryParamKey, DEVLAB_CONFIG } from "@quant-ai/shared-types";

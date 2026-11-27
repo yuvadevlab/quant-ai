@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/auth/auth.module.ts
  * @description NestJS Authentication module configuring Passport, JWT verification, and user management.
- * @author yuva.devlab@gmail.com
  */
 
 import { Module } from "@nestjs/common";

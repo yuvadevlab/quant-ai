@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/PredictionsTable.tsx
  * @description Tabular signal audit ledger using DevLab UI Table primitives.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ReactNode } from "react";

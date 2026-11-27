@@ -14,17 +14,21 @@ import { QuantTopbar } from "./QuantTopbar";
 export interface QuantShellProps {
   /** Page content to render inside the main workstation canvas */
   readonly children: ReactNode;
+  /** Lock outer shell to 100dvh so inner scroll containers own scrolling */
+  readonly fillViewport?: boolean;
 }
 
 /**
  * QuantAI primary workstation shell.
  * Provides the overarching terminal frame, responsive layout management, and global layout layers.
  */
-export function QuantShell({ children }: QuantShellProps) {
+export function QuantShell({ children, fillViewport = false }: QuantShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className={`quant-shell ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
+    <div
+      className={`quant-shell ${sidebarCollapsed ? "sidebar-collapsed" : ""} ${fillViewport ? "quant-shell--fill-viewport" : ""}`}
+    >
       <QuantSidebar
         isCollapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -34,9 +38,12 @@ export function QuantShell({ children }: QuantShellProps) {
         <QuantTopbar />
         <MarketTickerStrip />
 
-        <main className="quant-content-body" role="main">
+        <main
+          className={`quant-content-body ${fillViewport ? "quant-content-body--fill-viewport" : ""}`}
+          role="main"
+        >
           {children}
-          <ComplianceFooter />
+          {!fillViewport && <ComplianceFooter />}
         </main>
       </div>
     </div>

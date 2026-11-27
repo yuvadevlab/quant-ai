@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/PortfolioKpiGrid.tsx
  * @description KPI summary grid for paper portfolio balances, P&L, and margin.
- * @author yuva.devlab@gmail.com
  */
 
 import { ArrowUpRight, PieChart, ShieldCheck, TrendingUp, Wallet } from "lucide-react";

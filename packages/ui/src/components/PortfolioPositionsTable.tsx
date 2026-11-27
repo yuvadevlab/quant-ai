@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/PortfolioPositionsTable.tsx
  * @description Active simulated positions table with real-time P&L using DevLab UI Table primitives.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ReactNode } from "react";

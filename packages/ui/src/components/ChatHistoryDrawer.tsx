@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/ChatHistoryDrawer.tsx
  * @description Slide-over drawer presenting historical AI Copilot conversation threads.
- * @author yuva.devlab@gmail.com
  */
 
 import type { MouseEvent } from "react";

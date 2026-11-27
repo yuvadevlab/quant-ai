@@ -2,7 +2,6 @@
  * @file src/features/overview/components/OverviewPage.tsx
  * @description Master Executive Market Desk page wrapper.
  * Composes layout shell, live market ticks, breadth matrix, active signal spotlights, and launchpad using @quant-ai/ui.
- * @author yuva.devlab@gmail.com
  */
 
 import { useState } from "react";

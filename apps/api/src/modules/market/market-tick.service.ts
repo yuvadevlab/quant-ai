@@ -1,6 +1,5 @@
 /**
  * @fileoverview High-frequency market tick streaming and caching service.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable, OnModuleDestroy, OnModuleInit, Optional } from "@nestjs/common";

@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/portfolio/portfolio.service.ts
  * @description Dynamic paper portfolio service marking active simulated positions to live market prices.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable, OnModuleInit, OnModuleDestroy, Optional } from "@nestjs/common";

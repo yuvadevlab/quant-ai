@@ -1,6 +1,5 @@
 /**
  * @fileoverview Controller exposing Prediction Lab query endpoints.
- * @author yuva.devlab@gmail.com
  */
 
 import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from "@nestjs/common";

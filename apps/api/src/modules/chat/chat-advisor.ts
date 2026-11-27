@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/chat/chat-advisor.ts
  * @description Formulates institutional quantitative advisory commentary and multi-agent synthesis.
- * @author yuva.devlab@gmail.com
  */
 
 import { Signal, SignalDirection } from "@quant-ai/shared-types";

@@ -1,7 +1,6 @@
 /**
  * @fileoverview High-frequency streaming ticker strip for major Indian benchmarks (NSE & BSE).
  * Consumes real-time WebSocket tick events with fallback to static benchmarks.
- * @author yuva.devlab@gmail.com
  */
 
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";

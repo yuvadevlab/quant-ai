@@ -1,6 +1,5 @@
 /**
  * @fileoverview Zod schemas and validation parsers for multi-service environments.
- * @author yuva.devlab@gmail.com
  */
 
 import { z } from "zod";

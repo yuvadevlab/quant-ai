@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/predictions/predictions.service.ts
  * @description Dynamic reactive predictions service tracking multi-strategy live setups, PnL, and agent consensus.
- * @author yuva.devlab@gmail.com
  */
 
 import {

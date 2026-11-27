@@ -2,7 +2,6 @@
  * @file src/features/monitor/components/MonitorPage.tsx
  * @description Master Predictive Trajectory Monitor page wrapper with live WebSocket deliberation and pricing streams.
  * Composes workstation shell, KPI summary, and pure @quant-ai/ui presentation blocks with hook logic.
- * @author yuva.devlab@gmail.com
  */
 
 import { useState } from "react";

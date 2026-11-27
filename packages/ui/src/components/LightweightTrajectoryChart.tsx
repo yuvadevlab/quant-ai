@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/LightweightTrajectoryChart.tsx
  * @description Chart placeholder until provider-supplied OHLC data is available.
- * @author yuva.devlab@gmail.com
  */
 
 import { UI_COPY_CONSTANTS } from "../constants/ui-copy.constants";

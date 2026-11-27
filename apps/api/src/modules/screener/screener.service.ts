@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/screener/screener.service.ts
  * @description Dynamic reactive screener service computing live technicals and breakout anomalies.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable, OnModuleInit, OnModuleDestroy, Optional } from "@nestjs/common";

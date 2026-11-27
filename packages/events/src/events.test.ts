@@ -1,7 +1,6 @@
 /**
  * @file packages/events/src/events.test.ts
  * @description Unit tests for @quant-ai/events envelopes and schema validations.
- * @author yuva.devlab@gmail.com
  */
 
 import { describe, expect, it } from "vitest";

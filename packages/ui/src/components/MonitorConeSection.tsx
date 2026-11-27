@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/MonitorConeSection.tsx
  * @description Transparent state for unavailable provider-supplied price history.
- * @author yuva.devlab@gmail.com
  */
 
 import { UI_COPY_CONSTANTS } from "../constants/ui-copy.constants";

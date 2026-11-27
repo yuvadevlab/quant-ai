@@ -1,7 +1,6 @@
 /**
  * @file packages/events/src/contracts/tick.event.ts
  * @description Real-time market tick event payload and envelope factory using @yuva-devlab/events.
- * @author yuva.devlab@gmail.com
  */
 
 import { z } from "zod";

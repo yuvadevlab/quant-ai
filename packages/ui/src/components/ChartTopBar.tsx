@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/ChartTopBar.tsx
  * @description TradingView / Zerodha Kite institutional top toolbar for timeframe, indicators and style.
- * @author yuva.devlab@gmail.com
  */
 
 import {

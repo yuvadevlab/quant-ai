@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/quant-analysis/quant-analysis.module.ts
  * @description Module providing quantitative analysis, regime classification, and multi-agent deliberation.
- * @author yuva.devlab@gmail.com
  */
 
 import { Module } from "@nestjs/common";

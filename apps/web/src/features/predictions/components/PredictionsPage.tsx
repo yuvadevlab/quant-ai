@@ -2,7 +2,6 @@
  * @file src/features/predictions/components/PredictionsPage.tsx
  * @description Master Prediction Lab & Signal Audit Ledger page wrapper.
  * Composes workstation shell, and pure @quant-ai/ui presentation blocks with filter state.
- * @author yuva.devlab@gmail.com
  */
 
 import { useMemo, useState, type SyntheticEvent } from "react";

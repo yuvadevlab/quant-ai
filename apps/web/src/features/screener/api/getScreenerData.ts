@@ -2,7 +2,6 @@
  * @file src/features/screener/api/getScreenerData.ts
  * @description Dynamic data provider for the Quantitative Market Screener.
  * Fetches universe items dynamically from the backend screener API.
- * @author yuva.devlab@gmail.com
  */
 
 import { queryOptions } from "@tanstack/react-query";

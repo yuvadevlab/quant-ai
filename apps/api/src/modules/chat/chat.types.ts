@@ -1,10 +1,20 @@
 /**
  * @file apps/api/src/modules/chat/chat.types.ts
  * @description Type definitions and contracts for AI Copilot chat sessions and messages.
- * @author yuva.devlab@gmail.com
  */
 
-import type { AiProviderType, AgentRole, AgentStance } from "@quant-ai/shared-types";
+import type {
+  AiProviderType,
+  AgentRole,
+  AgentStance,
+  AgentRunLogEntry,
+} from "@quant-ai/shared-types";
+export {
+  AgentRunLogLevel,
+  AgentStreamEventType,
+  type AgentRunLogEntry,
+  type AgentStreamEvent,
+} from "@quant-ai/shared-types";
 
 export interface ChatSessionSummary {
   readonly id: string;
@@ -58,6 +68,8 @@ export interface ChatMessageResponse {
   };
   readonly signalData?: EmbeddedSignalSetup;
   readonly predictionId?: string;
+  readonly followUps?: readonly string[];
+  readonly logs?: readonly AgentRunLogEntry[];
   readonly timestamp: string;
 }
 

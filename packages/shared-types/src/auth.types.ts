@@ -1,7 +1,6 @@
 /**
  * @file packages/shared-types/src/auth.types.ts
  * @description Authentication, user preferences, and shadow account contracts.
- * @author yuva.devlab@gmail.com
  */
 
 export interface UserPreferences {

@@ -1,7 +1,6 @@
 /**
  * @file packages/prompts/src/test/prompts.test.ts
  * @description Unit tests validating prompt compilation, persona injection, and variable interpolation.
- * @author yuva.devlab@gmail.com
  */
 
 import { describe, expect, it } from "vitest";

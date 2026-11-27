@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/portfolio/portfolio.module.ts
  * @description NestJS module for simulated paper trading portfolio services.
- * @author yuva.devlab@gmail.com
  */
 
 import { Module } from "@nestjs/common";

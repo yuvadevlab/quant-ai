@@ -2,7 +2,6 @@
  * @file apps/web/src/routes/login.tsx
  * @description Dedicated SSO handoff route delegating authentication exclusively to DevLab Portal.
  * Local registration/signup is disabled; access is gated to onboarded DevLab ecosystem users.
- * @author yuva.devlab@gmail.com
  */
 
 import { createFileRoute } from "@tanstack/react-router";

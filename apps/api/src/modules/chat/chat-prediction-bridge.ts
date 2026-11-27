@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/chat/chat-prediction-bridge.ts
  * @description Bridges AI Copilot chat inquiries with real-time Prediction Lab registrations and revisions.
- * @author yuva.devlab@gmail.com
  */
 
 import { Logger } from "@yuva-devlab/logger";

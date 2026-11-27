@@ -2,7 +2,6 @@
  * @file src/features/screener/components/ScreenerPage.tsx
  * @description Master Institutional Screener page wrapper with filtering and sector tabs.
  * Composes workstation shell and pure @quant-ai/ui presentation blocks with filter state.
- * @author yuva.devlab@gmail.com
  */
 
 import { useMemo, useState } from "react";

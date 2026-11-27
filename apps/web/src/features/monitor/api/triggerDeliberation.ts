@@ -1,7 +1,6 @@
 /**
  * @file src/features/monitor/api/triggerDeliberation.ts
  * @description API client for triggering on-demand institutional multi-agent adversarial deliberation.
- * @author yuva.devlab@gmail.com
  */
 
 import { WEB_ENV } from "@/constants/env.constants";

@@ -2,7 +2,6 @@
  * @file packages/ui/src/types.ts
  * @description Standardized presentation data contracts for QuantAI institutional desk components.
  * Pure UI presentation interfaces decoupled from runtime API implementations and routers.
- * @author yuva.devlab@gmail.com
  */
 
 import type { MarketDataStatus } from "@quant-ai/shared-types";
@@ -131,13 +130,34 @@ export interface SectorItem {
 /**
  * Conversation message contract for Copilot chat thread.
  */
+import type { AgentActivity, AgentMode, AgentRunLogEntry } from "@quant-ai/shared-types";
+
+export interface ChatExecutionLogEntry {
+  readonly id: string;
+  readonly elapsedMs: number;
+  readonly level: string;
+  readonly message: string;
+  readonly detail?: string | undefined;
+}
+
 export interface ChatThreadMessage {
   readonly id: string | number;
   readonly type: "user" | "assistant" | string;
   readonly text: string;
   readonly time: string;
+  readonly mode?: AgentMode | undefined;
+  readonly reasoning?: string | undefined;
+  readonly reasoningStreaming?: boolean | undefined;
+  readonly reasoningStartedAt?: number | undefined;
+  readonly reasoningCompletedAt?: number | undefined;
+  readonly activities?: readonly AgentActivity[] | undefined;
+  readonly error?: string | undefined;
   readonly hasSignal?: boolean | undefined;
   readonly signalData?: TableSignalItem | undefined;
+  readonly followUps?: readonly string[] | undefined;
+  readonly agentRole?: string | undefined;
+  readonly logs?: readonly AgentRunLogEntry[] | undefined;
+  readonly streaming?: boolean | undefined;
 }
 
 /**

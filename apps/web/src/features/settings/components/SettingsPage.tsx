@@ -2,7 +2,6 @@
  * @file src/features/settings/components/SettingsPage.tsx
  * @description Master Platform Configuration & Risk Governance page wrapper.
  * Composes workstation shell, header actions, AI engine provider card, risk limits, and SSO identity using @quant-ai/ui.
- * @author yuva.devlab@gmail.com
  */
 
 import { useState } from "react";

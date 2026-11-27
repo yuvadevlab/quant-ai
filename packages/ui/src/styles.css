@@ -42,6 +42,9 @@
 @import "./styles/monitor-agents.css";
 @import "./styles/chat-thread.css";
 @import "./styles/chat-markdown.css";
+@import "./styles/chat-layout.css";
+@import "./styles/chat-console.css";
+@import "./styles/chat-timeline.css";
 @import "./styles/chat-composer.css";
 @import "./styles/chat-empty.css";
 @import "./styles/chat-history.css";

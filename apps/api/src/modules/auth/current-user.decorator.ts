@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/auth/current-user.decorator.ts
  * @description Parameter decorator to extract the authenticated user from the HTTP request context.
- * @author yuva.devlab@gmail.com
  */
 
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";

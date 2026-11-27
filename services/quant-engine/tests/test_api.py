@@ -1,6 +1,5 @@
 """
 Integration tests for QuantAI FastAPI quantitative engine endpoints.
-Author: yuva.devlab@gmail.com
 """
 
 from fastapi.testclient import TestClient

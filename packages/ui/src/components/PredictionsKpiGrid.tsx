@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/PredictionsKpiGrid.tsx
  * @description Performance KPIs grid for prediction ledger.
- * @author yuva.devlab@gmail.com
  */
 
 import { Activity, BarChart3, Target, TrendingUp } from "lucide-react";

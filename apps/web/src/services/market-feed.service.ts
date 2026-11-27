@@ -2,7 +2,6 @@
  * @file src/services/market-feed.service.ts
  * @description Centralized market data feed service for Indian financial benchmarks (NSE & BSE).
  * Fetches dynamic quotes, breadth, and sector momentum directly from backend API.
- * @author yuva.devlab@gmail.com
  */
 
 import { useQuery } from "@tanstack/react-query";

@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/quant-analysis/deliberation.controller.ts
  * @description Controller exposing REST endpoints to trigger multi-agent deliberation and expectancy checks.
- * @author yuva.devlab@gmail.com
  */
 
 import { Body, Controller, HttpCode, HttpStatus, Post } from "@nestjs/common";

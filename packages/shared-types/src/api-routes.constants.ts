@@ -1,6 +1,5 @@
 /**
  * @fileoverview Single Source of Truth for API route segments, full paths, and WebSocket namespaces.
- * @author yuva.devlab@gmail.com
  */
 
 /**
@@ -21,6 +20,7 @@ export enum ApiSegment {
   PORTFOLIO = "portfolio",
   CHAT = "chat",
   MESSAGE = "message",
+  STREAM = "stream",
   DELIBERATION = "deliberation",
   TRIGGER = "trigger",
   ROOT = "",
@@ -58,6 +58,7 @@ export const ApiRoute = {
   SCREENER_SURGES: `/${ApiSegment.API}/${ApiSegment.SCREENER}/${ApiSegment.SURGES}`,
   PORTFOLIO: `/${ApiSegment.API}/${ApiSegment.PORTFOLIO}`,
   CHAT_MESSAGE: `/${ApiSegment.API}/${ApiSegment.CHAT}/${ApiSegment.MESSAGE}`,
+  CHAT_STREAM: `/${ApiSegment.API}/${ApiSegment.CHAT}/${ApiSegment.STREAM}`,
   DELIBERATION_TRIGGER: `/${ApiSegment.API}/${ApiSegment.DELIBERATION}/${ApiSegment.TRIGGER}`,
   SWAGGER_DOCS: `/${ApiSegment.DOCS}`,
 } as const;

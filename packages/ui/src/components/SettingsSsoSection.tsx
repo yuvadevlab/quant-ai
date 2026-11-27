@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/SettingsSsoSection.tsx
  * @description DevLab Portal SSO status & identity information panel using DevLab UI primitives.
- * @author yuva.devlab@gmail.com
  */
 
 import { LogIn, LogOut, Moon, Sun, User } from "lucide-react";

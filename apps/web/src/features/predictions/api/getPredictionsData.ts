@@ -2,7 +2,6 @@
  * @file src/features/predictions/api/getPredictionsData.ts
  * @description Dynamic data provider for the Prediction Lab & Signal Audit Ledger.
  * Fetches real-time multi-asset signals from backend API.
- * @author yuva.devlab@gmail.com
  */
 
 import { queryOptions } from "@tanstack/react-query";

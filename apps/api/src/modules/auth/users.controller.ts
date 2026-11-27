@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/auth/users.controller.ts
  * @description User profile and preference endpoints.
- * @author yuva.devlab@gmail.com
  */
 
 import { Body, Controller, Get, Patch, UseGuards } from "@nestjs/common";

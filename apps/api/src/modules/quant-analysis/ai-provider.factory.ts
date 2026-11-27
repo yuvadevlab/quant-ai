@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/quant-analysis/ai-provider.factory.ts
  * @description Centralized model router and provider factory leveraging canonical @yuva-devlab/ai-client.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable } from "@nestjs/common";

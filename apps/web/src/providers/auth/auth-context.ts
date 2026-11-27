@@ -1,7 +1,6 @@
 /**
  * @file apps/web/src/providers/auth/auth-context.ts
  * @description React Context and custom hook for QuantAI authentication and user profile.
- * @author yuva.devlab@gmail.com
  */
 
 import { createContext, useContext } from "react";

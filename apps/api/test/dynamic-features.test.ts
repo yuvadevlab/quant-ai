@@ -1,7 +1,6 @@
 /**
  * @file apps/api/test/dynamic-features.test.ts
  * @description Unit tests for Chat Copilot, Paper Portfolio, and On-Demand Deliberation.
- * @author yuva.devlab@gmail.com
  */
 
 import { describe, expect, it } from "vitest";

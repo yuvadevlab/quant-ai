@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/OverviewBreadthSectors.tsx
  * @description 2-column market breadth and sector momentum matrix section.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ReactNode } from "react";

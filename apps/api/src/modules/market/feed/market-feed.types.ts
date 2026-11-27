@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/market/feed/market-feed.types.ts
  * @description Dynamic market data feed contracts and quote structures.
- * @author yuva.devlab@gmail.com
  */
 
 import type { MarketDataStatus } from "@quant-ai/shared-types";

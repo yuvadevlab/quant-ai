@@ -1,7 +1,6 @@
 /**
  * @file src/components/layout/QuantSidebar.tsx
  * @description Collapsible terminal sidebar navigation for QuantAI workstation.
- * @author yuva.devlab@gmail.com
  */
 
 import { Link, useRouterState } from "@tanstack/react-router";

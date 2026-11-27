@@ -1,6 +1,5 @@
 /**
  * @fileoverview Canonical financial market, strategy, asset class, and prediction state enums.
- * @author yuva.devlab@gmail.com
  */
 
 /**

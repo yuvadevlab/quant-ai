@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/quant-analysis/adapters/devlab-provider.adapter.ts
  * @description Universal AI model adapter backed by canonical @yuva-devlab/ai-client provider layer.
- * @author yuva.devlab@gmail.com
  */
 
 import { Logger } from "@yuva-devlab/logger";
@@ -16,6 +15,7 @@ import { AgentStance } from "@quant-ai/shared-types";
 import type {
   AgentDebateOutput,
   AiModelAdapter,
+  ChatCompletionInput,
   GenerateDeliberationInput,
 } from "../ai-provider.types";
 import { SimulatedModelAdapter } from "./simulated.adapter";
@@ -104,18 +104,19 @@ export class DevLabProviderAdapter implements AiModelAdapter {
   /**
    * Generates conversational AI synthesis using the configured LLM provider.
    */
-  public async generateChatReply(input: {
-    query: string;
-    symbol?: string;
-    marketContext?: string;
-  }): Promise<string> {
+  public async generateChatReply(input: ChatCompletionInput): Promise<string> {
     const userPrompt = buildCopilotChatUserPrompt(input.query, input.marketContext);
+    const historyMessages: AIMessage[] = (input.history ?? []).slice(-6).map((turn) => ({
+      role: turn.role === "assistant" ? MessageRole.ASSISTANT : MessageRole.USER,
+      content: turn.content,
+    }));
 
     try {
       const response = await this.client.complete({
         model: this.modelName,
         messages: [
-          { role: MessageRole.SYSTEM, content: COPILOT_CHAT_SYSTEM_PROMPT },
+          { role: MessageRole.SYSTEM, content: input.systemPrompt ?? COPILOT_CHAT_SYSTEM_PROMPT },
+          ...historyMessages,
           { role: MessageRole.USER, content: userPrompt },
         ],
         temperature: 0.3,

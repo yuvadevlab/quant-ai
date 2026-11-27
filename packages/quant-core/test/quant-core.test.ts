@@ -1,7 +1,6 @@
 /**
  * @file packages/finance-engine/test/finance-engine.test.ts
  * @description Comprehensive test suite for deterministic quantitative finance calculations.
- * @author yuva.devlab@gmail.com
  */
 
 import { describe, expect, it } from "vitest";

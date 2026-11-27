@@ -3,7 +3,6 @@
  * @description In-memory and sessionStorage persistence adapter for conversational threads.
  * Provides 0ms instant thread switching without UI jitter or skeleton flashing,
  * mirroring the architecture pattern established in FinAI & OrchestrAI.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ChatThreadMessage, ChatSessionHistoryItem } from "@quant-ai/ui";

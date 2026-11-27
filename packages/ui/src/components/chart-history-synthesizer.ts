@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/chart-history-synthesizer.ts
  * @description Multi-period historical candlestick and trajectory projection synthesizer (1D, 5D, 1M, 6M, 1Y, ALL).
- * @author yuva.devlab@gmail.com
  */
 
 import type {

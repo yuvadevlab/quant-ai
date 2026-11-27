@@ -1,7 +1,6 @@
 /**
  * @file src/features/chat/api/sendChatMessage.ts
  * @description API client for sending trader prompts and managing Copilot sessions.
- * @author yuva.devlab@gmail.com
  */
 
 import { WEB_ENV } from "@/constants/env.constants";
@@ -16,6 +15,13 @@ export interface ChatReplyPayload {
   readonly liveChange?: number;
   readonly signalData?: TableSignalItem;
   readonly predictionId?: string;
+  readonly followUps?: readonly string[];
+  readonly logs?: readonly AgentRunLogEntry[];
+  readonly agentPerspective?: {
+    readonly role: string;
+    readonly stance: string;
+    readonly conviction: number;
+  };
   readonly timestamp: string;
 }
 
@@ -42,39 +48,13 @@ function getApiEndpoint(route: string): string {
   return `${base}${normalizedRoute}`;
 }
 
-function generateDynamicFallback(message: string): string {
-  const upper = message.toUpperCase();
-  const knownSymbols = [
-    "TCS",
-    "RELIANCE",
-    "INFY",
-    "HDFCBANK",
-    "ICICIBANK",
-    "LT",
-    "SBIN",
-    "NIFTY",
-    "BANKNIFTY",
-  ];
-  const matched = knownSymbols.find((s) => upper.includes(s));
-
-  if (matched) {
-    return (
-      `### 📈 QuantAI Intelligence: ${matched}\n\n` +
-      `Our multi-agent quantitative models have synthesized real-time telemetry for **${matched}**:\n\n` +
-      `- **Technical Regime:** 20-period EMA expansion with healthy volume confirmation.\n` +
-      `- **Volatility Corridor:** ATR volatility bounds indicate an active mathematical edge with a favorable **1:2.8 Risk-to-Reward Ratio**.\n` +
-      `- **Actionable Thesis:** Institutional accumulation detected. Expected trajectory favors continuation towards key target levels with strict stop-loss discipline.\n\n` +
-      `*💡 Tip: Open the Predictions Desk to inspect the live candlestick trajectory cone and agent deliberation breakdown for this symbol.*`
-    );
-  }
-
+function buildServiceUnavailableReply(statusOrReason?: string): string {
+  const detail = statusOrReason ? ` (${statusOrReason})` : "";
   return (
-    `### 🏛️ QuantAI Market Strategist\n\n` +
-    `Regarding your inquiry on *"**${message}**"*:\n\n` +
-    `- **Market Regime:** Multi-agent monitors show Indian benchmark indices trading within normal standard deviation volatility bands.\n` +
-    `- **Discipline Mandate:** High-probability strategies require adhering to minimum **1:2 Risk-to-Reward setups**, avoiding over-leveraged intraday options, and keeping risk capped at 1-2% per trade.\n` +
-    `- **Style Tip:** For beginners, **Swing Momentum (2-5 days)** offers the highest statistical expectancy with manageable volatility compared to high-frequency scalping.\n\n` +
-    `*Ask about any specific stock (e.g. "Setup for TCS", "Analyze RELIANCE") to see real-time target and invalidation levels.*`
+    `### ⚠️ AI Strategist Service Unavailable\n\n` +
+    `Could not reach the QuantAI live inference backend${detail}. ` +
+    `No simulated or cached market thesis was generated.\n\n` +
+    `Please ensure the QuantAI API server is running on port 4005 and try your query again.`
   );
 }
 
@@ -100,9 +80,10 @@ export async function sendChatMessage(
     }
 
     return (await res.json()) as ChatReplyPayload;
-  } catch {
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : undefined;
     return {
-      reply: generateDynamicFallback(message),
+      reply: buildServiceUnavailableReply(reason),
       sessionId: sessionId || `session-${Date.now()}`,
       timestamp: new Date().toISOString(),
     };
@@ -149,6 +130,61 @@ export async function deleteChatSession(sessionId: string): Promise<boolean> {
     return res.ok;
   } catch {
     return false;
+  }
+}
+
+import type { AgentRunLogEntry, AgentStreamEvent } from "@quant-ai/shared-types";
+import { handleAgentStreamEvent, type AgentEventPort } from "./agentEventHandlers";
+
+/**
+ * Streams a trader's message query over SSE and dispatches events into the AgentEventPort.
+ */
+export async function sendChatMessageStream(
+  message: string,
+  sessionId: string | undefined,
+  port: AgentEventPort,
+  signal?: AbortSignal,
+): Promise<void> {
+  const endpoint = getApiEndpoint(ApiRoute.CHAT_STREAM);
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
+    },
+    body: JSON.stringify({ message, ...(sessionId ? { sessionId } : {}) }),
+    ...(signal ? { signal } : {}),
+  });
+
+  if (!res.ok || !res.body) {
+    throw new Error(`HTTP ${res.status}`);
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+
+    for (const line of lines) {
+      if (!line.startsWith("data: ")) continue;
+      const raw = line.slice(6).trim();
+      if (!raw) continue;
+
+      let event: AgentStreamEvent;
+      try {
+        event = JSON.parse(raw) as AgentStreamEvent;
+      } catch {
+        continue;
+      }
+
+      if (handleAgentStreamEvent(event, port)) return;
+    }
   }
 }
 

@@ -1,6 +1,5 @@
 /**
  * @fileoverview High-performance cache and low-latency state service with resilient in-memory fallback.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable } from "@nestjs/common";

@@ -1,6 +1,5 @@
 /**
  * @fileoverview Unit test verifying decoupled Prisma client initialization.
- * @author yuva.devlab@gmail.com
  */
 
 import { describe, it, expect } from "vitest";

@@ -2,7 +2,6 @@
  * @file apps/api/src/modules/llm-models/llm-models.service.ts
  * @description Service managing platform-wide database-backed AI provider and model catalogs.
  * Preserves audit history by deprecating models rather than mutating or deleting past records.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable, NotFoundException } from "@nestjs/common";

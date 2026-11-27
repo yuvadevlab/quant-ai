@@ -1,6 +1,5 @@
 /**
  * @fileoverview Controller exposing quantitative screener and momentum scan endpoints.
- * @author yuva.devlab@gmail.com
  */
 
 import { Body, Controller, Get, HttpCode, Post } from "@nestjs/common";

@@ -2,7 +2,6 @@
  * @file packages/ui/src/constants/ui-copy.constants.ts
  * @description Centralized UI copy dictionary for reusable components in @quant-ai/ui.
  * Adheres to Rule 5 (Package-level isolation) and Rule 6 (Zero hardcoded strings).
- * @author yuva.devlab@gmail.com
  */
 
 export const UI_COPY_CONSTANTS = {

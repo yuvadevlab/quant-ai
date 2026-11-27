@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/ScreenerToolbar.tsx
  * @description Filter tabs, search box, and sector selector for the screener desk.
- * @author yuva.devlab@gmail.com
  */
 
 import { Button, Card, CardContent, SearchInput } from "@yuva-devlab/ui";

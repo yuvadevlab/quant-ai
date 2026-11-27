@@ -2,7 +2,6 @@
  * @file src/features/overview/api/getOverviewData.ts
  * @description Dynamic SSR and client data provider for the Executive Market Overview Desk.
  * Fetches real-time benchmark indices, breadth, sectors, and multi-asset predictions from backend.
- * @author yuva.devlab@gmail.com
  */
 
 import { queryOptions } from "@tanstack/react-query";

@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/llm-models/llm-models.types.ts
  * @description Data contracts and DTOs for dynamic database-registered LLM providers and models.
- * @author yuva.devlab@gmail.com
  */
 
 /**

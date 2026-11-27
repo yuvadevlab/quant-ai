@@ -1,7 +1,6 @@
 /**
  * @file packages/shared-types/src/auth.constants.ts
  * @description Centralized DevLab Portal SSO configuration, storage keys, and authentication parameters.
- * @author yuva.devlab@gmail.com
  */
 
 /**

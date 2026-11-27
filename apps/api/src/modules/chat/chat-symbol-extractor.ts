@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/chat/chat-symbol-extractor.ts
  * @description Extracts market index or equity ticker symbols from natural-language trader queries.
- * @author yuva.devlab@gmail.com
  */
 
 import { BENCHMARK_INDEX_SYMBOLS, OPTION_CHAIN_KEYWORDS } from "./chat.constants";

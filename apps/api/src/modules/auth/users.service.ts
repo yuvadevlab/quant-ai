@@ -1,7 +1,6 @@
 /**
  * @file apps/api/src/modules/auth/users.service.ts
  * @description User preferences and profile management service.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable } from "@nestjs/common";

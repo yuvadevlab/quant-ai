@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/PredictionsToolbar.tsx
  * @description Filter tabs, search box, and trading horizon style dropdown toolbar.
- * @author yuva.devlab@gmail.com
  */
 
 import { LayoutGrid, Table2 } from "lucide-react";

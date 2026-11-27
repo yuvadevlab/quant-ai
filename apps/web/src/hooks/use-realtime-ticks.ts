@@ -1,6 +1,5 @@
 /**
  * @fileoverview React hook managing WebSocket subscription to real-time market tick streams.
- * @author yuva.devlab@gmail.com
  */
 
 import { useEffect, useState, useRef } from "react";

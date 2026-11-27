@@ -2,7 +2,6 @@
  * @file apps/web/src/lib/jwt.ts
  * @description Lightweight, environment-agnostic JWT decoder and preemptive expiry validator.
  * Operates across Vite client runtime and SSR without native crypto dependencies.
- * @author yuva.devlab@gmail.com
  */
 
 /** Canonical claims present in portal RS256/JWT authentication payloads */

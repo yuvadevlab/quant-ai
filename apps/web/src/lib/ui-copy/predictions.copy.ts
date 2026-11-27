@@ -1,7 +1,6 @@
 /**
  * @file src/lib/ui-copy/predictions.copy.ts
  * @description Centralized copy for the Predictions Lab, performance metrics, and signal ledger.
- * @author yuva.devlab@gmail.com
  */
 
 export const PREDICTIONS_COPY = {

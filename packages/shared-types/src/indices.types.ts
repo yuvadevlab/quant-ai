@@ -1,6 +1,5 @@
 /**
  * @fileoverview Type contracts for market indices, metadata, and benchmark telemetry.
- * @author yuva.devlab@gmail.com
  */
 
 import { IndexCategory, MarketDataStatus } from "./enums";

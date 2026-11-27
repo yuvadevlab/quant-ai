@@ -1,7 +1,6 @@
 /**
  * @file packages/prompts/src/guardrails/copilot-guardrail.patterns.ts
  * @description Centralized prompt-injection and financial-domain boundary patterns for QuantAI Copilot.
- * @author yuva.devlab@gmail.com
  */
 
 /**

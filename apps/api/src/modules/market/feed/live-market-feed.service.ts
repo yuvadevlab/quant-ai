@@ -2,7 +2,6 @@
  * @file apps/api/src/modules/market/feed/live-market-feed.service.ts
  * @description Dynamic multi-asset market data feed service resolving live quotes globally.
  * Implements Singleflight request coalescing, Last Known Good (LKG) caching, and automatic symbol mapping.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable, Optional } from "@nestjs/common";

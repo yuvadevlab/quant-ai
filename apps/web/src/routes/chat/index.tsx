@@ -1,7 +1,6 @@
 /**
  * @file src/routes/chat/index.tsx
  * @description Root fresh session route for AI Financial Copilot.
- * @author yuva.devlab@gmail.com
  */
 
 import { createFileRoute } from "@tanstack/react-router";

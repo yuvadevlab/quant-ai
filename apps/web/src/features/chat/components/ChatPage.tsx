@@ -2,19 +2,20 @@
  * @file src/features/chat/components/ChatPage.tsx
  * @description Master AI Financial Copilot conversation desk connected to live inference engine.
  * Real chat UI with empty-state landing, 1st-message ID page routing, zero mock messages, and history drawer.
- * @author yuva.devlab@gmail.com
  */
 
-import { useState, useEffect, type SyntheticEvent } from "react";
+import { useState, useEffect, useRef, type SyntheticEvent } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowDown, ArrowRight, Sparkles } from "lucide-react";
 import { QuantShell } from "@/components/layout";
 import { ChatMessageType } from "@/constants/market.constants";
 import { CHAT_COPY } from "@/lib/ui-copy/chat.copy";
+import { useBenchmarkTicks } from "@/services/market-feed.service";
+import { useWorkstationSession } from "@/hooks/use-workstation-session";
 import {
   ChatHeader,
+  ChatContextPanel,
   ChatThread,
-  ChatSuggestions,
   ChatComposer,
   ChatEmptyState,
   ChatHistoryDrawer,
@@ -24,11 +25,29 @@ import {
 import type { ChatInitialData } from "../api/getChatData";
 import {
   sendChatMessage,
+  sendChatMessageStream,
   fetchChatSessions,
   fetchChatSession,
   deleteChatSession,
   mapSessionMessageToUi,
+  type ChatReplyPayload,
 } from "../api/sendChatMessage";
+import {
+  appendActivityReducer,
+  appendLogReducer,
+  appendReasoningReducer,
+  appendTextReducer,
+  applyCompleteReducer,
+  endStreamReducer,
+  failStreamReducer,
+  replaceTextReducer,
+  setModeReducer,
+  setSuggestionsReducer,
+  updateActivityReducer,
+} from "../api/agentMessageReducers";
+import type { AgentEventPort } from "../api/agentEventHandlers";
+import { useChatAutoScroll } from "../hooks/useChatAutoScroll";
+import { ActivityTimeline } from "./ActivityTimeline";
 import {
   loadCachedMessages,
   saveCachedMessages,
@@ -58,6 +77,17 @@ export function ChatPage({ initialData, conversationId }: ChatPageProps) {
   const [prompt, setPrompt] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const { containerRef, contentRef, isAtBottom, handleScroll, scrollToBottom } =
+    useChatAutoScroll();
+  const { data: benchmarkTicks = [] } = useBenchmarkTicks();
+  const { sessionInfo } = useWorkstationSession();
+
+  useEffect(() => {
+    if (activeId && messages.length > 0 && !isSubmitting) {
+      saveCachedMessages(activeId, messages);
+    }
+  }, [activeId, messages, isSubmitting]);
 
   // Sync state if conversationId prop changes (e.g. from route change)
   useEffect(() => {
@@ -97,6 +127,7 @@ export function ChatPage({ initialData, conversationId }: ChatPageProps) {
     if (!question || isSubmitting) return;
 
     const userMsgId = Date.now();
+    const assistantMsgId = userMsgId + 1;
     const timeStr = new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
     const userMessage: ChatThreadMessage = {
       type: ChatMessageType.USER,
@@ -104,39 +135,78 @@ export function ChatPage({ initialData, conversationId }: ChatPageProps) {
       id: userMsgId,
       time: timeStr,
     };
+    const streamingPlaceholder: ChatThreadMessage = {
+      type: ChatMessageType.ASSISTANT,
+      text: "",
+      id: assistantMsgId,
+      time: timeStr,
+      logs: [],
+      streaming: true,
+    };
 
-    const nextMessages = [...messages, userMessage];
+    const nextMessages = [...messages, userMessage, streamingPlaceholder];
     setMessages(nextMessages);
     setPrompt("");
     setIsSubmitting(true);
+    scrollToBottom();
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    let resolvedSessionId = activeId;
+    let completedPayload: ChatReplyPayload | null = null;
+
+    const port: AgentEventPort = {
+      onConversation: (id) => {
+        resolvedSessionId = resolvedSessionId ?? id;
+        if (!activeId) {
+          setActiveId(id);
+          if (typeof window !== "undefined") {
+            window.history.replaceState(null, "", `/chat/${encodeURIComponent(id)}`);
+          }
+        }
+      },
+      onMode: (mode) => setMessages((prev) => setModeReducer(prev, mode)),
+      appendLog: (entry) => setMessages((prev) => appendLogReducer(prev, entry)),
+      appendReasoning: (content) => setMessages((prev) => appendReasoningReducer(prev, content)),
+      appendText: (content) => setMessages((prev) => appendTextReducer(prev, content)),
+      replaceText: (content) => setMessages((prev) => replaceTextReducer(prev, content)),
+      appendActivity: (activity) => setMessages((prev) => appendActivityReducer(prev, activity)),
+      updateActivity: (tool, patch) =>
+        setMessages((prev) => updateActivityReducer(prev, tool, patch)),
+      setSuggestions: (suggestions) =>
+        setMessages((prev) => setSuggestionsReducer(prev, suggestions)),
+      onComplete: (payload) => {
+        completedPayload = payload;
+        setMessages((prev) => applyCompleteReducer(prev, payload, initialData.featuredSignal));
+      },
+      failStream: (error) => setMessages((prev) => failStreamReducer(prev, error)),
+      endStream: () => setMessages((prev) => endStreamReducer(prev)),
+    };
 
     try {
-      const response = await sendChatMessage(question, activeId);
-      const newSessionId = response.sessionId ?? activeId ?? `session-${Date.now()}`;
+      try {
+        await sendChatMessageStream(question, activeId, port, controller.signal);
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") {
+          setMessages((prev) => endStreamReducer(prev));
+          return;
+        }
+        const fallback = await sendChatMessage(question, activeId);
+        completedPayload = fallback;
+        setMessages((prev) => applyCompleteReducer(prev, fallback, initialData.featuredSignal));
+      }
 
-      const assistantMessage: ChatThreadMessage = {
-        type: ChatMessageType.ASSISTANT,
-        text: response.reply,
-        id: userMsgId + 1,
-        time: timeStr,
-        hasSignal: !!response.signalData || !!initialData.featuredSignal,
-        ...(response.signalData ? { signalData: response.signalData } : {}),
-      };
-
-      const finalMessages = [...nextMessages, assistantMessage];
-      setMessages(finalMessages);
-      saveCachedMessages(newSessionId, finalMessages);
-
+      const newSessionId =
+        completedPayload?.sessionId ?? resolvedSessionId ?? activeId ?? `session-${Date.now()}`;
       const sessionItem: ChatSessionHistoryItem = {
         id: newSessionId,
         title: question.slice(0, 38) || "Discussion",
         updatedAt: new Date().toISOString(),
-        messageCount: finalMessages.length,
+        messageCount: nextMessages.length,
       };
       saveCachedSession(sessionItem);
       setSessions((prev) => [sessionItem, ...prev.filter((s) => s.id !== newSessionId)]);
 
-      // If this was the first message on the empty root page, land on the ID-generated page
       if (!activeId) {
         setActiveId(newSessionId);
         if (typeof window !== "undefined") {
@@ -144,8 +214,13 @@ export function ChatPage({ initialData, conversationId }: ChatPageProps) {
         }
       }
     } finally {
+      abortControllerRef.current = null;
       setIsSubmitting(false);
     }
+  }
+
+  function handleStopStream() {
+    abortControllerRef.current?.abort();
   }
 
   function handleSelectConversation(id: string) {
@@ -179,39 +254,104 @@ export function ChatPage({ initialData, conversationId }: ChatPageProps) {
   }
 
   return (
-    <QuantShell>
-      <div className="desk-container">
+    <QuantShell fillViewport>
+      <div className="desk-container advisor-workspace-viewport">
         <ChatHeader
+          title={copy.HEADER.TITLE}
           onToggleHistory={() => setHistoryOpen(true)}
           historyCount={sessions.length}
           onNewChat={handleStartNewChat}
+          hasMessages={messages.length > 0 || Boolean(activeId)}
         />
 
-        <div className="chat-thread-card">
-          <div className="chat-thread-header">
-            <div className="thread-title-wrap">
-              <span className="thread-pulse" />
-              <strong>{copy.THREAD.SESSION_TITLE}</strong>
-            </div>
-            <div className="model-chip">
-              <Sparkles size={13} />
-              <span>{copy.THREAD.MODEL_BADGE}</span>
+        <div className="advisor-workspace-grid">
+          <div className="advisor-workspace-main">
+            <div className="chat-thread-card">
+              <div className="chat-thread-header">
+                <div className="thread-title-wrap">
+                  <span className="thread-pulse" />
+                  <strong>{copy.THREAD.SESSION_TITLE}</strong>
+                </div>
+                <div className="model-chip">
+                  <Sparkles size={13} />
+                  <span>{copy.THREAD.MODEL_BADGE}</span>
+                </div>
+              </div>
+
+              <ChatThread
+                messages={messages}
+                isSubmitting={isSubmitting}
+                onSelectFollowUp={handleSendPrompt}
+                assistantName={copy.THREAD.ASSISTANT_NAME}
+                userName={copy.THREAD.USER_NAME}
+                followUpsLabel={copy.THREAD.FOLLOW_UPS_LABEL}
+                thinkingLabel={copy.THREAD.THINKING_LABEL}
+                featuredSignal={initialData.featuredSignal}
+                emptyState={<ChatEmptyState onSelectPrompt={handleSendPrompt} />}
+                scrollContainerRef={containerRef}
+                scrollContentRef={contentRef}
+                onScroll={handleScroll}
+                renderTimeline={(msg) => (
+                  <ActivityTimeline
+                    activities={msg.activities}
+                    logs={msg.logs}
+                    reasoning={msg.reasoning}
+                    reasoningStreaming={msg.reasoningStreaming}
+                    reasoningStartedAt={msg.reasoningStartedAt}
+                    reasoningCompletedAt={msg.reasoningCompletedAt}
+                    isStreaming={Boolean(msg.streaming)}
+                    hasText={msg.text.length > 0}
+                  />
+                )}
+                renderTrajectoryLink={(signal) => (
+                  <Link
+                    to="/predictions/$id"
+                    params={{ id: signal.id }}
+                    className="embed-action-btn"
+                  >
+                    <span>{copy.THREAD.VIEW_TRAJECTORY}</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                )}
+              />
+              {!isAtBottom && messages.length > 0 && (
+                <button type="button" className="qt-jump-bottom" onClick={scrollToBottom}>
+                  <ArrowDown size={14} />
+                  <span>{copy.COMPOSER.JUMP_TO_LATEST}</span>
+                </button>
+              )}
+              <ChatComposer
+                prompt={prompt}
+                onPromptChange={setPrompt}
+                onSubmit={submitPrompt}
+                isSubmitting={isSubmitting}
+                placeholder={copy.COMPOSER.PLACEHOLDER}
+                shortcutHint={copy.COMPOSER.SHORTCUT_HINT}
+                sendButtonLabel={copy.COMPOSER.SEND_BUTTON}
+                onStop={handleStopStream}
+                stopButtonLabel={copy.COMPOSER.STOP_BUTTON}
+              />
             </div>
           </div>
 
-          <ChatThread
-            messages={messages}
-            featuredSignal={initialData.featuredSignal}
-            emptyState={<ChatEmptyState onSelectPrompt={handleSendPrompt} />}
-            renderTrajectoryLink={(signal) => (
-              <Link to="/predictions/$id" params={{ id: signal.id }} className="embed-action-btn">
-                <span>{copy.THREAD.VIEW_TRAJECTORY}</span>
-                <ArrowRight size={14} />
-              </Link>
-            )}
+          <ChatContextPanel
+            ticks={benchmarkTicks}
+            regimeLabel={sessionInfo.statusText}
+            disabled={isSubmitting}
+            onSelectPrompt={handleSendPrompt}
+            quickPrompts={[
+              { label: copy.SUGGESTIONS.PROMPT_NIFTY, prompt: copy.SUGGESTIONS.PROMPT_NIFTY },
+              {
+                label: copy.SUGGESTIONS.PROMPT_BANKNIFTY,
+                prompt: copy.SUGGESTIONS.PROMPT_BANKNIFTY,
+              },
+              {
+                label: copy.SUGGESTIONS.PROMPT_RELIANCE,
+                prompt: copy.SUGGESTIONS.PROMPT_RELIANCE,
+              },
+              { label: copy.SUGGESTIONS.PROMPT_RULES, prompt: copy.SUGGESTIONS.PROMPT_RULES },
+            ]}
           />
-          {messages.length > 0 && <ChatSuggestions onSelectPrompt={setPrompt} />}
-          <ChatComposer prompt={prompt} onPromptChange={setPrompt} onSubmit={submitPrompt} />
         </div>
 
         <ChatHistoryDrawer

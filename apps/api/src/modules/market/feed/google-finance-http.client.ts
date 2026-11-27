@@ -2,7 +2,6 @@
  * @file apps/api/src/modules/market/feed/google-finance-http.client.ts
  * @description Zero-auth, zero-cost real-time market data client using Google Finance.
  * Resolves live Indian NSE/BSE equity and index quotes with zero 429 rate-limiting.
- * @author yuva.devlab@gmail.com
  */
 
 import { Injectable } from "@nestjs/common";

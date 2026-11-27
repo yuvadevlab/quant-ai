@@ -1,7 +1,6 @@
 /**
  * @file src/hooks/use-quant-theme.ts
  * @description Shared hook for toggling and persisting the QuantAI light/dark workstation theme.
- * @author yuva.devlab@gmail.com
  */
 
 import { useState, useCallback } from "react";

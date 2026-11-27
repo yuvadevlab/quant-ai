@@ -2,7 +2,6 @@
  * @file src/features/portfolio/api/getPortfolioData.ts
  * @description Dynamic data provider for the Paper Portfolio & Risk Desk.
  * Fetches simulated positions and executions from the backend API.
- * @author yuva.devlab@gmail.com
  */
 
 import { queryOptions } from "@tanstack/react-query";

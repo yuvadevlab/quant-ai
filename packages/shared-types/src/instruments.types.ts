@@ -1,6 +1,5 @@
 /**
  * @fileoverview Universal dynamic instrument and options derivative type contracts.
- * @author yuva.devlab@gmail.com
  */
 
 import { AssetClass, MarketExchange, OptionType, TradeStrategy } from "./enums";

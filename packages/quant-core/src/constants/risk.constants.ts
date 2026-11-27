@@ -1,7 +1,6 @@
 /**
  * @file packages/finance-engine/src/constants/risk.constants.ts
  * @description Institutional trade risk, Kelly Criterion, and expectancy boundary constants.
- * @author yuva.devlab@gmail.com
  */
 
 /** Minimum institutional Risk-to-Reward ratio required for trade execution approval. */

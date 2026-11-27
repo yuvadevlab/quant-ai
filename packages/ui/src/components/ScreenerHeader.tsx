@@ -1,7 +1,6 @@
 /**
  * @file packages/ui/src/components/ScreenerHeader.tsx
  * @description Header banner for the Quantitative Screener workstation desk.
- * @author yuva.devlab@gmail.com
  */
 
 import type { ReactNode } from "react";
